@@ -34,7 +34,7 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastSimpleElement
         System.out.println("pish" +new Timestamp(1477591200).toString());
         DailyForecastSimpleElement dfse = getItem(position);
         TextView temperatureBox = (TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast);
-        temperatureBox.setText(Double.toString(dfse.getTemperature())+"°");
+        temperatureBox.setText(dfse.getTemperature()+"°");
         TextView timeView = (TextView) convertView.findViewById(R.id.timeBoxDailyForecast);
         DateFormat format1 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         format1.setTimeZone(TimeZone.getTimeZone("GMT"));

@@ -55,12 +55,24 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
                     secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
+                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
+                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                 } else if (position == 1){
                     setTitle(CitiesFragment.activeCityName);
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
                     secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
+                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
+                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
+                } else if (position == 2) {
+                    System.out.println("third tab");
+                    ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
+                    firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
+                    ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
+                    secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
+                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
+                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
                 }
             }
             @Override

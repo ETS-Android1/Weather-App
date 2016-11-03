@@ -36,21 +36,33 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|bottom"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:gravity="center"
         android:layout_marginBottom="50dp">
+
         <ImageView
             android:id="@+id/first_tab"
             android:layout_width="10dp"
             android:layout_height="10dp"
+            android:layout_margin="5dp"
             android:src="@drawable/circle2_active"/>
         <ImageView
             android:id="@+id/second_tab"
-            android:layout_marginLeft="20dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/circle2_deactive"/>
+        <ImageView
+            android:id="@+id/third_tab"
+            android:layout_margin="5dp"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:src="@drawable/circle2_deactive"/>
-    </RelativeLayout>
+
+    </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>

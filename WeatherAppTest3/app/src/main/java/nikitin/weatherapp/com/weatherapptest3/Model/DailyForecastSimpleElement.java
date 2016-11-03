@@ -7,9 +7,9 @@ import java.util.Date;
  */
 public class DailyForecastSimpleElement {
     private Date date;
-    private double temperature;
+    private String temperature;
 
-    public DailyForecastSimpleElement(Date date, double temperature) {
+    public DailyForecastSimpleElement(Date date, String temperature) {
         this.date = date;
         this.temperature = temperature;
     }
@@ -21,10 +21,10 @@ public class DailyForecastSimpleElement {
         this.date = date;
     }
 
-    public double getTemperature() {
+    public String getTemperature() {
         return temperature;
     }
-    public void setTemperature(double temperature) {
+    public void setTemperature(String temperature) {
         this.temperature = temperature;
     }
 }

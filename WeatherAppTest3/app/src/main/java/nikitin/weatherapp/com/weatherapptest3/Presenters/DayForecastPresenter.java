@@ -5,11 +5,14 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastSimpleElement;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
@@ -49,7 +52,7 @@ public class DayForecastPresenter {
                 System.out.println("size" + response.body().getList().size());
                 for (int i = 0; i < forecastWeatherList.size(); i++) {
                     Date date = new Date(response.body().getList().get(i).getDt() * 1000L);
-                    double temperature = response.body().getList().get(i).getData().getTemp();
+                    String temperature = createTemperatureText(response.body().getList().get(i).getData().getTemp());
                     System.out.println(response.body().getList().get(i).getDt());
 
                     adapter.add(new DailyForecastSimpleElement(date, temperature));
@@ -61,5 +64,22 @@ public class DayForecastPresenter {
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
             }
         });
+    }
+
+    private String createTemperatureText(double temp) {
+        int temperature = convertToCelcium(temp);
+        return (temperature >= 0)?"+ " +temperature : "- "+Math.abs(temperature);
+    }
+
+    private int convertToCelcium(double temp) {
+        double KELVIN_TO_CELCIUM = 273.0;
+        return (int) Math.round(temp - KELVIN_TO_CELCIUM);
+    }
+    private Data convertToCelcium(Data data) {
+        double KELVIN_TO_CELCIUM = 273.0;
+        data.setTemp(Math.round(data.getTemp() - KELVIN_TO_CELCIUM));
+        data.setTemp_max(Math.round(data.getTemp_max() - KELVIN_TO_CELCIUM));
+        data.setTemp_min(Math.round(data.getTemp_min() - KELVIN_TO_CELCIUM));
+        return data;
     }
 }
