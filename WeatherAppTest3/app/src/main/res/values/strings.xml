@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">WeatherAppTest3</string>
+
+
+
+    <string name="city_1">city_1</string>
+    <string name="city_2">city_2</string>
+    <string name="city_3">city_3</string>
+    <string name="city_4">city_4</string>
+    <string name="city_5">city_5</string>
+</resources>

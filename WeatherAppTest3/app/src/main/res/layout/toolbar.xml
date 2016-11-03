@@ -1,0 +1,16 @@
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar_actionbar"
+    android:layout_width="match_parent"
+    android:minHeight="?attr/actionBarSize"
+    app:theme="@style/ThemeOverlay.AppCompat.Light"
+    app:contentInsetEnd="0dp"
+    app:contentInsetStart="0dp"
+    android:layout_height="wrap_content"
+    android:background="#1a75ae">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="pish"/>
+
+</android.support.v7.widget.Toolbar>

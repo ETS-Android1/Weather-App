@@ -1,0 +1,53 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    android:descendantFocusability="blocksDescendants"
+    android:elevation="5dp"
+    android:background="@drawable/shape_rounded_active"
+    style="@style/CustomTextView">
+
+    <android.support.v7.widget.AppCompatRadioButton
+        android:id="@+id/activeCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_gravity="center_vertical"
+        app:buttonTint="#2e8bb9">
+    </android.support.v7.widget.AppCompatRadioButton>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/cityName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#2a2f37"
+            android:textSize="20sp"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/cityShotWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#2a2f37"
+            android:textSize="14sp"
+            android:text="+ 20, Rainy"
+            android:textStyle="normal"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/findLocationButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical"
+        android:background="@android:drawable/ic_menu_mylocation"/>
+</LinearLayout>
