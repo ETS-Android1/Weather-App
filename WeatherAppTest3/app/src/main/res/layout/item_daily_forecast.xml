@@ -2,30 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
+    android:layout_height="40dp"
     android:weightSum="3">
 
     <TextView
         android:id="@+id/timeBoxDailyForecast"
+        android:gravity="center"
         android:textSize="20sp"
         android:textColor="#ffffff"
-        android:layout_width="wrap_content"
-        android:gravity="left"
+        android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <ImageView
+        android:id="@+id/iconBoxDailyForecast"
+        android:gravity="center"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        />
 
     <TextView
         android:id="@+id/temperatureBoxDailyForecast"
+        android:gravity="center"
         android:textSize="20sp"
         android:textColor="#ffffff"
-        android:gravity="right"
+        android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_width="wrap_content"
+
         android:layout_height="match_parent" />
 </LinearLayout>

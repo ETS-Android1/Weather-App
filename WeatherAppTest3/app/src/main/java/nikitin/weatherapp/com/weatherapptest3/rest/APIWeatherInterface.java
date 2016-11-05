@@ -20,7 +20,7 @@ public interface APIWeatherInterface {
     @GET("weather")
     Call<WeatherResponse> getWeatherByCityCoordinates(@Query("lat") double latitude, @Query("lon") double longtitude, @Query("appId") String appId);
     @GET("forecast")
-    Call<ForecastResponse> getForecastByCityId(@Query("id") int cityId, @Query("appId") String appId);
+    Call<ForecastResponse> getForecastByCityId(@Query("id") int cityId, @Query("cnt") int count, @Query("appId") String appId);
     @GET("forecast")
     Call<ForecastResponse> getForecastByCityName(@Query("q") String cityName, @Query("appId") String appId);
 }

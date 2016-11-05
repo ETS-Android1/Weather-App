@@ -39,7 +39,7 @@ public class DayForecastPresenter {
     }
 
     public void updateForecastList() {
-        api.getForecastByCityId(629634, new Callback<ForecastResponse>() {
+        api.getDailyForecastByCityId(629634, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
                 System.out.println("Look at this");
@@ -53,9 +53,8 @@ public class DayForecastPresenter {
                 for (int i = 0; i < forecastWeatherList.size(); i++) {
                     Date date = new Date(response.body().getList().get(i).getDt() * 1000L);
                     String temperature = createTemperatureText(response.body().getList().get(i).getData().getTemp());
-                    System.out.println(response.body().getList().get(i).getDt());
-
-                    adapter.add(new DailyForecastSimpleElement(date, temperature));
+                    String weatherName = response.body().getList().get(i).getWeathers().get(0).getMain();
+                    adapter.add(new DailyForecastSimpleElement(date, temperature, weatherName));
                     adapter.notifyDataSetChanged();
                 }
             }

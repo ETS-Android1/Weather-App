@@ -53,8 +53,15 @@ public class OpenWeatherMapAPI {
         return null;
     }
 
-    public void getForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
-        Call<ForecastResponse> call = api.getForecastByCityId(cityId, API_KEY);
+    public void getDailyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
+        int hoursSectionCount = 9;
+        Call<ForecastResponse> call = api.getForecastByCityId(cityId, hoursSectionCount, API_KEY);
         call.enqueue(callback);
     }
+//
+//    public void getWeaklyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
+//        int hoursSection = 9;
+//        Call<ForecastResponse> call = api.getForecastByCityId(cityId, hoursSection, API_KEY);
+//        call.enqueue(callback);
+//    }
 }
