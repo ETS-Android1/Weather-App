@@ -59,6 +59,7 @@ public class PreferencesAPI {
             String cityItemJSON = preferences.getString(String.format(CITY_ITEM, i), "");
             WeatherResponse cityItem = gson.fromJson(cityItemJSON, WeatherResponse.class);
             citiesList.add(cityItem);
+            System.out.println(cityItem);
         }
         return citiesList;
     }

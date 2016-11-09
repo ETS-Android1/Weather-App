@@ -35,7 +35,7 @@ public class MainWindowFragment extends Fragment {
 
     private MainWindowPresenter presenter;
 
-    private final String TITLE = "Weather";
+    public static final String TITLE = "Weather";
     private int activeCityId;
 
     public MainWindowFragment(){
@@ -45,6 +45,10 @@ public class MainWindowFragment extends Fragment {
     public MainWindowFragment(int activeCityId) {
         presenter = new MainWindowPresenter(this);
         this.activeCityId = activeCityId;
+    }
+
+    public static MainWindowFragment newInstance(int activeCityId) {
+        return (activeCityId == 0) ? new MainWindowFragment() : new MainWindowFragment(activeCityId);
     }
 
     public static MainWindowFragment getInstance(int activeCityId) {
@@ -64,8 +68,6 @@ public class MainWindowFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View mainWindowView = inflater.inflate(R.layout.fragment_main_window, container, false);
-
-        getActivity().setTitle(TITLE);
 
         weatherIconBox = (ImageView) mainWindowView.findViewById(R.id.weatherIconBox);
         temperatureBox = (TextView) mainWindowView.findViewById(R.id.temperatureBox);

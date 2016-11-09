@@ -39,9 +39,8 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastSimpleElement
 
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDate()));
         ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getTemperature()+"°");
-
-        //getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeatherName()), getContext().getTheme());
         ((ImageView) convertView.findViewById(R.id.iconBoxDailyForecast)).setImageDrawable(getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeatherName())));
+        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherName());
         return convertView;
     }
 

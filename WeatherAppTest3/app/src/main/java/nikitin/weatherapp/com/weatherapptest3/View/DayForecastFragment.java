@@ -3,6 +3,8 @@ package nikitin.weatherapp.com.weatherapptest3.View;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -15,9 +17,14 @@ import nikitin.weatherapp.com.weatherapptest3.R;
  */
 public class DayForecastFragment extends Fragment {
     DayForecastPresenter presenter;
+    public static final String TITLE = "Daily Forecast";
     private ListView dailyForecastView;
     public DayForecastFragment() {
 
+    }
+
+    public static DayForecastFragment newInstance() {
+        return new DayForecastFragment();
     }
 
     @Override
@@ -42,6 +49,12 @@ public class DayForecastFragment extends Fragment {
 
     public ListView getDailyForecastView() {
         return dailyForecastView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.setGroupVisible(R.id.main_menu_group, false);
     }
 
 }

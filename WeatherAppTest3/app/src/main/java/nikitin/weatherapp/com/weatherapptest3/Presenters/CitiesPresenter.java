@@ -12,6 +12,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CityAdapter;
+
+import nikitin.weatherapp.com.weatherapptest3.Model.City;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.PreferencesAPI;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -34,10 +36,11 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     private GoogleApiClient googleApiClient;
     private OpenWeatherMapAPI openWeatherMapAPI;
     private PreferencesAPI preferencesAPI;
+    private List<WeatherResponse> citiesList;
 
     private final int GPS_ELEMENT_POSITION = 0;
 
-    public CitiesPresenter(Activity activity, CitiesFragment citiesView) {
+    public CitiesPresenter(Activity activity) {
         this.citiesView = citiesView;
         this.mainActivity = activity;
 
@@ -45,12 +48,31 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         preferencesAPI = PreferencesAPI.getInstance(activity);
         //preferencesAPI.clear();
 
-        citiesListAdapter = CityAdapter.getInstance(activity, new ArrayList<WeatherResponse>(), citiesView.getCitiesList());
+
+
+
+
+        System.out.println("restoringPish");
+        //restoreCities();
+    }
+
+    public void setAddapter(CitiesFragment citiesView) {
+        citiesListAdapter = CityAdapter.getInstance(mainActivity, new ArrayList<WeatherResponse>(), citiesView.getCitiesList());
         citiesView.getCitiesList().setAdapter(citiesListAdapter);
+        System.out.println("pishj" + citiesView.getCitiesList().getAdapter().getCount());
+
+        //citiesView.getCitiesList().getAdapter().
+        if (citiesListAdapter.getCount() == 0) {
+            createFindLocationElement();
+            citiesListAdapter.addAll(citiesList);
+        }
+        System.out.println("jop"+citiesList.size());
+        for (int i = 0; i < citiesList.size(); i++) {
+            System.out.println(citiesList.get(i).getSys().getCountry());
+        }
 
 
-        createFindLocationElement();
-        restoreCities();
+        citiesListAdapter.notifyDataSetChanged();
     }
 
     public int getActiveCityId() {
@@ -82,9 +104,9 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         citiesListAdapter.notifyDataSetChanged();
     }
 
-    private void restoreCities() {
-        citiesListAdapter.addAll(preferencesAPI.restoreCities());
-        citiesListAdapter.notifyDataSetChanged();
+    public void restoreCities() {
+        citiesList = preferencesAPI.restoreCities();
+        System.out.println(citiesList);
     }
 
     public void saveCities() {

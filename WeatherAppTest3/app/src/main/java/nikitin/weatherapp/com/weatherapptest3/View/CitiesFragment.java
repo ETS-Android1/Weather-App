@@ -4,6 +4,8 @@ package nikitin.weatherapp.com.weatherapptest3.View;
  * Created by Влад on 23.07.2016.
  */
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,15 +15,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Sys;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 
 public class CitiesFragment extends Fragment {
     private final String TAG = "CitiesFragment";
-    private final String TITLE = "Choose City";
+    public static final String TITLE = "Choose City";
 
     private ListView citiesList;
     private static CitiesPresenter citiesPresenter;
+    private static Activity activity;
 
     //Хуйня
     public static String activeCityName;
@@ -30,28 +34,44 @@ public class CitiesFragment extends Fragment {
     public CitiesFragment() {
     }
 
-    public static CitiesFragment getInstance() {
-        if (citiesView == null) {
-            citiesView = new CitiesFragment();
-        }
+
+    public static CitiesFragment newInstance() {
+        System.out.println("new instance");
+        citiesView = new CitiesFragment();
+
         return citiesView;
     }
+
+    public static CitiesFragment getInstance() {
+        return citiesView;}
 
     public CitiesPresenter getPresenter() {
         return citiesPresenter;
     }
 
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        citiesPresenter = new CitiesPresenter(getActivity());
+        citiesPresenter.restoreCities();
+        System.out.println("pish pop");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_locations, container, false);
         citiesList = (ListView) rootView.findViewById(R.id.citiesList);
-        citiesPresenter = new CitiesPresenter(getActivity(), this);
-
-        getActivity().setTitle(TITLE);
+        citiesPresenter.setAddapter(this);
+        System.out.println("creating view");
         setHasOptionsMenu(true);
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("onAttach");
     }
 
     @Override

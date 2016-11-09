@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
+import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
+import nikitin.weatherapp.com.weatherapptest3.View.MainWindowFragment;
 import nikitin.weatherapp.com.weatherapptest3.View.TabsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -43,14 +45,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         presenter.createBackground();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
+        TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(tabsPagerAdapter);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    setTitle("Choose city");
+                    setTitle(CitiesFragment.TITLE);
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
                     thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                 } else if (position == 1){
-                    setTitle(CitiesFragment.activeCityName);
+                    setTitle(MainWindowFragment.TITLE);
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
@@ -66,7 +68,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
                     thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                 } else if (position == 2) {
-                    System.out.println("third tab");
+                    setTitle(DayForecastFragment.TITLE);
+                    //System.out.println("third tab");
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);

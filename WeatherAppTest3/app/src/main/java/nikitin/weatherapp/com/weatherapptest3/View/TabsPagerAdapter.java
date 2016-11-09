@@ -1,8 +1,10 @@
 package nikitin.weatherapp.com.weatherapptest3.View;
 
+import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 
 /**
@@ -13,32 +15,34 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     public static CitiesFragment citiesFragment;
     public static MainWindowFragment mainWindowFragment;
 
-    public TabsPagerAdapter(FragmentManager fm) {
-        super(fm);
+    private Activity activity;
 
-        citiesFragment = CitiesFragment.getInstance();
+    public TabsPagerAdapter(FragmentManager fm, Activity activity) {
+        super(fm);
+        this.activity = activity;
+        citiesFragment = CitiesFragment.newInstance();
 
     }
 
     @Override
     public Fragment getItem(int index) {
+
         switch (index) {
-            case 0:
+            case 0: {
                 return citiesFragment;
+            }
 
             case 1: {
-                if (citiesFragment.getPresenter() == null) {
-                    System.out.println("null");
-                    mainWindowFragment = MainWindowFragment.getInstance(0);
+                if (CitiesFragment.getInstance().getPresenter() == null) {
+                    mainWindowFragment = MainWindowFragment.newInstance(0);
                     return mainWindowFragment;
                 } else {
-                    System.out.println("not null");
-                    mainWindowFragment = MainWindowFragment.getInstance(citiesFragment.getActiveCityId());
+                    mainWindowFragment = MainWindowFragment.newInstance(citiesFragment.getActiveCityId());
                     return mainWindowFragment;
                 }
             }
             case 2: {
-                return new DayForecastFragment();
+                return DayForecastFragment.newInstance();
             }
         }
         return null;
