@@ -34,7 +34,7 @@ public class DayForecastPresenter {
         this.activity = activity;
         this.view = view;
         api = OpenWeatherMapAPI.getInstance();
-        adapter = new DailyWeatherAdapter(activity.getApplicationContext(), new ArrayList<DailyForecastSimpleElement>());
+        adapter = new DailyWeatherAdapter(activity, new ArrayList<DailyForecastSimpleElement>());
         view.getDailyForecastView().setAdapter(adapter);
     }
 

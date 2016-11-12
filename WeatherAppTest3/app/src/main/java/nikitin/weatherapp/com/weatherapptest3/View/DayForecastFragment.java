@@ -56,5 +56,4 @@ public class DayForecastFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.setGroupVisible(R.id.main_menu_group, false);
     }
-
 }
