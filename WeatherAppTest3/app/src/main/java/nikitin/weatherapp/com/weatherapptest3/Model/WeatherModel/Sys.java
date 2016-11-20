@@ -2,10 +2,12 @@ package nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by Влад on 16.10.2016.
  */
-public class Sys {
+public class Sys implements Serializable{
     @SerializedName("message")
     private float message;
     @SerializedName("country")

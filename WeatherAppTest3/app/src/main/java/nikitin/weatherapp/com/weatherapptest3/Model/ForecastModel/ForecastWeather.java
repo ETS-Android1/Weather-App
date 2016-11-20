@@ -2,6 +2,7 @@ package nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.*;
@@ -13,7 +14,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Wind;
 /**
  * Created by Влад on 26.10.2016.
  */
-public class ForecastWeather {
+public class ForecastWeather implements Serializable{
     @SerializedName("dt")
     int dt;
     @SerializedName("sys")

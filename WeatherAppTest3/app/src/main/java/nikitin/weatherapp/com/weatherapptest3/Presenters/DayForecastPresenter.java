@@ -1,9 +1,11 @@
 package nikitin.weatherapp.com.weatherapptest3.Presenters;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,6 +15,7 @@ import java.util.List;
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastSimpleElement;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
+import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
@@ -29,39 +32,81 @@ public class DayForecastPresenter {
     private DayForecastFragment view;
     private DailyWeatherAdapter adapter;
     private Activity activity;
+    private int deviderHeight;
 
-    public DayForecastPresenter(Activity activity, DayForecastFragment view) {
+    public DayForecastPresenter(final Activity activity, DayForecastFragment view) {
         this.activity = activity;
         this.view = view;
         api = OpenWeatherMapAPI.getInstance();
-        adapter = new DailyWeatherAdapter(activity, new ArrayList<DailyForecastSimpleElement>());
+        adapter = new DailyWeatherAdapter(activity, new ArrayList<ForecastWeather>());
         view.getDailyForecastView().setAdapter(adapter);
+        System.out.println("Devider " + view.getDailyForecastView().getDividerHeight());
+        deviderHeight = view.getDailyForecastView().getDividerHeight();
+
     }
 
     public void updateForecastList() {
         api.getDailyForecastByCityId(629634, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                System.out.println("Look at this");
-                System.out.println(response.body().getList().get(0).getWeathers().get(0).getMain());
-                System.out.println(response.body().getList().get(1).getWeathers().get(0).getMain());
-                System.out.println(response.body().getList().get(1).getWeathers().get(0).getMain());
+                adapter.addAll(response.body().getList());
+                adapter.notifyDataSetChanged();
+                view.getDailyForecastView().setOnScrollListener(new AbsListView.OnScrollListener() {
 
-                List<DailyForecastSimpleElement> list = new ArrayList<DailyForecastSimpleElement>();
-                List<ForecastWeather> forecastWeatherList = response.body().getList();
-                System.out.println("size" + response.body().getList().size());
-                for (int i = 0; i < forecastWeatherList.size(); i++) {
-                    Date date = new Date(response.body().getList().get(i).getDt() * 1000L);
-                    String temperature = createTemperatureText(response.body().getList().get(i).getData().getTemp());
-                    String weatherName = response.body().getList().get(i).getWeathers().get(0).getMain();
-                    adapter.add(new DailyForecastSimpleElement(date, temperature, weatherName));
-                    adapter.notifyDataSetChanged();
-                }
+                    private int ELEMENT_SIZE;
+                    private int LIST_VIEW_SIZE;
+                    private boolean firstLaunch = true;
+                    private int firstVisibleItemNumber;
+                    private int firstVisibleItemBottom;
+                    int space;
+                    int divider;
+
+                    boolean userStartScroll = true;
+
+                    @Override
+                    public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                        switch (scrollState) {
+                            case SCROLL_STATE_TOUCH_SCROLL: {
+                                userStartScroll = true;
+                                break;
+                            }
+                            case SCROLL_STATE_IDLE: {
+                                System.out.println("pish " +3/2.0);
+                                if (!userStartScroll) return;
+                                //Растояние от верха listView до верхушки первого полностью видимого элемента.
+                                int pixelsFromTop = (firstVisibleItemBottom - space - (firstVisibleItemNumber - 1) * divider) % ELEMENT_SIZE;
+                                int dividersSumHeight =  divider * (int)Math.ceil(((double) (LIST_VIEW_SIZE/2) - pixelsFromTop) / (double) ELEMENT_SIZE);
+                                int selectedViewPosition = firstVisibleItemNumber + (int) Math.ceil((double) ((LIST_VIEW_SIZE / 2) - pixelsFromTop - space -dividersSumHeight) / (double) ELEMENT_SIZE);
+                                //Отступ что бы зацентрировать выбранный элемент
+                                int indent = LIST_VIEW_SIZE / 2 - ELEMENT_SIZE / 2 - (selectedViewPosition-1)*divider - space;
+                                view.setSelectionFromTop(selectedViewPosition, indent);
+                                userStartScroll = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                        if (view.getChildAt(0) == null) return;
+
+                        this.firstVisibleItemNumber = firstVisibleItem;
+                        this.firstVisibleItemBottom = view.getChildAt(0).getBottom();
+
+                        if (firstLaunch) {
+                            ELEMENT_SIZE = view.getChildAt(firstVisibleItem).getHeight();
+                            LIST_VIEW_SIZE = view.getHeight();
+                            divider = Math.abs(view.getChildAt(firstVisibleItem).getBottom() - view.getChildAt(firstVisibleItem+1).getTop());
+                            space = view.getChildAt(0).getTop();
+                            firstLaunch = false;
+                        }
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {
-            }
+            public void onFailure(Call<ForecastResponse> call, Throwable t) {}
         });
     }
 

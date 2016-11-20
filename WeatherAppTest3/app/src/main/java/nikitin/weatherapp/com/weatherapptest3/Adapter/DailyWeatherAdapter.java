@@ -17,6 +17,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastSimpleElement;
+import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.WeatherDrawable;
 import nikitin.weatherapp.com.weatherapptest3.detailedforecast.DetailedForecastActivity;
@@ -24,31 +25,33 @@ import nikitin.weatherapp.com.weatherapptest3.detailedforecast.DetailedForecastA
 /**
  * Created by Влад on 22.10.2016.
  */
-public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastSimpleElement> {
+public class DailyWeatherAdapter extends ArrayAdapter<ForecastWeather> {
 
-    public DailyWeatherAdapter(Context context, ArrayList<DailyForecastSimpleElement> cities) {
-        super(context, 0, new ArrayList<DailyForecastSimpleElement>());
+    public static final String INTENT_NAME = "DailyWeatherAdapter";
+
+    public DailyWeatherAdapter(Context context, ArrayList<ForecastWeather> cities) {
+        super(context, 0, new ArrayList<ForecastWeather>());
     }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_daily_forecast, parent, false);
-
-        DailyForecastSimpleElement forecast = getItem(position);
+        convertView.setTag(position);
+        ForecastWeather forecast = getItem(position);
 
         DateFormat format1 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         format1.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDate()));
-        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getTemperature()+"°");
-        ((ImageView) convertView.findViewById(R.id.iconBoxDailyForecast)).setImageDrawable(getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeatherName())));
-        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherName());
+        ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDt() * 1000L));
+        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getData().getTemp()+"°");
+        ((ImageView) convertView.findViewById(R.id.iconBoxDailyForecast)).setImageDrawable(getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeathers().get(0).getMain())));
+        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeathers().get(0).getMain());
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), DetailedForecastActivity.class);
-                intent.putExtra("pish", "pop");
+                intent.putExtra(INTENT_NAME, getItem((int)view.getTag()));
                 getContext().startActivity(intent);
             }
         });
