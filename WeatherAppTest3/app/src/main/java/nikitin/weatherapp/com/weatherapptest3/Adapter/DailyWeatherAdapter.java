@@ -43,19 +43,25 @@ public class DailyWeatherAdapter extends ArrayAdapter<ForecastWeather> {
         format1.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDt() * 1000L));
-        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getData().getTemp()+"°");
-        ((ImageView) convertView.findViewById(R.id.iconBoxDailyForecast)).setImageDrawable(getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeathers().get(0).getMain())));
+        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(convertToCelcium(forecast.getData().getTemp())+"°");
+        //((ImageView) convertView.findViewById(R.id.iconBoxDailyForecast)).setImageDrawable(getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeathers().get(0).getMain())));
         ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeathers().get(0).getMain());
+
 
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), DetailedForecastActivity.class);
-                intent.putExtra(INTENT_NAME, getItem((int)view.getTag()));
+                intent.putExtra(INTENT_NAME, getItem((int) view.getTag()));
                 getContext().startActivity(intent);
             }
         });
         return convertView;
+    }
+
+    private int convertToCelcium(double temp) {
+        double KELVIN_TO_CELCIUM = 273.0;
+        return (int) Math.round(temp - KELVIN_TO_CELCIUM);
     }
 
 
