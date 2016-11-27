@@ -47,9 +47,10 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 for (int i = 0; i < adapterView.getCount(); i++) {
                     selectedPosition = pos;
-                    mainActivity.setCurrentCityId(selectedPosition);
                     RadioButton rd;
                     if (i == pos) {
+                        System.out.println("id    " +mainActivity.getCurrentCityId());
+                        mainActivity.setCurrentCityId(getItem(selectedPosition).getId());
                         view.setBackgroundResource(R.drawable.shape_rounded_active);
                         rd = (RadioButton) view.findViewById(R.id.activeCity);
                         rd.setChecked(i == pos);
