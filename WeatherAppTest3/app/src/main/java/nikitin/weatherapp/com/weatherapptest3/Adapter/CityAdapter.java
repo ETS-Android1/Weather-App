@@ -10,12 +10,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+
+import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
@@ -26,7 +28,7 @@ import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
  */
 public class CityAdapter extends ArrayAdapter<WeatherResponse> {
     public static int selectedPosition = -1;
-    Activity mainActivity;
+    MainActivity mainActivity;
     CitiesPresenter citiesPresenter;
     private static CityAdapter cityAdapter;
     ListView listView;
@@ -37,7 +39,7 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
 
     private CityAdapter(final Context context, ArrayList<WeatherResponse> cities, ListView listView) {
         super(context, 0, cities);
-        this.mainActivity = (Activity)context;
+        this.mainActivity = (MainActivity)context;
         this.listView = listView;
 
         this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -45,6 +47,7 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 for (int i = 0; i < adapterView.getCount(); i++) {
                     selectedPosition = pos;
+                    mainActivity.setCurrentCityId(selectedPosition);
                     RadioButton rd;
                     if (i == pos) {
                         view.setBackgroundResource(R.drawable.shape_rounded_active);

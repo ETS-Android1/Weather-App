@@ -53,6 +53,7 @@ public class DayForecastFragment extends Fragment {
         presenter.updateForecastList();
 
 
+
         setHasOptionsMenu(true);
         return rootView;
     }

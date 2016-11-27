@@ -62,7 +62,7 @@ public class CitiesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_locations, container, false);
         citiesList = (ListView) rootView.findViewById(R.id.citiesList);
-        citiesPresenter.setAddapter(this);
+        citiesPresenter.setAdapter(this);
         System.out.println("creating view");
         setHasOptionsMenu(true);
         return rootView;

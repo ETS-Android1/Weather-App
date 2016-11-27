@@ -56,7 +56,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         //restoreCities();
     }
 
-    public void setAddapter(CitiesFragment citiesView) {
+    public void setAdapter(CitiesFragment citiesView) {
         citiesListAdapter = CityAdapter.getInstance(mainActivity, new ArrayList<WeatherResponse>(), citiesView.getCitiesList());
         citiesView.getCitiesList().setAdapter(citiesListAdapter);
         System.out.println("pishj" + citiesView.getCitiesList().getAdapter().getCount());

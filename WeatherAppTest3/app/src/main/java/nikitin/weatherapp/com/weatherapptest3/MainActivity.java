@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     SearchView searchView;
     private ImageView imageView;
     MainPresenter presenter;
+    TabsPagerAdapter tabsPagerAdapter;
+    private int currentCityId = 629634;
+    private String currentCityName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         presenter.createBackground();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        TabsPagerAdapter tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
+        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
         viewPager.setAdapter(tabsPagerAdapter);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -129,5 +132,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
+    }
+
+    public void setCurrentCityId(int currentCityId) {
+        this.currentCityId = currentCityId;
+    }
+    public int getCurrentCityId (){
+        return currentCityId;
+    }
+
+    public void setCurrentCityName(String currentCityName) {
+        this.currentCityName = currentCityName;
+    }
+    public String getCurrentCityName() {
+        return this.currentCityName;
     }
 }

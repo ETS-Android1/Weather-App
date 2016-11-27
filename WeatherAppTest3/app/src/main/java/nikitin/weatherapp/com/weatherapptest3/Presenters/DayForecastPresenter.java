@@ -18,6 +18,8 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastSimpleElement;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -40,96 +42,80 @@ public class DayForecastPresenter implements AbsListView.OnScrollListener {
     private DayForecastFragment view;
     private DailyWeatherAdapter adapter;
     private Activity activity;
-    private int deviderHeight;
-
-
-    private int ELEMENT_SIZE;
-    private int LIST_VIEW_SIZE;
-    private boolean firstLaunch = true;
+    private ListView forecastList;
+    private int listElementHeight;
+    private int listViewHeight;
     private int firstVisibleItemNumber;
     private int firstVisibleItemBottom;
-    int space;
-    int divider;
+    private int topSpace;
+    private int divider;
 
-    boolean userStartScroll = true;
+    private int currentCityId;
 
     public DayForecastPresenter(final Activity activity, DayForecastFragment view) {
         this.presenter = this;
         this.activity = activity;
+        this.currentCityId = ((MainActivity)activity).getCurrentCityId();
         this.view = view;
+        forecastList = this.view.getDailyForecastView();
         api = OpenWeatherMapAPI.getInstance();
         adapter = new DailyWeatherAdapter(activity, new ArrayList<ForecastWeather>());
-        view.getDailyForecastView().setAdapter(adapter);
-        System.out.println("Devider " + view.getDailyForecastView().getDividerHeight());
-        deviderHeight = view.getDailyForecastView().getDividerHeight();
-
+        forecastList.setAdapter(adapter);
     }
 
     public void updateForecastList() {
-        api.getDailyForecastByCityId(629634, new Callback<ForecastResponse>() {
+        api.getDailyForecastByCityId(currentCityId, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
                 adapter.addAll(response.body().getList());
-                for (int i = 0; i < response.body().getList().size(); i++) {
-                    System.out.println(" " +response.body().getList().get(i).getData().getTemp());
-                }
                 adapter.notifyDataSetChanged();
-                view.getDailyForecastView().setOnScrollListener(presenter);
-                //adapter.getView(0, null, null).setPadding(0, 550, 0, 0);
-                //adapter.getView(0, null, null).setPadding(0, 0, 0 , 300);
+                forecastList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                    @Override
+                    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+                        forecastList.removeOnLayoutChangeListener(this);
 
-               //view.getDailyForecastView().addHeaderView(pish, null, false);
-                //view.getDailyForecastView().addHeaderView(pish, null, false);
-                //view.getDailyForecastView().addHeaderView(pish, null, false);
-                //System.out.println("count " +view.getDailyForecastView().getTop());
-                //view.getDailyForecastView().getTop();
+                        //Заносим константы
+                        listElementHeight = forecastList.getChildAt(0).getHeight();
+                        listViewHeight = forecastList.getHeight();
+                        divider = Math.abs(forecastList.getChildAt(0).getBottom() - forecastList.getChildAt(1).getTop());
+                        topSpace = forecastList.getChildAt(0).getTop();
+                        //Пустые вьюшки нужны что бы центрировать верхние и нижние значимые элементы списка.
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight / 2 - listElementHeight / 2);
+                        LinearLayout indent = new LinearLayout(activity);
+                        indent.setLayoutParams(layoutParams);
+                        forecastList.addHeaderView(indent, null, true);
+                        forecastList.addFooterView(indent, null, true);
 
-
-                //System.out.println(view.getDailyForecastView().getChildAt(0).getTop());
-                //adapter.getView(0, null, null).setPadding(0, 250, 0, 0);
-                //adapter.getView(0, null, null).set
-                //spacer.setPadding(0, 250, 0, 0);
-                //view.getDailyForecastView().addHeaderView(spacer);
-
+                        forecastList.setOnScrollListener(presenter);
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {}
+            public void onFailure(Call<ForecastResponse> call, Throwable t) {
+            }
         });
-
     }
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-
         switch (scrollState) {
-            case SCROLL_STATE_TOUCH_SCROLL: {
-                userStartScroll = true;
-                break;
-            }
             case SCROLL_STATE_IDLE: {
-                System.out.println("feels like " +pish(42.8, 0.89));
-                System.out.println("space " +space +" firstVisibleItem " +firstVisibleItemNumber + " divider " +divider +" Element_size " +ELEMENT_SIZE + " List_view_size " +LIST_VIEW_SIZE +" bottom " +firstVisibleItemBottom);
-                if (!userStartScroll) return;
+                //Еба формула, ахтунг. Оптимизация бы не помешала.
                 //Растояние от верха listView до верхушки первого полностью видимого элемента.
                 int pixelsFromTop;
                 if (firstVisibleItemNumber == 0) {
-                    pixelsFromTop = (LIST_VIEW_SIZE/2 - ELEMENT_SIZE/2) + this.view.getDailyForecastView().getChildAt(0).getTop();
-                } else
-                pixelsFromTop = (firstVisibleItemBottom - space - (firstVisibleItemNumber - 1) * divider) % ELEMENT_SIZE;
-                int dividersSumHeight =  divider * (int)Math.ceil(((double) (LIST_VIEW_SIZE/2) - pixelsFromTop) / (double) ELEMENT_SIZE);
-                int selectedViewPosition = firstVisibleItemNumber + (int) Math.ceil((double) ((LIST_VIEW_SIZE / 2) - pixelsFromTop - space -dividersSumHeight) / (double) ELEMENT_SIZE);
-                //Отступ что бы зацентрировать выбранный элемент
-                int indent = LIST_VIEW_SIZE / 2 - ELEMENT_SIZE / 2 - (selectedViewPosition-1)*divider - space;
-                //System.out.println("pixelsFromTop = "+pixelsFromTop+" = " +firstVisibleItemBottom +" - " +space +" - ( " +firstVisibleItemNumber+" - " +1 +") * " +divider+" ) % " +ELEMENT_SIZE);
-                //System.out.println("dividersSumHeight = " +dividersSumHeight +" = " +divider +" * " + " (int) "+"Math.ceil(" +LIST_VIEW_SIZE/2 +" ) - " +pixelsFromTop +" ) / " +ELEMENT_SIZE);
-                //System.out.println("selectedViewPosition = " +selectedViewPosition +" = " + firstVisibleItemNumber + "(int) Math.ceil( "+LIST_VIEW_SIZE/2 +" ) - " +pixelsFromTop +" - " +space +" - " +dividersSumHeight +" ) /" +ELEMENT_SIZE);
-                view.setSelectionFromTop(selectedViewPosition, indent);
-                //System.out.println(this.view.getDailyForecastView().getChildAt(firstVisibleItemNumber).getTop());
-                userStartScroll = false;
-                //pish
+                    pixelsFromTop = (listViewHeight - listElementHeight)/ 2 + forecastList.getChildAt(0).getTop();
+                } else pixelsFromTop = (firstVisibleItemBottom - topSpace - (firstVisibleItemNumber - 1) * divider) % listElementHeight;
 
-                ForecastWeather forecastItem = adapter.getItem(selectedViewPosition - 1);
+                int dividersSumHeight =  divider * (int)Math.ceil(((double) (listViewHeight/2) - pixelsFromTop) / (double) listElementHeight);
+                int selectedViewPosition = firstVisibleItemNumber + (int) Math.ceil((double) ((listViewHeight / 2) - pixelsFromTop - topSpace -dividersSumHeight) / (double) listElementHeight);
+                //Отступ что бы зацентрировать выбранный элемент
+                int indent = (listViewHeight - listElementHeight) / 2 - (selectedViewPosition-1)*divider - topSpace;
+
+                view.setSelectionFromTop(selectedViewPosition, indent);
+                int item = selectedViewPosition - 1;
+                ForecastWeather forecastItem = adapter.getItem(item);
                 this.view.setHumidityBoxText(forecastItem.getData().getHumidity());
                 this.view.setPressureBoxText(forecastItem.getData().getPressure());
                 this.view.setWindSpeedBoxText(forecastItem.getWind().getSpeed());
@@ -142,49 +128,7 @@ public class DayForecastPresenter implements AbsListView.OnScrollListener {
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        if (view.getChildAt(0) == null) return;
-
         this.firstVisibleItemNumber = firstVisibleItem;
         this.firstVisibleItemBottom = this.view.getDailyForecastView().getChildAt(0).getBottom();
-        System.out.println("pish " +this.view.getDailyForecastView().getChildAt(0).getBottom());
-        System.out.println("LIST_VIEW_SIZE/2 - ELEMENT_SIZE/2 = " +(LIST_VIEW_SIZE/2 - ELEMENT_SIZE/2));
-
-        if (firstLaunch) {
-
-
-
-            //this.view.getDailyForecastView().getChildAt(0).setPadding(0, 350, 0, 0);
-            //this.view.getDailyForecastView().set
-            ELEMENT_SIZE = view.getChildAt(firstVisibleItem).getHeight();
-            LIST_VIEW_SIZE = view.getHeight();
-            divider = Math.abs(view.getChildAt(firstVisibleItem +1).getBottom() - view.getChildAt(firstVisibleItem+2).getTop());
-            space = view.getChildAt(0).getTop();
-            firstLaunch = false;
-
-
-            LinearLayout.LayoutParams layoutParams= new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LIST_VIEW_SIZE/2 - ELEMENT_SIZE/2);
-            LinearLayout linearLayout = new LinearLayout(activity);
-            linearLayout.setLayoutParams(layoutParams);
-            this.view.getDailyForecastView().addHeaderView(linearLayout, null, true);
-
-
-            LinearLayout linearLayout2 = new LinearLayout(activity);
-            linearLayout2.setLayoutParams(layoutParams);
-            this.view.getDailyForecastView().addFooterView(linearLayout, null, true);
-        }
-    }
-
-    public double pish (double t, double rh) {
-        return -42.379 + (2.04901523 * t) + (10.14333127 * rh) - (0.22475541 * t * rh) - (6.83783 / 1000 * t * t) - (5.481717 / 100 * rh * rh) + (1.22874 / 1000 * t * t * rh) + (8.5282 / 10000 * t * rh * rh) - (1.99 * 1000000 * t * t * rh * rh);
-    }
-
-
-
-    private Data convertToCelcium(Data data) {
-        double KELVIN_TO_CELCIUM = 273.0;
-        data.setTemp(Math.round(data.getTemp() - KELVIN_TO_CELCIUM));
-        data.setTemp_max(Math.round(data.getTemp_max() - KELVIN_TO_CELCIUM));
-        data.setTemp_min(Math.round(data.getTemp_min() - KELVIN_TO_CELCIUM));
-        return data;
     }
 }
