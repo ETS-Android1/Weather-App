@@ -6,7 +6,7 @@
 * Window with hourly weather forecast for the day;
 
 Now working on:
-Refactoring
+Moving data storing from Preferences to SQLite DB
 
 It is planned to add the following features:
 * Weekly weather forecast;
