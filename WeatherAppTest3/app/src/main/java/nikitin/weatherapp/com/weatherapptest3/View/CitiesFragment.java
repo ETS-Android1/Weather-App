@@ -26,9 +26,6 @@ public class CitiesFragment extends Fragment {
     private ListView citiesList;
     private static CitiesPresenter citiesPresenter;
     private static Activity activity;
-
-    //Хуйня
-    public static String activeCityName;
     private static CitiesFragment citiesView;
 
     public CitiesFragment() {
@@ -38,7 +35,6 @@ public class CitiesFragment extends Fragment {
     public static CitiesFragment newInstance() {
         System.out.println("new instance");
         citiesView = new CitiesFragment();
-
         return citiesView;
     }
 

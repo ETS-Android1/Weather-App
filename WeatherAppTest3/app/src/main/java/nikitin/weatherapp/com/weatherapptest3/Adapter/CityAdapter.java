@@ -18,6 +18,7 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
@@ -26,7 +27,7 @@ import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 /**
  * Created by Влад on 28.07.2016.
  */
-public class CityAdapter extends ArrayAdapter<WeatherResponse> {
+public class CityAdapter extends ArrayAdapter<City> {
     public static int selectedPosition = -1;
     MainActivity mainActivity;
     CitiesPresenter citiesPresenter;
@@ -37,7 +38,7 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
     final int TYPE_ITEM_LOCATION = 1;
     final int TYPES_AMOUNT = 2;
 
-    private CityAdapter(final Context context, ArrayList<WeatherResponse> cities, ListView listView) {
+    private CityAdapter(final Context context, ArrayList<City> cities, ListView listView) {
         super(context, 0, cities);
         this.mainActivity = (MainActivity)context;
         this.listView = listView;
@@ -49,8 +50,7 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
                     selectedPosition = pos;
                     RadioButton rd;
                     if (i == pos) {
-                        System.out.println("id    " +mainActivity.getCurrentCityId());
-                        mainActivity.setCurrentCityId(getItem(selectedPosition).getId());
+                        mainActivity.setCurrentCityId(getItem(selectedPosition).getOw_id());
                         view.setBackgroundResource(R.drawable.shape_rounded_active);
                         rd = (RadioButton) view.findViewById(R.id.activeCity);
                         rd.setChecked(i == pos);
@@ -71,7 +71,7 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
         });
     }
 
-    public static CityAdapter getInstance(Context context, ArrayList<WeatherResponse> cities, ListView listView) {
+    public static CityAdapter getInstance(Context context, ArrayList<City> cities, ListView listView) {
         if (cityAdapter == null) {
             cityAdapter = new CityAdapter(context, cities, listView);
         }
@@ -96,9 +96,10 @@ public class CityAdapter extends ArrayAdapter<WeatherResponse> {
         TextView cityName = (TextView) convertView.findViewById(R.id.cityName);
         TextView cityShortWeather = (TextView) convertView.findViewById(R.id.cityShotWeather);
 
-        WeatherResponse city = this.getItem(position);
-        cityName.setText(city.getName());
-        cityShortWeather.setText(city.getData().getTemp() + ", " + city.getWeathers().get(0).getMain());
+        City city = getItem(position);
+        cityName.setText(city.getName() + ", " +city.getCountry());
+        //cityShortWeather.setText(city.getData().getTemp() + ", " + city.getWeathers().get(0).getMain());
+        cityShortWeather.setText("zaglyshka");
         RadioButton rd = (RadioButton) convertView.findViewById(R.id.activeCity);
         //rd.setEnabled(false);
         createRadioButton(convertView, position, false);

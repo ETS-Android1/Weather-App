@@ -13,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CityAdapter;
 
-import nikitin.weatherapp.com.weatherapptest3.Model.City;
+import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.PreferencesAPI;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -32,11 +33,13 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     private CitiesFragment citiesView;
     private CityAdapter citiesListAdapter;
 
+    private DatabaseHandler databaseHandler;
+
     private Activity mainActivity;
     private GoogleApiClient googleApiClient;
     private OpenWeatherMapAPI openWeatherMapAPI;
     private PreferencesAPI preferencesAPI;
-    private List<WeatherResponse> citiesList;
+    private List<City> citiesList;
 
     private final int GPS_ELEMENT_POSITION = 0;
 
@@ -48,29 +51,20 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         preferencesAPI = PreferencesAPI.getInstance(activity);
         //preferencesAPI.clear();
 
-
-
-
+        databaseHandler = new DatabaseHandler(mainActivity);
 
         System.out.println("restoringPish");
         //restoreCities();
     }
 
     public void setAdapter(CitiesFragment citiesView) {
-        citiesListAdapter = CityAdapter.getInstance(mainActivity, new ArrayList<WeatherResponse>(), citiesView.getCitiesList());
+        citiesListAdapter = CityAdapter.getInstance(mainActivity, new ArrayList<City>(), citiesView.getCitiesList());
         citiesView.getCitiesList().setAdapter(citiesListAdapter);
-        System.out.println("pishj" + citiesView.getCitiesList().getAdapter().getCount());
 
-        //citiesView.getCitiesList().getAdapter().
         if (citiesListAdapter.getCount() == 0) {
             createFindLocationElement();
             citiesListAdapter.addAll(citiesList);
         }
-        System.out.println("jop"+citiesList.size());
-        for (int i = 0; i < citiesList.size(); i++) {
-            System.out.println(citiesList.get(i).getSys().getCountry());
-        }
-
 
         citiesListAdapter.notifyDataSetChanged();
     }
@@ -88,7 +82,16 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 WeatherResponse weatherResponse = response.body();
                 response.body().setData(convertToCelcium(response.body().getData()));
-                citiesListAdapter.add(weatherResponse);
+
+                City city = new City();
+                city.setOw_id(response.body().getId());
+                city.setName(response.body().getName());
+                city.setCountry(response.body().getSys().getCountry());
+                city.setLatitude(response.body().getCoordinates().getLatitude());
+                city.setLongitude(response.body().getCoordinates().getLongitude());
+
+                databaseHandler.addCity(city);
+                citiesListAdapter.add(city);
                 citiesListAdapter.notifyDataSetChanged();
             }
 
@@ -102,15 +105,20 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     public void deleteCity (int position) {
         citiesListAdapter.remove(citiesListAdapter.getItem(position));
         citiesListAdapter.notifyDataSetChanged();
+        databaseHandler.deleteCity(position);
     }
 
     public void restoreCities() {
-        citiesList = preferencesAPI.restoreCities();
-        System.out.println(citiesList);
+        //citiesList = preferencesAPI.restoreCities();
+        citiesList = databaseHandler.getAllCities();
+        for (int i = 0; i < citiesList.size(); i ++) {
+            System.out.println(citiesList.get(i));
+        }
+        //System.out.println(citiesList);
     }
 
     public void saveCities() {
-        preferencesAPI.saveCities();
+        //preferencesAPI.saveCities();
     }
 
     public CityAdapter getCityAdapter() {
@@ -136,12 +144,13 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
 
     private void createFindLocationElement() {
         //Создаю первый элемент списка - поиск по GPS. Почти все поля - пока не определены.
-        Data data = new Data(0, 0, 0, 0, 0, 0, 0);
-        List<Weather> weathers = new ArrayList<>();
-        weathers.add(new Weather(0, "unknown location", null, null));
-        Wind wind = new Wind(0, 0);
-        WeatherResponse weatherResponse = new WeatherResponse(0, "Find location by GPS", null, weathers, data, wind, null, 0, null);
-        citiesListAdapter.add(weatherResponse);
+        //Data data = new Data(0, 0, 0, 0, 0, 0, 0);
+        //List<Weather> weathers = new ArrayList<>();
+        //weathers.add(new Weather(0, "unknown location", null, null));
+        //Wind wind = new Wind(0, 0);
+        //WeatherResponse weatherResponse = new WeatherResponse(0, "Find location by GPS", null, weathers, data, wind, null, 0, null);
+        City city = new City(0, 0, "Find location by GPS", "", 0, 0);
+        citiesListAdapter.add(city);
         citiesListAdapter.notifyDataSetChanged();
     }
 
@@ -173,9 +182,20 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityCoordinate(latitude, longitude, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                response.body().setData(convertToCelcium(response.body().getData()));
+                City city = new City();
+                city.setOw_id(response.body().getId());
+                city.setName(response.body().getName());
+                city.setCountry(response.body().getSys().getCountry());
+                city.setLongitude(response.body().getCoordinates().getLongitude());
+                city.setLatitude(response.body().getCoordinates().getLatitude());
+
                 citiesListAdapter.remove(citiesListAdapter.getItem(GPS_ELEMENT_POSITION));
-                citiesListAdapter.insert(response.body(), GPS_ELEMENT_POSITION);
+                citiesListAdapter.insert(city, GPS_ELEMENT_POSITION);
+
+//                response.body().setData(convertToCelcium(response.body().getData()));
+//                citiesListAdapter.remove(citiesListAdapter.getItem(GPS_ELEMENT_POSITION));
+//                citiesListAdapter.insert(response.body(), GPS_ELEMENT_POSITION);
+
             }
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {

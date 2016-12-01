@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
+import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.WeatherDrawable;
@@ -52,7 +52,13 @@ public class DayForecastFragment extends Fragment {
         presenter = new DayForecastPresenter(getActivity(), this);
         presenter.updateForecastList();
 
+        DatabaseHandler db = new DatabaseHandler(getContext());
 
+//        System.out.println("shit");
+//        City city = new City(656565, "Brest", "By", 43.5, 30.6);
+//        db.addTestCity(city);
+//
+//        System.out.println("pISH" +db.getTestCity(1).getName());
 
         setHasOptionsMenu(true);
         return rootView;

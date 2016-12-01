@@ -41,16 +41,16 @@ public class PreferencesAPI {
         return preferencesAPI;
     }
 
-    public void saveCities() {
-        CityAdapter cityAdapter = CitiesFragment.getInstance().getPresenter().getCityAdapter();
-        editor.putInt(CITIES_AMOUNT, cityAdapter.getCount()-1);
-        for (int i = 1; i < cityAdapter.getCount(); i++) {
-            WeatherResponse cityItem = cityAdapter.getItem(i);
-            String cityItemJSON = gson.toJson(cityItem, WeatherResponse.class);
-            editor.putString(String.format(CITY_ITEM, i), cityItemJSON);
-        }
-        editor.apply();
-    }
+//    public void saveCities() {
+//        CityAdapter cityAdapter = CitiesFragment.getInstance().getPresenter().getCityAdapter();
+//        editor.putInt(CITIES_AMOUNT, cityAdapter.getCount()-1);
+//        for (int i = 1; i < cityAdapter.getCount(); i++) {
+//            WeatherResponse cityItem = cityAdapter.getItem(i);
+//            String cityItemJSON = gson.toJson(cityItem, WeatherResponse.class);
+//            editor.putString(String.format(CITY_ITEM, i), cityItemJSON);
+//        }
+//        editor.apply();
+//    }
 
     public List <WeatherResponse> restoreCities() {
         List<WeatherResponse> citiesList = new ArrayList<>();

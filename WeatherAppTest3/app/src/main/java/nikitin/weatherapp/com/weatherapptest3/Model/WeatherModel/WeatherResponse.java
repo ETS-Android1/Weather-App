@@ -26,9 +26,12 @@ public class WeatherResponse {
     private Clouds clouds;
     @SerializedName("sys")
     private Sys sys;
+    @SerializedName("dt")
+    private int dt;
 
-    public WeatherResponse (int id, String name, Coordinates coordinates, List<Weather> weathers, Data data, Wind wind, Clouds clouds, int cod, Sys sys) {
+    public WeatherResponse (int id, int dt, String name, Coordinates coordinates, List<Weather> weathers, Data data, Wind wind, Clouds clouds, int cod, Sys sys) {
         this.id = id;
+        this.dt = dt;
         this.name = name;
         this.coordinates = coordinates;
         this.weathers = weathers;
@@ -44,6 +47,13 @@ public class WeatherResponse {
     }
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getDt() {
+        return dt;
+    }
+    public void setDt(int dt) {
+        this.dt = dt;
     }
 
     public Coordinates getCoordinates() {
