@@ -1,22 +1,25 @@
 package nikitin.weatherapp.com.weatherapptest3;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 
 /**
  * Created by Влад on 28.11.2016.
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler databaseHandler;
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 14;
     private static final String DATABASE_NAME = "weatherAppDatabase";
 
     private static final String TABLE_CITIES = "cities";
@@ -59,18 +62,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_CURRENT_WEATHER_ID +" INTEGER PRIMARY KEY AUTOINCREMENT, " +KEY_CURRENT_WEATHER_FK_CITY_ID
                 +" INTEGER, " +KEY_CURRENT_WEATHER_NAME +" TEXT, " +KEY_CURRENT_WEATHER_DATE +" INTEGER, "
                 +KEY_CURRENT_WEATHER_HUMIDITY +" REAL, " +KEY_CURRENT_WEATHER_PRESSURE +" REAL, "
-                +KEY_CURRENT_WEATHER_TEMP +" REAL" +")";
+                +KEY_CURRENT_WEATHER_TEMP +" REAL, " +KEY_CURRENT_WEATHER_WIND_SPEED +" REAL" +")";
         db.execSQL(CREATE_CURRENT_WEATHER_TABLE);
+
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         System.out.println("protokol");
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CITIES);
+        db.execSQL("DROP TABLE IF EXISTS " +TABLE_CURRENT_WEATHER);
         System.out.println("pop");
+        Preferences.getInstance(MainActivity.getAppContext()).clear();
         onCreate(db);
     }
 
-    public void addCity(City city) {
+    //----------------------------------------------------------------------------------------------
+    //----------------------------- Methods for work with cities -----------------------------------
+
+    public long addCity(City city) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_CITIES_OW_ID, city.getOw_id());
@@ -78,17 +87,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITIES_COUNTRY, city.getCountry());
         values.put(KEY_CITIES_LATITUDE, city.getLatitude());
         values.put(KEY_CITIES_LONGITUDE, city.getLongitude());
+        long id = db.insert(TABLE_CITIES, null, values);
+        db.close();
+        return id;
+    }
 
-        db.insert(TABLE_CITIES, null, values);
+    public void updateCity(City city) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_CITIES_OW_ID, city.getOw_id());
+        values.put(KEY_CITIES_NAME, city.getName());
+        values.put(KEY_CITIES_COUNTRY, city.getCountry());
+        values.put(KEY_CITIES_LATITUDE, city.getLatitude());
+        values.put(KEY_CITIES_LONGITUDE, city.getLongitude());
+        db.update(TABLE_CITIES, values, "id = " + city.getId(), null);
         db.close();
     }
 
     public City getCity(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_CITIES, new String[] { KEY_CITIES_ID, KEY_CITIES_OW_ID, KEY_CITIES_NAME,
-                         KEY_CITIES_COUNTRY, KEY_CITIES_LATITUDE, KEY_CITIES_LONGITUDE}, KEY_CITIES_ID + "=?",
-                new String[] {String.valueOf(id)}, null, null, null, null);
+        Cursor cursor = db.query(TABLE_CITIES, new String[]{KEY_CITIES_ID, KEY_CITIES_OW_ID, KEY_CITIES_NAME,
+                        KEY_CITIES_COUNTRY, KEY_CITIES_LATITUDE, KEY_CITIES_LONGITUDE}, KEY_CITIES_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (cursor != null){
             cursor.moveToFirst();
@@ -97,6 +118,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         City city = new City(cursor.getInt(0), cursor.getInt(1), cursor.getString(2),
                 cursor.getString(3), cursor.getDouble(4), cursor.getDouble(5));
         cursor.close();
+        db.close();
         return city;
     }
 
@@ -111,16 +133,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cities.add(city);
         }
         cursor.close();
+        db.close();
     return cities;
     }
 
     public void deleteCity(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        db.rawQuery("DELETE FROM cities WHERE ID = " + id, null);
-        //DELETE FROM COMPANY WHERE ID = 7;
+        db.delete(TABLE_CITIES, KEY_CITIES_ID + " = " + id, null);
+        db.close();
     }
 
-    public void addWeather(CurrentWeather currentWeather) {
+    //----------------------------------------------------------------------------------------------
+    //----------------------------- Methods for work with weather ----------------------------------
+
+    public long addWeather(CurrentWeather currentWeather) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_CURRENT_WEATHER_FK_CITY_ID, currentWeather.getFk_city_id());
+        values.put(KEY_CURRENT_WEATHER_NAME, currentWeather.getName());
+        values.put(KEY_CURRENT_WEATHER_TEMP, currentWeather.getTemp());
+        values.put(KEY_CURRENT_WEATHER_HUMIDITY, currentWeather.getHumidity());
+        values.put(KEY_CURRENT_WEATHER_WIND_SPEED, currentWeather.getWind_speed());
+        values.put(KEY_CURRENT_WEATHER_PRESSURE, currentWeather.getPressure());
+        values.put(KEY_CURRENT_WEATHER_DATE, currentWeather.getDate());
+        long id = db.insert(TABLE_CURRENT_WEATHER, null, values);
+        db.close();
+        return id;
+    }
+
+    public void updateWeather(CurrentWeather currentWeather, long weatherId) {
         SQLiteDatabase db = this.getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_CURRENT_WEATHER_FK_CITY_ID, currentWeather.getFk_city_id());
@@ -130,8 +172,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CURRENT_WEATHER_WIND_SPEED, currentWeather.getWind_speed());
         values.put(KEY_CURRENT_WEATHER_PRESSURE, currentWeather.getPressure());
         values.put(KEY_CURRENT_WEATHER_DATE, currentWeather.getDate());
-        db.insert(TABLE_CURRENT_WEATHER, null, values);
+        db.update(TABLE_CURRENT_WEATHER, values, KEY_CURRENT_WEATHER_ID +"=" +weatherId, null);
+    }
+
+    public int findWeatherIdByCityId(long cityId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_CURRENT_WEATHER, new String[]{KEY_CURRENT_WEATHER_ID, KEY_CURRENT_WEATHER_FK_CITY_ID,
+                        KEY_CURRENT_WEATHER_NAME, KEY_CURRENT_WEATHER_TEMP, KEY_CURRENT_WEATHER_HUMIDITY,
+                        KEY_CURRENT_WEATHER_WIND_SPEED, KEY_CURRENT_WEATHER_PRESSURE, KEY_CURRENT_WEATHER_DATE},
+                KEY_CURRENT_WEATHER_FK_CITY_ID + "=?", new String[]{String.valueOf(cityId)}, null, null, null, null);
+
+        if (cursor != null && cursor.getCount() > 0){
+            cursor.moveToFirst();
+            return cursor.getInt(0);
+        }
         db.close();
+        return -1;
     }
 
     public CurrentWeather getWeather(int id) {
@@ -148,6 +205,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         CurrentWeather currentWeather = new CurrentWeather(cursor.getInt(0), cursor.getInt(1), cursor.getString(2),
                 cursor.getDouble(3), cursor.getDouble(4), cursor.getDouble(5), cursor.getDouble(6), cursor.getInt(7));
         cursor.close();
+        db.close();
         return currentWeather;
     }
+
+    public ArrayList<CurrentWeather> getAllWeathers() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " +TABLE_CURRENT_WEATHER, null);
+        cursor.moveToFirst();
+        ArrayList<CurrentWeather> weathers = new ArrayList<>();
+        do {
+            CurrentWeather currentWeather = new CurrentWeather(cursor.getInt(0), cursor.getInt(1), cursor.getString(2),
+                    cursor.getDouble(3), cursor.getDouble(4), cursor.getDouble(5), cursor.getDouble(6), cursor.getInt(7));
+            weathers.add(currentWeather);
+        } while (cursor.moveToNext());
+        cursor.close();
+        db.close();
+        return weathers;
+    }
+
+
 }

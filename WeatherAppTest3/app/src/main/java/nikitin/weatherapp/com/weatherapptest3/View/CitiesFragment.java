@@ -4,8 +4,6 @@ package nikitin.weatherapp.com.weatherapptest3.View;
  * Created by Влад on 23.07.2016.
  */
 
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,110 +11,94 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
-
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Sys;
+import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 
-public class CitiesFragment extends Fragment {
+public class CitiesFragment extends Fragment implements ListView.OnItemClickListener{
     private final String TAG = "CitiesFragment";
     public static final String TITLE = "Choose City";
-
+    private static CitiesFragment fragment;
     private ListView citiesList;
-    private static CitiesPresenter citiesPresenter;
-    private static Activity activity;
-    private static CitiesFragment citiesView;
-
-    public CitiesFragment() {
-    }
-
-
-    public static CitiesFragment newInstance() {
-        System.out.println("new instance");
-        citiesView = new CitiesFragment();
-        return citiesView;
-    }
+    private CitiesPresenter presenter;
+    private CitiesAdapter adapter;
+    private View view;
+    private int selectedPosition = -1;
 
     public static CitiesFragment getInstance() {
-        return citiesView;}
+        if (fragment == null) fragment = new CitiesFragment();
+        return fragment;
+    }
 
     public CitiesPresenter getPresenter() {
-        return citiesPresenter;
+        return presenter;
     }
 
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        citiesPresenter = new CitiesPresenter(getActivity());
-        citiesPresenter.restoreCities();
-        System.out.println("pish pop");
+        presenter = new CitiesPresenter(this, getActivity());
+        adapter = CitiesAdapter.getInstance(presenter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_locations, container, false);
-        citiesList = (ListView) rootView.findViewById(R.id.citiesList);
-        citiesPresenter.setAdapter(this);
-        System.out.println("creating view");
+        if (view == null) {
+            view = inflater.inflate(R.layout.fragment_locations, container, false);
+            citiesList = (ListView) view.findViewById(R.id.citiesList);
+            adapter.setDatas(presenter.restoreCities());
+            citiesList.setOnItemClickListener(this);
+            citiesList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
         setHasOptionsMenu(true);
-        return rootView;
+        return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        System.out.println("onAttach");
+    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+            if (selectedPosition != -1) {
+                adapterView.getChildAt(selectedPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
+            }
+            selectedPosition = pos;
+            //Тут подумай
+            //mainActivity.setCurrentCityId(adapter.getItem(selectedPosition).getOw_id());
+            view.setBackgroundResource(R.drawable.shape_rounded_active);
+            //rd = (RadioButton) view.findViewById(R.id.activeCity);
+            //rd.setChecked(true);
+            TabsPagerAdapter.mainWindowFragment.updateWeather(getActiveCityId());
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.setGroupVisible(R.id.main_menu_group, true);
+        menu.setGroupVisible(R.id.cities_group, true);
     }
 
-    public void addNewCity(int cityId) {
-        citiesPresenter.addCity(cityId);
+    public void addCity(City city) {
+        adapter.add(city);
+        adapter.notifyDataSetChanged();
     }
-
-    public void deleteCity(int position) {
-        citiesPresenter.deleteCity(position);
+    public void updateGPSItem(City city, int pos) {
+        adapter.remove(adapter.getItem(pos));
+        adapter.insert(city, pos);
+    }
+    public void getCityData(int cityId) {
+        presenter.getCityData(cityId);
     }
 
     public int getActiveCityId() {
-        return citiesPresenter.getActiveCityId();
+        return adapter.getActiveCityId(selectedPosition);
     }
-
-    public void getCityByGPS() {
-        citiesPresenter.getCityByGPS();
-    }
-
-
-    public ListView getCitiesList() {
-        return citiesList;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        citiesPresenter.saveCities();
+        adapter = null;
+        view = null;
     }
 }
 
-//    private void updateCityWeather (final int cityId, final int position) {
-//
-//        WeatherAPI.getInstance().getWeatherByCityId(cityId, new ResponseCallback() {
-//            @Override
-//            public void onDataReceived(String output) {
-//                City city = preferencesAPI.restoreCity(position);
-//
-//                System.out.println("CITY " + city);
-//                Weather weather = JSONParser.getInstance().parseWeather(output);
-//                city.setWeather(weather);
-//                System.out.println("CITY " + city);
-//                citiesListAdapter.add(city);
-//                preferencesAPI.storeExistedCity(city, position);
-//            }
-//        });
-//    }

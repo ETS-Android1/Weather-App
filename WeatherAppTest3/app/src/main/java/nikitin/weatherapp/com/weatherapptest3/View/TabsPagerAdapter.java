@@ -23,8 +23,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     public TabsPagerAdapter(FragmentManager fm, Activity activity) {
         super(fm);
         this.activity = activity;
-        citiesFragment = CitiesFragment.newInstance();
-
+        citiesFragment = CitiesFragment.getInstance();
+        mainWindowFragment = MainWindowFragment.getInstance();
     }
 
     @Override
@@ -36,13 +36,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             }
 
             case 1: {
-                if (CitiesFragment.getInstance().getPresenter() == null) {
-                    mainWindowFragment = MainWindowFragment.newInstance(0);
-                    return mainWindowFragment;
-                } else {
-                    mainWindowFragment = MainWindowFragment.newInstance(citiesFragment.getActiveCityId());
-                    return mainWindowFragment;
-                }
+                return mainWindowFragment;
             }
             case 2: {
                 return DayForecastFragment.newInstance();

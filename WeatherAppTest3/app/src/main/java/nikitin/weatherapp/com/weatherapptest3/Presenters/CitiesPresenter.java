@@ -6,21 +6,16 @@ import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.List;
-import nikitin.weatherapp.com.weatherapptest3.Adapter.CityAdapter;
-
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
+import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
-import nikitin.weatherapp.com.weatherapptest3.PreferencesAPI;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Wind;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -30,59 +25,31 @@ import retrofit2.Response;
  * Created by Влад on 09.10.2016.
  */
 public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
-    private CitiesFragment citiesView;
-    private CityAdapter citiesListAdapter;
-
+    private CitiesFragment view;
     private DatabaseHandler databaseHandler;
 
     private Activity mainActivity;
     private GoogleApiClient googleApiClient;
     private OpenWeatherMapAPI openWeatherMapAPI;
-    private PreferencesAPI preferencesAPI;
-    private List<City> citiesList;
-
+    private Preferences preferences;
     private final int GPS_ELEMENT_POSITION = 0;
 
-    public CitiesPresenter(Activity activity) {
-        this.citiesView = citiesView;
-        this.mainActivity = activity;
-
+    public CitiesPresenter(CitiesFragment view, Activity activity) {
+        mainActivity = activity;
+        this.view = view;
         openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
-        preferencesAPI = PreferencesAPI.getInstance(activity);
-        //preferencesAPI.clear();
-
-        databaseHandler = new DatabaseHandler(mainActivity);
-
-        System.out.println("restoringPish");
-        //restoreCities();
-    }
-
-    public void setAdapter(CitiesFragment citiesView) {
-        citiesListAdapter = CityAdapter.getInstance(mainActivity, new ArrayList<City>(), citiesView.getCitiesList());
-        citiesView.getCitiesList().setAdapter(citiesListAdapter);
-
-        if (citiesListAdapter.getCount() == 0) {
-            createFindLocationElement();
-            citiesListAdapter.addAll(citiesList);
-        }
-
-        citiesListAdapter.notifyDataSetChanged();
-    }
-
-    public int getActiveCityId() {
-        return citiesListAdapter.getActiveCityId();
+        preferences = Preferences.getInstance(mainActivity);
+        databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 
     //----------------------------------------------------------------------------------------------
     //---------------------------- Methods For Working with cities list ----------------------------
 
-    public void addCity(int cityId) {
+    public void getCityData(int cityId) {
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                WeatherResponse weatherResponse = response.body();
-                response.body().setData(convertToCelcium(response.body().getData()));
-
+                response.body().setData(convertToCelsius(response.body().getData()));
                 City city = new City();
                 city.setOw_id(response.body().getId());
                 city.setName(response.body().getName());
@@ -91,10 +58,8 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 city.setLongitude(response.body().getCoordinates().getLongitude());
 
                 databaseHandler.addCity(city);
-                citiesListAdapter.add(city);
-                citiesListAdapter.notifyDataSetChanged();
+                view.addCity(city);
             }
-
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
                 t.printStackTrace();
@@ -102,57 +67,41 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         });
     }
 
-    public void deleteCity (int position) {
-        citiesListAdapter.remove(citiesListAdapter.getItem(position));
-        citiesListAdapter.notifyDataSetChanged();
+    public void deleteCity(int position) {
         databaseHandler.deleteCity(position);
     }
 
-    public void restoreCities() {
-        //citiesList = preferencesAPI.restoreCities();
-        citiesList = databaseHandler.getAllCities();
-        for (int i = 0; i < citiesList.size(); i ++) {
-            System.out.println(citiesList.get(i));
+    public ArrayList<City> restoreCities() {
+        ArrayList<City> cities = databaseHandler.getAllCities();
+        long gpsId = preferences.getGPSCityID();
+        for (City city: cities) {
+            if (city.getId() == gpsId) {
+                cities.remove(city);
+                cities.add(0, city);
+                return cities;
+            }
         }
-        //System.out.println(citiesList);
+        City GPSCity = new City(0, 0, "Find location by GPS", "", 0, 0);
+        cities.add(0, GPSCity);
+        long gpsCityId = databaseHandler.addCity(GPSCity);
+        preferences.putGPSCityId(gpsCityId);
+        return cities;
     }
 
-    public void saveCities() {
-        //preferencesAPI.saveCities();
-    }
-
-    public CityAdapter getCityAdapter() {
-        return citiesListAdapter;
-    }
-
-    public Data convertToCelcium(Data data) {
+    public Data convertToCelsius(Data data) {
         double KELVIN_TO_CELCIUM = 273.0;
         double roundedTemp = new BigDecimal(data.getTemp()-KELVIN_TO_CELCIUM).setScale(2, RoundingMode.UP).doubleValue(); //double)((int)Math.round(data.getTemp()*10)/10);
-        System.out.println("PISH" +roundedTemp);
         double roundedTempMin = Math.round(data.getTemp_min()*10)/10;
         double roundedTempMax = Math.round(data.getTemp_max()*10)/10.0;
 
         data.setTemp(roundedTemp);
-        System.out.println("PISH" + data.getTemp());
         data.setTemp_max(roundedTempMin - KELVIN_TO_CELCIUM);
-        data.setTemp_min(roundedTempMax-KELVIN_TO_CELCIUM);
+        data.setTemp_min(roundedTempMax - KELVIN_TO_CELCIUM);
         return data;
     }
 
     //----------------------------------------------------------------------------------------------
     //---------------------------------- GPS Methods -----------------------------------------------
-
-    private void createFindLocationElement() {
-        //Создаю первый элемент списка - поиск по GPS. Почти все поля - пока не определены.
-        //Data data = new Data(0, 0, 0, 0, 0, 0, 0);
-        //List<Weather> weathers = new ArrayList<>();
-        //weathers.add(new Weather(0, "unknown location", null, null));
-        //Wind wind = new Wind(0, 0);
-        //WeatherResponse weatherResponse = new WeatherResponse(0, "Find location by GPS", null, weathers, data, wind, null, 0, null);
-        City city = new City(0, 0, "Find location by GPS", "", 0, 0);
-        citiesListAdapter.add(city);
-        citiesListAdapter.notifyDataSetChanged();
-    }
 
     public void getCityByGPS() {
         googleApiClient = new GoogleApiClient.Builder(mainActivity)
@@ -188,27 +137,14 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 city.setCountry(response.body().getSys().getCountry());
                 city.setLongitude(response.body().getCoordinates().getLongitude());
                 city.setLatitude(response.body().getCoordinates().getLatitude());
-
-                citiesListAdapter.remove(citiesListAdapter.getItem(GPS_ELEMENT_POSITION));
-                citiesListAdapter.insert(city, GPS_ELEMENT_POSITION);
-
-//                response.body().setData(convertToCelcium(response.body().getData()));
-//                citiesListAdapter.remove(citiesListAdapter.getItem(GPS_ELEMENT_POSITION));
-//                citiesListAdapter.insert(response.body(), GPS_ELEMENT_POSITION);
-
+                view.updateGPSItem(city, GPS_ELEMENT_POSITION);
             }
             @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-            }
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {}
         });
     }
-
     @Override
-    public void onConnectionSuspended(int i) {
-        System.out.println("pish onConnected1");
-    }
+    public void onConnectionSuspended(int i) {}
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        System.out.println("pish onConnected2");
-    }
+    public void onConnectionFailed(ConnectionResult connectionResult) {}
 }

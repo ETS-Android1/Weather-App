@@ -18,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
@@ -32,11 +35,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     TabsPagerAdapter tabsPagerAdapter;
     private int currentCityId = 629634;
     private String currentCityName;
+    private static Context appContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //System.out.println("LOL cities adapter " +CitiesAdapter.citiesAdapter);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        appContext = getApplicationContext();
 
         Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mActionBarToolbar);
@@ -90,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
     }
 
+    public static Context getAppContext() {
+        return appContext;
+    }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -99,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Cursor cursor = CitySuggestionProvider.cursor;
             cursor.move(0);
             int cityId = cursor.getInt(cursor.getColumnIndex(CitySuggestionProvider.SUGGEST_COLUMN_CITY_ID));
-            TabsPagerAdapter.citiesFragment.addNewCity(cityId);
+            TabsPagerAdapter.citiesFragment.getCityData(cityId);
         }
     }
 
@@ -109,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_cities, menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -122,6 +133,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 new ComponentName(this, MainActivity.class)));
         searchView.setIconifiedByDefault(false);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch(menuItem.getItemId()) {
+            case R.id.refresh: {
+                Toast toast = Toast.makeText(getAppContext(), "Selected", Toast.LENGTH_LONG);
+                toast.show();
+
+                return true;
+            }
+            default:
+                return false;
+        }
     }
 
     @Override

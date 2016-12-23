@@ -80,4 +80,10 @@ public class CurrentWeather {
     public void setDate(int date) {
         this.date = date;
     }
+    @Override
+    public String toString() {
+        return "CurrentWeather{" + "id=" + id + ", fk_city_id=" + fk_city_id + ", name=" + name +
+                ", temp=" + temp + ", humidity=" + humidity + ", wind_speed=" + wind_speed +
+                ", pressure=" + pressure + ", date=" + date + '}';
+    }
 }
