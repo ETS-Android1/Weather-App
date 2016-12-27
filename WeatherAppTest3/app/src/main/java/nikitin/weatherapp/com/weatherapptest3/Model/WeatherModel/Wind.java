@@ -13,6 +13,11 @@ public class Wind implements Serializable{
     @SerializedName("deg")
     private double deg;
 
+    public Wind() {
+        speed = 0;
+        deg = 0;
+    }
+
     public Wind (double speed, double deg) {
         this.speed = speed;
         this.deg = deg;

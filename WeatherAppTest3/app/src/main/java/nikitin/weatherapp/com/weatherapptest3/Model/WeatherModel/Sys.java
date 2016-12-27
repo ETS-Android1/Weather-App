@@ -16,6 +16,12 @@ public class Sys implements Serializable{
     private int sunRise;
     @SerializedName("sunset")
     private int sunSet;
+    public Sys() {
+        message = 0;
+        country = "";
+        sunRise = 0;
+        sunSet = 0;
+    }
     public Sys(int message, String country, int sunRise, int sunSet) {
         this.message = message;
         this.country = country;

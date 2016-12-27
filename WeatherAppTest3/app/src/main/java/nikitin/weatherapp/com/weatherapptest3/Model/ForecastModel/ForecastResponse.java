@@ -2,6 +2,7 @@ package nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,9 +18,9 @@ public class ForecastResponse {
     @SerializedName("cnt")
     int cnt;
     @SerializedName("list")
-    List<ForecastWeather> list;
+    ArrayList<ForecastWeather> list;
 
-    ForecastResponse(City city, String cod, double message, int cnt, List <ForecastWeather> list) {
+    ForecastResponse(City city, String cod, double message, int cnt, ArrayList <ForecastWeather> list) {
         this.city = city;
         this.message = message;
         this.cnt = cnt;
@@ -54,10 +55,21 @@ public class ForecastResponse {
         this.cnt = cnt;
     }
 
-    public List<ForecastWeather> getList() {
+    public ArrayList<ForecastWeather> getList() {
         return list;
     }
-    public void setList(List<ForecastWeather> list) {
+    public void setList(ArrayList<ForecastWeather> list) {
         this.list = list;
+    }
+
+    @Override
+    public String toString() {
+        return "ForecastResponse{" +
+                "city=" + city +
+                ", cod='" + cod + '\'' +
+                ", message=" + message +
+                ", cnt=" + cnt +
+                ", list=" + list +
+                '}';
     }
 }

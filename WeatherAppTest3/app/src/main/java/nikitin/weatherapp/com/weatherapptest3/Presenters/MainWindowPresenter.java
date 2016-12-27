@@ -18,11 +18,14 @@ import retrofit2.Response;
  */
 public class MainWindowPresenter {
     static MainWindowFragment view;
+    private static Context context;
+    private static int activeCityId;
     private DatabaseHandler databaseHandler;
 
     public MainWindowPresenter(MainWindowFragment view) {
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
         this.view = view;
+        this.context = view.getContext();
     }
     public void getWeatherData(final int activeCityId) {
         OpenWeatherMapAPI openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
@@ -47,6 +50,11 @@ public class MainWindowPresenter {
                     System.out.println("WEATHER add");
                     databaseHandler.addWeather(currentWeather);
                 }
+
+                for (CurrentWeather weather : databaseHandler.getAllWeathers()) {
+                    System.out.println(weather);
+                }
+
                 response.body().setData(CitiesFragment.getInstance().getPresenter().convertToCelsius(response.body().getData()));
                 view.applyWeather(response.body());
             }

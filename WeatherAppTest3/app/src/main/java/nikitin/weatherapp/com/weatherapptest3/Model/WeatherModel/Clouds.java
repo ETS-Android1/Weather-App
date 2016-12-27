@@ -11,6 +11,10 @@ public class Clouds implements Serializable{
     @SerializedName("all")
     private int all;
 
+    public Clouds() {
+        all = 0;
+    }
+
     public Clouds(int all) {
         this.all = all;
     }

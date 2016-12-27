@@ -23,6 +23,17 @@ public class Data implements Serializable{
     @SerializedName("grnd_level")
     private double grnd_level;
 
+    public Data() {
+        temp = 0;
+        pressure = 0;
+        humidity = 0;
+        temp_min = 0;
+        temp_max = 0;
+        sea_level = 0;
+        grnd_level = 0;
+
+    }
+
     public Data (double temp, double pressure, int humidity, double temp_min, double temp_max, double sea_level, double grnd_level) {
         this.temp = temp;
         this.pressure = pressure;

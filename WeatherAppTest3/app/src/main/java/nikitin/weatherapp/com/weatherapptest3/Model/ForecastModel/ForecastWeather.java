@@ -3,9 +3,7 @@ package nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.List;
-
-import nikitin.weatherapp.com.weatherapptest3.Model.*;
+import java.util.ArrayList;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Clouds;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Sys;
@@ -24,11 +22,21 @@ public class ForecastWeather implements Serializable{
     @SerializedName("wind")
     Wind wind;
     @SerializedName("weather")
-    List<Weather> weathers;
+    ArrayList<Weather> weathers;
     @SerializedName("main")
     Data data;
 
-    ForecastWeather(int dt, Sys sys, Clouds clouds, Wind wind, List<Weather> weathers, Data data) {
+    public ForecastWeather() {
+        weathers = new ArrayList<>();
+        weathers.add(new Weather());
+        dt = 0;
+        sys = new Sys();
+        clouds = new Clouds();
+        wind = new Wind();
+        data = new Data();
+    }
+
+    ForecastWeather(int dt, Sys sys, Clouds clouds, Wind wind, ArrayList<Weather> weathers, Data data) {
         this.dt = dt;
         this.sys = sys;
         this.clouds = clouds;
@@ -65,10 +73,10 @@ public class ForecastWeather implements Serializable{
         this.wind = wind;
     }
 
-    public List<Weather> getWeathers() {
+    public ArrayList<Weather> getWeathers() {
         return weathers;
     }
-    public void setWeathers(List<Weather> weathers) {
+    public void setWeathers(ArrayList<Weather> weathers) {
         this.weathers = weathers;
     }
 
@@ -77,5 +85,17 @@ public class ForecastWeather implements Serializable{
     }
     public void setData(Data data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "ForecastWeather{" +
+                "dt=" + dt +
+                ", sys=" + sys +
+                ", clouds=" + clouds +
+                ", wind=" + wind +
+                ", weathers=" + weathers +
+                ", data=" + data +
+                '}';
     }
 }

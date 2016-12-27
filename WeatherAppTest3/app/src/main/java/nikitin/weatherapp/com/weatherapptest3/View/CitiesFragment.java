@@ -5,6 +5,7 @@ package nikitin.weatherapp.com.weatherapptest3.View;
  */
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -61,16 +62,17 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-            if (selectedPosition != -1) {
-                adapterView.getChildAt(selectedPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
-            }
-            selectedPosition = pos;
-            //Тут подумай
-            //mainActivity.setCurrentCityId(adapter.getItem(selectedPosition).getOw_id());
-            view.setBackgroundResource(R.drawable.shape_rounded_active);
-            //rd = (RadioButton) view.findViewById(R.id.activeCity);
-            //rd.setChecked(true);
-            TabsPagerAdapter.mainWindowFragment.updateWeather(getActiveCityId());
+        if (selectedPosition != -1) {
+            adapterView.getChildAt(selectedPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
+        }
+        selectedPosition = pos;
+        //Тут подумай
+        //mainActivity.setCurrentCityId(adapter.getItem(selectedPosition).getOw_id());
+        view.setBackgroundResource(R.drawable.shape_rounded_active);
+        //rd = (RadioButton) view.findViewById(R.id.activeCity);
+        //rd.setChecked(true);
+        TabsPagerAdapter.currentCityId = getActiveCityId();
+        TabsPagerAdapter.mainWindowFragment.updateWeather(getActiveCityId());
     }
 
     @Override

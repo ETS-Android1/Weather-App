@@ -104,6 +104,8 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         notifyDataSetChanged();
     }
 
+
+
 //    private void createRadioButton(final View convertView, final int position, boolean isChecked) {
 //        AppCompatRadioButton r = (AppCompatRadioButton)convertView.findViewById(R.id.activeCity);
 //        r.setChecked(false);
