@@ -88,8 +88,8 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
                 int position = (int)((LinearLayout)view.getParent()).getTag();
                 City city = getItem(position);
                 remove(city);
-                notifyDataSetChanged();
                 presenter.deleteCity(city.getId());
+                notifyDataSetChanged();
                 break;
             case R.id.findLocationButton:
                 presenter.getCityByGPS();

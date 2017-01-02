@@ -1,8 +1,19 @@
 package nikitin.weatherapp.com.weatherapptest3.Presenters;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.widget.ListView;
 
+import java.nio.channels.AsynchronousCloseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
+import nikitin.weatherapp.com.weatherapptest3.MainActivity;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
@@ -19,6 +30,7 @@ public class DayForecastPresenter  {
     private DayForecastFragment fragment;
     private Activity activity;
     private ListView forecastList;
+    private DatabaseHandler handler;
     private int listElementHeight;
     private int listViewHeight;
     private int firstVisibleItemNumber;
@@ -36,17 +48,35 @@ public class DayForecastPresenter  {
         this.fragment = fragment;
         forecastList = fragment.getDailyForecastView();
         api = OpenWeatherMapAPI.getInstance();
+        handler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 
-    public void loadForecast(int currentCityId) {
+    public void loadForecast(final int currentCityId) {
+        System.out.println("Starting");
         api.getDailyForecastByCityId(currentCityId, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                System.out.println("i get list size " +response.body().getList().size());
-                fragment.createForecastList(response.body().getList());
+                //Иногда сервер глючит и выдает прогноз на больше чем 9 запрашиваемых позиций. Так что тут я обрезаю лишние
+                // и заодно конвертирую в подходящий тип.
+                ArrayList<DailyForecast>  list = new ArrayList<DailyForecast>();
+                for (int i = 0; i<9; i++) {
+                    list.add(new DailyForecast(response.body().getList().get(i), currentCityId));
+                }
+                if (handler.isDailyForecastExists(currentCityId)) {
+                    System.out.println("update");
+                    new updateDBTask().execute(list);
+
+                } else {
+                    System.out.println("new");
+                    new dbAddTask().execute(list);
+                }
+                fragment.createForecastList(list);
+                System.out.println(handler.getDailyForecastAll());
             }
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
+                fragment.createForecastList(handler.getDailyForecast(currentCityId));
+                System.out.println(handler.getDailyForecastAll());
             }
         });
     }
@@ -94,5 +124,22 @@ public class DayForecastPresenter  {
     public int convertToCelcium (double temp) {
         double KELVIN_TO_CELCIUM = 273.0;
         return (int) Math.round(temp - KELVIN_TO_CELCIUM);
+    }
+
+    class dbAddTask extends AsyncTask<ArrayList<DailyForecast>,Void,Void> {
+        @Override
+        protected Void doInBackground(ArrayList<DailyForecast>... f) {
+            DatabaseHandler.getInstance(MainActivity.getAppContext()).addDailyForecastList(f[0]);
+            return null;
+        }
+    }
+
+    class updateDBTask extends AsyncTask<ArrayList<DailyForecast>,Void,Void> {
+        @Override
+        protected Void doInBackground(ArrayList<DailyForecast>... f) {
+            int fk_city_id = f[0].get(0).getFk_city_ow_id();
+            DatabaseHandler.getInstance(MainActivity.getAppContext()).updateDailyForecast(fk_city_id, f[0]);
+            return null;
+        }
     }
 }

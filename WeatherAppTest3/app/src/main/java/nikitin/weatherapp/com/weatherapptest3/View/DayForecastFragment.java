@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -69,6 +70,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     public void onStart() {
         super.onStart();
         dailyForecastView.setAdapter(adapter);
+        System.out.println("onStart. CurrentCutyId " +TabsPagerAdapter.currentCityId);
         presenter.getForecastData(TabsPagerAdapter.currentCityId);
     }
 
@@ -98,7 +100,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         menu.setGroupVisible(R.id.main_menu_group, false);
     }
 
-    public void createForecastList(ArrayList<ForecastWeather> weathers) {
+    public void createForecastList(ArrayList<DailyForecast> weathers) {
         adapter.setData(weathers);
         if (presenter.isParametrsSet) return;
         view.post(new Runnable() {
@@ -120,7 +122,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             }
         });
     }
-
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         presenter.onScroll(firstVisibleItem, dailyForecastView.getChildAt(0).getBottom());
@@ -132,12 +133,12 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 presenter.calculateScrollParameters(dailyForecastView.getChildAt(0).getTop());
                 view.setSelectionFromTop(presenter.getSelectedViewPosition(), presenter.getIndent());
                 int item = presenter.getSelectedViewPosition() - 1;
-                ForecastWeather forecastItem = adapter.getItem(item);
-                setHumidityBoxText(forecastItem.getData().getHumidity());
-                setPressureBoxText(forecastItem.getData().getPressure());
-                setWindSpeedBoxText(forecastItem.getWind().getSpeed());
-                setWindDirectionBoxText(forecastItem.getWind().getDeg());
-                setWeatherIcon(forecastItem.getWeathers().get(0).getMain());
+                DailyForecast forecastItem = adapter.getItem(item);
+                setHumidityBoxText(forecastItem.getHumidity());
+                setPressureBoxText(forecastItem.getPressure());
+                setWindSpeedBoxText(forecastItem.getWind_speed());
+                setWindDirectionBoxText(forecastItem.getWind_direction());
+                setWeatherIcon(forecastItem.getWeather_name());
                 break;
             }
         }

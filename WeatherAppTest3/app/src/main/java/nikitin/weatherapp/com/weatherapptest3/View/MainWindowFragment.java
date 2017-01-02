@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainWindowPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -81,6 +82,16 @@ public class MainWindowFragment extends Fragment {
         pressureBox.setText(Double.toString(weatherResponse.getData().getPressure()) + " Pa");
         windSpeedBox.setText(Double.toString(weatherResponse.getWind().getSpeed()) + " km/h");
         Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(weatherResponse.getWeathers().get(0).getMain()));
+        weatherIconBox.setImageDrawable(icon);
+    }
+
+    public void applyWeather (CurrentWeather weather) {
+        temperatureBox.setText(Double.toString(weather.getTemp()));
+        weatherNameBox.setText(weather.getName());
+        humidityBox.setText(weather.getHumidity() + " %");
+        pressureBox.setText(weather.getPressure() + " Pa");
+        windSpeedBox.setText(weather.getWind_speed() + " km/h");
+        Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(weather.getName()));
         weatherIconBox.setImageDrawable(icon);
     }
 

@@ -57,6 +57,7 @@ public class OpenWeatherMapAPI {
         int hoursSectionCount = 9;
         Call<ForecastResponse> call = api.getForecastByCityId(cityId, hoursSectionCount, API_KEY);
         call.enqueue(callback);
+        //call.
     }
 //
 //    public void getWeaklyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
