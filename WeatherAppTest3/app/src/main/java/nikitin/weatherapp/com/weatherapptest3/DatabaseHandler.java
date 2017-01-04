@@ -107,7 +107,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITIES_LATITUDE, city.getLatitude());
         values.put(KEY_CITIES_LONGITUDE, city.getLongitude());
         long id = db.insert(TABLE_CITIES, null, values);
-        db.close();
         return id;
     }
 
@@ -120,7 +119,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITIES_LATITUDE, city.getLatitude());
         values.put(KEY_CITIES_LONGITUDE, city.getLongitude());
         db.update(TABLE_CITIES, values, "id = " + city.getId(), null);
-        db.close();
     }
 
     public City getCity(int id) {
@@ -137,7 +135,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         City city = new City(cursor.getInt(0), cursor.getInt(1), cursor.getString(2),
                 cursor.getString(3), cursor.getDouble(4), cursor.getDouble(5));
         cursor.close();
-        db.close();
         return city;
     }
 
@@ -152,7 +149,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cities.add(city);
         }
         cursor.close();
-        db.close();
     return cities;
     }
 
@@ -171,7 +167,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.moveToFirst();
         int cityId = cursor.getInt(0);
         cursor.close();
-        db.close();
         return cityId;
     }
 
@@ -190,7 +185,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CURRENT_WEATHER_PRESSURE, currentWeather.getPressure());
         values.put(KEY_CURRENT_WEATHER_DATE, currentWeather.getDate());
         long id = db.insert(TABLE_CURRENT_WEATHER, null, values);
-        db.close();
         return id;
     }
 
@@ -217,7 +211,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             cursor.moveToFirst();
             return cursor.getInt(0);
         }
-        db.close();
         return -1;
     }
 
@@ -234,7 +227,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         CurrentWeather weather = new CurrentWeather(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getDouble(3),
                 cursor.getDouble(4), cursor.getDouble(5), cursor.getDouble(6), cursor.getInt(7));
         cursor.close();
-        db.close();
         return weather;
     }
 
@@ -244,7 +236,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         int deleteRes = db.delete(TABLE_CURRENT_WEATHER, KEY_CURRENT_WEATHER_FK_CITY_ID + " = " + cityId, null);
         System.out.println("delete res " +deleteRes);
-        db.close();
     }
 
 //    public CurrentWeather getWeather(int id) {
@@ -276,7 +267,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             weathers.add(currentWeather);
         } while (cursor.moveToNext());
         cursor.close();
-        db.close();
         return weathers;
     }
 
@@ -295,7 +285,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_DAILY_FORECAST_PRESSURE, forecast.getPressure());
         values.put(KEY_DAILY_FORECAST_WIND_DIRECTION, forecast.getWind_direction());
         db.insert(TABLE_DAILY_FORECAST, null, values);
-        db.close();
     }
 
     public void addDailyForecastList(ArrayList<DailyForecast> forecastList) {
@@ -315,7 +304,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.insert(TABLE_DAILY_FORECAST, null, values);
             values.clear();
         }
-        //db.close();
     }
 
     public ArrayList<DailyForecast> getDailyForecast(int fk_city_id) {
@@ -334,7 +322,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8)));
         } while(cursor.moveToNext());
         cursor.close();
-        //db.close();
         return list;
     }
 
@@ -348,7 +335,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8)));
         } while (cursor.moveToNext());
         cursor.close();
-        //db.close();
         return list;
     }
 
@@ -376,7 +362,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.clear();
         } while (cursor.moveToNext());
         cursor.close();
-        //db.close();
     }
 
     public boolean isDailyForecastExists(int fk_city_id) {
@@ -387,9 +372,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         int count = cursor.getCount();
         System.out.println(count);
         cursor.close();
-        //db.close();
         return count > 0;
     }
-
-
 }

@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
@@ -46,7 +47,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         appContext = getApplicationContext();
 
         Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        //TextView tv = (TextView) mActionBarToolbar.findViewById(R.id.pop);
+        //tv.setText("olololol");
         setSupportActionBar(mActionBarToolbar);
+
 
         imageView = (ImageView)findViewById(R.id.mainActivityImage);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
                     thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                 } else if (position == 1){
-                    setTitle(MainWindowFragment.TITLE);
+                    setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                     ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
                     thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
                 } else if (position == 2) {
-                    setTitle(DayForecastFragment.TITLE);
+                    setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     //System.out.println("third tab");
                     ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
                     firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));

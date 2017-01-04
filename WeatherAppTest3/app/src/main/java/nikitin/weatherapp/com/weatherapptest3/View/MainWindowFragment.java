@@ -30,12 +30,14 @@ public class MainWindowFragment extends Fragment {
     public static final String TITLE = "Weather";
     private MainWindowPresenter presenter;
 
-    static private TextView temperatureBox;
-    static private TextView weatherNameBox;
-    static private TextView humidityBox;
-    static private TextView windSpeedBox;
-    static private TextView pressureBox;
-    static private ImageView weatherIconBox;
+    private TextView temperatureBox;
+    private TextView weatherNameBox;
+    private TextView humidityBox;
+    private TextView windSpeedBox;
+    private TextView pressureBox;
+    private ImageView weatherIconBox;
+    private TextView apparentTemperatureBox;
+
     private static MainWindowFragment fragment;
     private View view;
 
@@ -63,6 +65,7 @@ public class MainWindowFragment extends Fragment {
             humidityBox = (TextView) view.findViewById(R.id.humidityBox);
             pressureBox = (TextView) view.findViewById(R.id.pressureBox);
             windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
+            apparentTemperatureBox = (TextView) view.findViewById(R.id.apparentTemperatureBox);
         }
         createBlankScreen();
         setHasOptionsMenu(true);
@@ -73,36 +76,26 @@ public class MainWindowFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.setGroupVisible(R.id.main_menu_group, true);
-    }
-
-    public void applyWeather (WeatherResponse weatherResponse) {
-        temperatureBox.setText(Double.toString(weatherResponse.getData().getTemp()));
-        weatherNameBox.setText(weatherResponse.getWeathers().get(0).getMain());
-        humidityBox.setText(Integer.toString(weatherResponse.getData().getHumidity()) + " %");
-        pressureBox.setText(Double.toString(weatherResponse.getData().getPressure()) + " Pa");
-        windSpeedBox.setText(Double.toString(weatherResponse.getWind().getSpeed()) + " km/h");
-        Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(weatherResponse.getWeathers().get(0).getMain()));
-        weatherIconBox.setImageDrawable(icon);
+        menu.setGroupVisible(R.id.cities_group, false);
     }
 
     public void applyWeather (CurrentWeather weather) {
-        temperatureBox.setText(Double.toString(weather.getTemp()));
+        temperatureBox.setText(Integer.toString((int)weather.getTemp() )+ "°");
         weatherNameBox.setText(weather.getName());
-        humidityBox.setText(weather.getHumidity() + " %");
-        pressureBox.setText(weather.getPressure() + " Pa");
-        windSpeedBox.setText(weather.getWind_speed() + " km/h");
+        humidityBox.setText(Integer.toString((int)weather.getHumidity()) + " %");
+        pressureBox.setText(Integer.toString((int)weather.getPressure()) + " Pa");
+        windSpeedBox.setText(Integer.toString((int)weather.getWind_speed()) + " MS");
         Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(weather.getName()));
         weatherIconBox.setImageDrawable(icon);
     }
 
+    public void applyApparentTemperature(double temp) {
+        apparentTemperatureBox.setText(Integer.toString((int)temp) + "°");
+    }
+
     private void createBlankScreen() {
-        Data data = new Data(0, 0, 0, 0, 0, 0, 0);
-        List<Weather> weathers = new ArrayList<>();
-        weathers.add(new Weather(0, "unknown location", null, null));
-        Wind wind = new Wind(0, 0);
-        City city = new City(0, 0, "Find location by GPS", "unknown location", 0, 0);
-        WeatherResponse weatherResponse = new WeatherResponse(0,0, "Find location by GPS", null, weathers, data, wind, null, 0, null);
-        applyWeather(weatherResponse);
+        CurrentWeather currentWeather = new CurrentWeather(0, 0, "No city selected", 0, 0, 0, 0, 0);
+        applyWeather(currentWeather);
     }
 
     private static int chooseWeatherIcon(String weatherName) {

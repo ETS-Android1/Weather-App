@@ -97,7 +97,8 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.setGroupVisible(R.id.main_menu_group, false);
+        menu.setGroupVisible(R.id.main_menu_group, true);
+        menu.setGroupVisible(R.id.cities_group, false);
     }
 
     public void createForecastList(ArrayList<DailyForecast> weathers) {

@@ -21,7 +21,7 @@ import nikitin.weatherapp.com.weatherapptest3.R;
 
 public class CitiesFragment extends Fragment implements ListView.OnItemClickListener{
     private final String TAG = "CitiesFragment";
-    public static final String TITLE = "Choose City";
+    public static final String TITLE = "Cities List";
     private static CitiesFragment fragment;
     private ListView citiesList;
     private CitiesPresenter presenter;
@@ -79,6 +79,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.setGroupVisible(R.id.cities_group, true);
+        menu.setGroupVisible(R.id.main_menu_group, false);
     }
 
     public void addCity(City city) {
@@ -102,5 +103,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter = null;
         view = null;
     }
+
+    public String getActiveCityName() {return adapter.getActiveCityName(selectedPosition);}
 }
 

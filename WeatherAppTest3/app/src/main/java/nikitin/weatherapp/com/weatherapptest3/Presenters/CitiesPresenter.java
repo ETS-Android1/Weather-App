@@ -2,6 +2,7 @@ package nikitin.weatherapp.com.weatherapptest3.Presenters;
 
 import android.app.Activity;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -56,8 +58,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 city.setCountry(response.body().getSys().getCountry());
                 city.setLatitude(response.body().getCoordinates().getLatitude());
                 city.setLongitude(response.body().getCoordinates().getLongitude());
-
-                databaseHandler.addCity(city);
+                new AddCityTask().execute(city);
                 view.addCity(city);
             }
             @Override
@@ -100,6 +101,11 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         return data;
     }
 
+
+
+
+
+
     //----------------------------------------------------------------------------------------------
     //---------------------------------- GPS Methods -----------------------------------------------
 
@@ -117,10 +123,10 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         Location mLastLocation;
         try {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            //System.out.println(mLastLocation.getLatitude() + " " +mLastLocation.getLongitude());
-            //if (mLastLocation != null) {
-                getCityByCoordinate(43,43);
-            //}
+            System.out.println(mLastLocation.getLatitude() + " " +mLastLocation.getLongitude());
+            if (mLastLocation != null) {
+                getCityByCoordinate(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            }
         }
         catch(SecurityException ex) {
             System.out.println("EXEPTION");
@@ -147,4 +153,12 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     public void onConnectionSuspended(int i) {}
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
+
+    class AddCityTask extends AsyncTask<City,Void,Void> {
+        @Override
+        protected Void doInBackground(City... f) {
+            databaseHandler.addCity(f[0]);
+            return null;
+        }
+    }
 }

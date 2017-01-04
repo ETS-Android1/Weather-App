@@ -82,6 +82,13 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         return 0;
     }
 
+    public String getActiveCityName(int selectedPosition) {
+        if (selectedPosition != -1) {
+            return getItem(selectedPosition).getName();
+        }
+        return "";
+    }
+
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.deleteButton:

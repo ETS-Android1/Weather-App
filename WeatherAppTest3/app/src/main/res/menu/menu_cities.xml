@@ -10,4 +10,13 @@
             app:showAsAction="collapseActionView|ifRoom"
             app:actionViewClass="android.support.v7.widget.SearchView" />
     </group>
+    <group
+        android:id="@+id/main_menu_group">
+        <item
+            android:id="@+id/refresh"
+            android:title="Refresh"
+            android:icon="@android:drawable/ic_menu_rotate"
+            app:showAsAction="ifRoom"
+            />
+    </group>
 </menu>
