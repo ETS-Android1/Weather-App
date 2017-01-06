@@ -41,12 +41,13 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 2: {
                 return DayForecastFragment.newInstance();
             }
+            case 3: return WeeklyForecastFragment.getInstance();
         }
         return null;
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 }

@@ -43,6 +43,8 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         super.onCreate(bundle);
         presenter = new CitiesPresenter(this, getActivity());
         adapter = CitiesAdapter.getInstance(presenter);
+
+
     }
 
     @Override

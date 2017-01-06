@@ -23,4 +23,6 @@ public interface APIWeatherInterface {
     Call<ForecastResponse> getForecastByCityId(@Query("id") int cityId, @Query("cnt") int count, @Query("appId") String appId);
     @GET("forecast")
     Call<ForecastResponse> getForecastByCityName(@Query("q") String cityName, @Query("appId") String appId);
+    @GET("forecast")
+    Call<ForecastResponse> getWeeklyForecastByCityId(@Query("id") int cityId, @Query("appId") String appId);
 }
