@@ -40,6 +40,8 @@ public class WeeklyWeatherAdapter extends ArrayAdapter<WeeklyForecast> {
         }
         ((TextView) convertView.findViewById(R.id.weather_name_weekly_forecast)).setText(getItem(position).getWeatherName());
         ((TextView) convertView.findViewById(R.id.day_name_weekly_forecast)).setText(getItem(position).getDayName());
+        ((TextView) convertView.findViewById(R.id.max_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getDayTemp()));
+        ((TextView) convertView.findViewById(R.id.min_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getNightTemp()));
         return convertView;
     }
 

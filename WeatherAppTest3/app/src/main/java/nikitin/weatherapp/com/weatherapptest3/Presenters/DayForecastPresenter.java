@@ -65,7 +65,6 @@ public class DayForecastPresenter  {
                 if (handler.isDailyForecastExists(currentCityId)) {
                     System.out.println("update");
                     new updateDBTask().execute(list);
-
                 } else {
                     System.out.println("new");
                     new dbAddTask().execute(list);

@@ -63,7 +63,6 @@ public class OpenWeatherMapAPI {
     public void getWeeklyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
         Call<ForecastResponse> call = api.getWeeklyForecastByCityId(cityId, API_KEY);
         call.enqueue(callback);
-        //call.
     }
 
 

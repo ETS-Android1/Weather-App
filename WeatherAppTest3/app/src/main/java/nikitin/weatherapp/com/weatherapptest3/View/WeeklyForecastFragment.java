@@ -1,5 +1,6 @@
 package nikitin.weatherapp.com.weatherapptest3.View;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.app.Notification;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class WeeklyForecastFragment extends Fragment {
     private WeeklyForecastPresenter presenter;
     private ListView weeklyListView;
     private View view;
+    public static final String TITLE = "Weekly Forecast";
     public WeeklyForecastFragment() {
         adapter = WeeklyWeatherAdapter.getInstance();
         presenter = new WeeklyForecastPresenter(this);
@@ -48,7 +50,6 @@ public class WeeklyForecastFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_weekly_forecast, container, false);
             weeklyListView = (ListView) view.findViewById(R.id.weekly_forecast);
             adapter = WeeklyWeatherAdapter.getInstance();
-            weeklyListView.setAdapter(adapter);
         }
 
         setHasOptionsMenu(true);
@@ -56,9 +57,20 @@ public class WeeklyForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        weeklyListView.setAdapter(adapter);
+        presenter.getWeeklyForecast(TabsPagerAdapter.currentCityId);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.setGroupVisible(R.id.main_menu_group, true);
         menu.setGroupVisible(R.id.cities_group, false);
+    }
+
+    public void updateWeeklyForecastList(ArrayList<WeeklyForecast> weeklyForecasts) {
+        adapter.setData(weeklyForecasts);
     }
 }

@@ -42,6 +42,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
                 return DayForecastFragment.newInstance();
             }
             case 3: return WeeklyForecastFragment.getInstance();
+
         }
         return null;
     }
