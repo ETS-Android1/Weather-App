@@ -4,12 +4,12 @@
 * Search and add cities in favorite list;
 * Get weather by your GPS coordinates;
 * Window with hourly weather forecast for the day;
+* Storing weather data in sqlite db, to provide forcast even if user is offline.
 
 Now working on:
-Moving data storing from Preferences to SQLite DB
+* Weekly weather forecast;
 
 It is planned to add the following features:
-* Weekly weather forecast;
 * Analysis of "extreme" weather conditions such as rain, fog, storm and other for the day. Warn user about them through main application window and/or a by the notification.
 
 ---
