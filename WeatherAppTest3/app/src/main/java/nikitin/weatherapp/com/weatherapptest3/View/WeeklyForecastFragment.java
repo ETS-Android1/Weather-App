@@ -50,6 +50,7 @@ public class WeeklyForecastFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_weekly_forecast, container, false);
             weeklyListView = (ListView) view.findViewById(R.id.weekly_forecast);
             adapter = WeeklyWeatherAdapter.getInstance();
+            //weeklyListView.setDivider(R.);
         }
 
         setHasOptionsMenu(true);

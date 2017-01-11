@@ -67,47 +67,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-                    setTitle(CitiesFragment.TITLE);
-                    ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
-                    firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
-                    ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
-                    secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
-                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
-                    fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                } else if (position == 1){
-                    setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
-                    ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
-                    firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
-                    secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
-                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
-                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
-                    fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                } else if (position == 2) {
-                    setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
-                    //System.out.println("third tab");
-                    ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
-                    firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
-                    secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
-                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
-                    ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
-                    fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                } else if (position == 3) {
-                    setTitle(WeeklyForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
-                    ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
-                    firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
-                    secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
-                    thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_deactive));
-                    ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
-                    fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.circle2_active));
+                boolean firstActive = (position == 0);
+                boolean secondActive = (position == 1);
+                boolean thirdActive = (position == 2);
+                boolean fourthActive = (position == 3);
+
+                ImageView firstTab = (ImageView)findViewById(R.id.first_tab);
+                firstTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), getNavigationCircleDrawable(firstActive)));
+                ImageView secondTab = (ImageView)findViewById(R.id.second_tab);
+                secondTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), getNavigationCircleDrawable(secondActive)));
+                ImageView thirdTab = (ImageView)findViewById(R.id.third_tab);
+                thirdTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), getNavigationCircleDrawable(thirdActive)));
+                ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
+                fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), getNavigationCircleDrawable(fourthActive)));
+
+                switch(position) {
+                    case 0: setTitle(CitiesFragment.TITLE);
+                    case 1: setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+                    case 2: setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+                    case 3: setTitle(WeeklyForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+
                 }
             }
             @Override
@@ -121,6 +100,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public static Context getAppContext() {
         return appContext;
+    }
+
+
+    private int getNavigationCircleDrawable(boolean status) {
+        if (status) return R.drawable.circle2_active;
+        else return R.drawable.circle2_deactive;
     }
 
     @Override

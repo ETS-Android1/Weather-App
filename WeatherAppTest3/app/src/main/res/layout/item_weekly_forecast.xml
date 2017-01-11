@@ -3,13 +3,18 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="3">
+    android:padding="5dp"
+    android:paddingStart="15dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:paddingEnd="15dp"
+    android:weightSum="4">
     <LinearLayout
         android:id="@+id/pip"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:weightSum="2">
         <TextView
             android:id="@+id/day_name_weekly_forecast"
@@ -22,7 +27,7 @@
         <TextView
             android:id="@+id/weather_name_weekly_forecast"
             android:layout_height="0dp"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:gravity="start|top"
             android:layout_width="wrap_content"
             android:layout_weight="1"
@@ -44,15 +49,16 @@
             android:layout_height="match_parent"
             android:text="0"
             android:layout_weight="1"
-            android:gravity="center_vertical|start"
+            android:gravity="center_vertical|end"
             android:textSize="20sp" />
         <TextView
             android:id="@+id/min_temp_weekly_forecast"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="0"
+            android:textColor="#8c8c8c"
             android:layout_weight="1"
             android:gravity="center_vertical|end"
-            android:textSize="20sp"/>
+            android:textSize="18sp"/>
     </LinearLayout>
 </LinearLayout>

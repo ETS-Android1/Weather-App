@@ -120,6 +120,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 dailyForecastView.addHeaderView(indent, null, true);
                 dailyForecastView.addFooterView(indent, null, true);
                 dailyForecastView.setOnScrollListener(fragment);
+                dailyForecastView.scrollListBy(30);
             }
         });
     }
