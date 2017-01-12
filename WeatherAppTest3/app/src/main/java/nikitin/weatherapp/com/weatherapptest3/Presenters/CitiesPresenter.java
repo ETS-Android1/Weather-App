@@ -52,12 +52,12 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 response.body().setData(convertToCelsius(response.body().getData()));
-                City city = new City();
-                city.setOw_id(response.body().getId());
-                city.setName(response.body().getName());
-                city.setCountry(response.body().getSys().getCountry());
-                city.setLatitude(response.body().getCoordinates().getLatitude());
-                city.setLongitude(response.body().getCoordinates().getLongitude());
+                WeatherResponse weatherResponse = response.body();
+                City city = new City(weatherResponse.getId(), weatherResponse.getName(), weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
+                        (int)weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
+                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
                 new AddCityTask().execute(city);
                 view.addCity(city);
             }
@@ -68,7 +68,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         });
     }
 
-    public void deleteCity(int position) {
+    public void deleteCity(long position) {
         databaseHandler.deleteCity(position);
     }
 
@@ -82,7 +82,13 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 return cities;
             }
         }
-        City GPSCity = new City(0, 0, "Find location by GPS", "", 0, 0);
+
+//        public City(long id, String name, String country, double latitude, double longitude,
+//        int temperature, String weather_type, int humidity, double wind_speed,
+//        int pressure, int wind_direction, int date)
+        City GPSCity = new City(0, "GPS", "", 0, 0, 0, "Find location by GPS", 0, 0, 0, 0, 0);
+        //int id, int ow_id, String name, String country, double latitude, double longitude
+        //City GPSCity = new City(0, 0, "Find location by GPS", "", 0, 0);
         cities.add(0, GPSCity);
         long gpsCityId = databaseHandler.addCity(GPSCity);
         preferences.putGPSCityId(gpsCityId);
@@ -137,12 +143,12 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityCoordinate(latitude, longitude, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                City city = new City();
-                city.setOw_id(response.body().getId());
-                city.setName(response.body().getName());
-                city.setCountry(response.body().getSys().getCountry());
-                city.setLongitude(response.body().getCoordinates().getLongitude());
-                city.setLatitude(response.body().getCoordinates().getLatitude());
+                WeatherResponse weatherResponse = response.body();
+                City city = new City(weatherResponse.getId(), weatherResponse.getName(), weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
+                        (int)weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
+                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
                 view.updateGPSItem(city, GPS_ELEMENT_POSITION);
             }
             @Override

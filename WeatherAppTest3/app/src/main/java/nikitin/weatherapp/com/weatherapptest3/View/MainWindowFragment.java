@@ -50,7 +50,7 @@ public class MainWindowFragment extends Fragment {
         return fragment;
     }
 
-    public void updateWeather(int activeCityId) {
+    public void updateWeather(long activeCityId) {
         presenter.getWeatherData(activeCityId);
     }
 

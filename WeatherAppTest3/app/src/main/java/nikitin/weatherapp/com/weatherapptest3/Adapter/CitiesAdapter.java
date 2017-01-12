@@ -75,9 +75,9 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         return TYPES_AMOUNT;
     }
 
-    public int getActiveCityId(int selectedPosition) {
+    public long getActiveCityId(int selectedPosition) {
         if (selectedPosition != -1) {
-            return getItem(selectedPosition).getOw_id();
+            return getItem(selectedPosition).getId();
         }
         return 0;
     }

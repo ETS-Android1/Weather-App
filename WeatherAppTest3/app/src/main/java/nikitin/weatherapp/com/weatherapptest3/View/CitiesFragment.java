@@ -96,7 +96,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         presenter.getCityData(cityId);
     }
 
-    public int getActiveCityId() {
+    public long getActiveCityId() {
         return adapter.getActiveCityId(selectedPosition);
     }
     @Override

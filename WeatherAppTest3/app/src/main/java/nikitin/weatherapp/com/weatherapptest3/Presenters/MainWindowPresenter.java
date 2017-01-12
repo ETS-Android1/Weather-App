@@ -35,7 +35,7 @@ public class MainWindowPresenter {
         this.view = view;
         this.context = view.getContext();
     }
-    public void getWeatherData(final int activeCityId) {
+    public void getWeatherData(final long activeCityId) {
         OpenWeatherMapAPI openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
         openWeatherMapAPI.getWeatherByCityId(activeCityId, new Callback<WeatherResponse>() {
             @Override

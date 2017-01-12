@@ -15,7 +15,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     public static CitiesFragment citiesFragment;
     public static MainWindowFragment mainWindowFragment;
 
-    public static int currentCityId = -1;
+    public static long currentCityId = -1;
     public static String currentCityName;
 
     private Activity activity;
