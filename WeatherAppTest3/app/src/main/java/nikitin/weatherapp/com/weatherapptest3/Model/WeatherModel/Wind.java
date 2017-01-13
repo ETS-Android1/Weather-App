@@ -18,7 +18,7 @@ public class Wind implements Serializable{
         deg = 0;
     }
 
-    public Wind (double speed, double deg) {
+    public Wind (double speed, int deg) {
         this.speed = speed;
         this.deg = deg;
     }

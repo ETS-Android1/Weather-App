@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import nikitin.weatherapp.com.weatherapptest3.Pishable;
+
 
 /**
  * Created by Влад on 23.07.2016.
@@ -20,11 +22,15 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 
     private Activity activity;
 
+
+    private Pishable pishable;
+
     public TabsPagerAdapter(FragmentManager fm, Activity activity) {
         super(fm);
         this.activity = activity;
         citiesFragment = CitiesFragment.getInstance();
         mainWindowFragment = MainWindowFragment.getInstance();
+
     }
 
     @Override

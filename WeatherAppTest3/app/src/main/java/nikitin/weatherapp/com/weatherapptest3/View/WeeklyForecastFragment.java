@@ -74,4 +74,8 @@ public class WeeklyForecastFragment extends Fragment {
     public void updateWeeklyForecastList(ArrayList<WeeklyForecast> weeklyForecasts) {
         adapter.setData(weeklyForecasts);
     }
+
+    public void sadPish() {
+        System.out.println("I AM THE PISH SAIER FUCK YOU");
+    }
 }

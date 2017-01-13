@@ -4,6 +4,8 @@ package nikitin.weatherapp.com.weatherapptest3.View;
  * Created by Влад on 23.07.2016.
  */
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,7 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
+import nikitin.weatherapp.com.weatherapptest3.ForecastSender;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -28,7 +34,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     private CitiesAdapter adapter;
     private View view;
     private int selectedPosition = -1;
-
+    private ForecastSender sender;
     public static CitiesFragment getInstance() {
         if (fragment == null) fragment = new CitiesFragment();
         return fragment;
@@ -38,13 +44,19 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         return presenter;
     }
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        sender = (ForecastSender) context;
+    }
+
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         presenter = new CitiesPresenter(this, getActivity());
         adapter = CitiesAdapter.getInstance(presenter);
-
-
+        System.out.println("pop id " +getId() +" tah" +getTag());
     }
 
     @Override
@@ -71,10 +83,11 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         //Тут подумай
         //mainActivity.setCurrentCityId(adapter.getItem(selectedPosition).getOw_id());
         view.setBackgroundResource(R.drawable.shape_rounded_active);
-        //rd = (RadioButton) view.findViewById(R.id.activeCity);
-        //rd.setChecked(true);
         TabsPagerAdapter.currentCityId = getActiveCityId();
         TabsPagerAdapter.mainWindowFragment.updateWeather(getActiveCityId());
+        getCityData(getActiveCityId());
+
+        //sender.send();
     }
 
     @Override
@@ -88,12 +101,19 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter.add(city);
         adapter.notifyDataSetChanged();
     }
+    public void addAllCities(ArrayList<City> cities) {
+        for (City city : cities) {
+            adapter.add(city);
+        }
+        adapter.notifyDataSetChanged();
+    }
     public void updateGPSItem(City city, int pos) {
         adapter.remove(adapter.getItem(pos));
         adapter.insert(city, pos);
     }
-    public void getCityData(int cityId) {
+    public void getCityData(long cityId) {
         presenter.getCityData(cityId);
+
     }
 
     public long getActiveCityId() {

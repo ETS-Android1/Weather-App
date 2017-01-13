@@ -7,7 +7,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeathe
  */
 public class DailyForecast {
     private int id;
-    private int fk_city_ow_id;
+    private long fk_city_ow_id;
     private int date;
     private String weather_name;
     private int temperature;
@@ -28,7 +28,7 @@ public class DailyForecast {
         this.pressure = pressure;
     }
 
-    public DailyForecast(ForecastWeather weather, int fk_city_ow_id) {
+    public DailyForecast(ForecastWeather weather, long fk_city_ow_id) {
         this.fk_city_ow_id = fk_city_ow_id;
         this.date = weather.getDt();
         this.weather_name = weather.getWeathers().get(0).getMain();
@@ -46,10 +46,10 @@ public class DailyForecast {
         this.id = id;
     }
 
-    public int getFk_city_ow_id() {
+    public long getFk_city_ow_id() {
         return fk_city_ow_id;
     }
-    public void setFk_city_ow_id(int fk_city_ow_id) {
+    public void setFk_city_ow_id(long fk_city_ow_id) {
         this.fk_city_ow_id = fk_city_ow_id;
     }
 

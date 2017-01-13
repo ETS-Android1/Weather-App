@@ -21,7 +21,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
@@ -30,7 +33,7 @@ import nikitin.weatherapp.com.weatherapptest3.View.MainWindowFragment;
 import nikitin.weatherapp.com.weatherapptest3.View.TabsPagerAdapter;
 import nikitin.weatherapp.com.weatherapptest3.View.WeeklyForecastFragment;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, DataSharer {
 
     SearchView searchView;
     private ImageView imageView;
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int currentCityId = 629634;
     private String currentCityName;
     private static Context appContext;
+
+
+    private ArrayList<Forecast> forecasts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+        //System.out.println(getSupportFragmentManager().findFragmentById(R.id.fragment_cities_list).getId());
     }
 
     public static Context getAppContext() {
@@ -178,5 +186,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
     public String getCurrentCityName() {
         return this.currentCityName;
+    }
+
+    @Override
+    public void shareForecast() {
+
+    }
+    @Override
+    public void shareCity() {
+
     }
 }

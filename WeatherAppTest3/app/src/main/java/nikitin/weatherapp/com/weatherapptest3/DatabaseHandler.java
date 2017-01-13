@@ -22,7 +22,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler databaseHandler;
-    private static final int DATABASE_VERSION = 25;
+    private static final int DATABASE_VERSION = 27;
     private static final String DATABASE_NAME = "weatherAppDatabase";
 
     private static final String TABLE_CITY = "city";
@@ -73,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_CITY_HUMIDITY +" INTEGER, "
                 +KEY_CITY_WIND_SPEED +" REAL, "
                 +KEY_CITY_PRESSURE +" INTEGER, "
-                +KEY_CITY_WIND_DIRECTION +" INTEGER"
+                +KEY_CITY_WIND_DIRECTION +" INTEGER, "
                 +KEY_CITY_DATE +" INTEGER" +")";
         db.execSQL(CREATE_CITY_TABLE);
 
@@ -116,16 +116,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITY_PRESSURE, city.getPressure());
         values.put(KEY_CITY_WIND_DIRECTION, city.getWind_direction());
         values.put(KEY_CITY_DATE, city.getDate());
+
         return db.insert(TABLE_CITY, null, values);
     }
 
     public void updateCity(City city) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_CITY_NAME, city.getName());
-        values.put(KEY_CITY_COUNTRY, city.getCountry());
-        values.put(KEY_CITY_LATITUDE, city.getLatitude());
-        values.put(KEY_CITY_LONGITUDE, city.getLongitude());
         values.put(KEY_CITY_TEMPERATURE, city.getTemperature());
         values.put(KEY_CITY_WEATHER_TYPE, city.getWeather_type());
         values.put(KEY_CITY_HUMIDITY, city.getHumidity());
@@ -219,7 +216,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return list;
     }
 
-    public void deleteAllForecasts(int fk_city_id) {
+    public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_FORECAST, KEY_FORECAST_FK_CITY_ID +" = " +fk_city_id, null);
     }

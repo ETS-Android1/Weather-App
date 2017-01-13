@@ -32,7 +32,7 @@ public class OpenWeatherMapAPI {
         return openWeatherMapAPI;
     }
 
-    public void getWeatherByCityId(int cityId, Callback<WeatherResponse> callback) {
+    public void getWeatherByCityId(long cityId, Callback<WeatherResponse> callback) {
         Call<WeatherResponse> call = api.getWeatherByCityId(cityId, API_KEY);
         call.enqueue(callback);
     }
@@ -53,15 +53,20 @@ public class OpenWeatherMapAPI {
         return null;
     }
 
-    public void getDailyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
+    public void getDailyForecastByCityId(long cityId, Callback<ForecastResponse> callback) {
         int hoursSectionCount = 9;
         Call<ForecastResponse> call = api.getForecastByCityId(cityId, hoursSectionCount, API_KEY);
         call.enqueue(callback);
         //call.
     }
 
-    public void getWeeklyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
+    public void getWeeklyForecastByCityId(long cityId, Callback<ForecastResponse> callback) {
         Call<ForecastResponse> call = api.getWeeklyForecastByCityId(cityId, API_KEY);
+        call.enqueue(callback);
+    }
+
+    public void getForecast(long cityId, Callback<ForecastResponse> callback) {
+        Call<ForecastResponse> call = api.getForecast(cityId, API_KEY);
         call.enqueue(callback);
     }
 

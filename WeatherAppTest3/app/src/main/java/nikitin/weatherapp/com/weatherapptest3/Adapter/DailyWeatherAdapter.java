@@ -13,6 +13,7 @@ import java.util.TimeZone;
 
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -20,14 +21,14 @@ import nikitin.weatherapp.com.weatherapptest3.R;
 /**
  * Created by Влад on 22.10.2016.
  */
-public class DailyWeatherAdapter extends ArrayAdapter<DailyForecast> {
+public class DailyWeatherAdapter extends ArrayAdapter<Forecast> {
 
     private static DailyWeatherAdapter adapter;
     private static DayForecastPresenter presenter;
-    private ArrayList<DailyForecast> weathers;
+    private ArrayList<Forecast> weathers;
 
     private DailyWeatherAdapter() {
-        super(MainActivity.getAppContext(), 0, new ArrayList<DailyForecast>());
+        super(MainActivity.getAppContext(), 0, new ArrayList<Forecast>());
     }
 
     public static DailyWeatherAdapter getInstance(DayForecastPresenter p) {
@@ -44,18 +45,18 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecast> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_daily_forecast, parent, false);
         }
         convertView.setTag(position);
-        DailyForecast forecast = getItem(position);
+        Forecast forecast = getItem(position);
 
         DateFormat format1 = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         format1.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDate() * 1000L));
         ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(presenter.convertToCelcium(forecast.getTemperature()) + "°");
-        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeather_name());
+        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherType());
         return convertView;
     }
 
-    public void setData(ArrayList<DailyForecast> weathers) {
+    public void setData(ArrayList<Forecast> weathers) {
         System.out.println("weathers " + weathers.size());
         clear();
         notifyDataSetChanged();

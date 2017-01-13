@@ -14,15 +14,18 @@ public interface APIWeatherInterface {
     @GET("weather")
     Call<WeatherResponse> getWeatherByCityName(@Query("q") String cityName, @Query("appId") String appId);
     @GET("weather")
-    Call<WeatherResponse> getWeatherByCityId(@Query("id") int id, @Query("appId") String appId);
+    Call<WeatherResponse> getWeatherByCityId(@Query("id") long id, @Query("appId") String appId);
     @GET("find")
     Call<FindCityResponse> findCity(@Query("q") String cityName, @Query("type") String findType, @Query("appId") String appId);
     @GET("weather")
     Call<WeatherResponse> getWeatherByCityCoordinates(@Query("lat") double latitude, @Query("lon") double longtitude, @Query("appId") String appId);
     @GET("forecast")
-    Call<ForecastResponse> getForecastByCityId(@Query("id") int cityId, @Query("cnt") int count, @Query("appId") String appId);
+    Call<ForecastResponse> getForecastByCityId(@Query("id") long cityId, @Query("cnt") int count, @Query("appId") String appId);
     @GET("forecast")
     Call<ForecastResponse> getForecastByCityName(@Query("q") String cityName, @Query("appId") String appId);
     @GET("forecast")
-    Call<ForecastResponse> getWeeklyForecastByCityId(@Query("id") int cityId, @Query("appId") String appId);
+    Call<ForecastResponse> getWeeklyForecastByCityId(@Query("id") long cityId, @Query("appId") String appId);
+    @GET("forecast")
+    Call<ForecastResponse> getForecast(@Query("id") long cityId, @Query("appId") String appId);
+
 }

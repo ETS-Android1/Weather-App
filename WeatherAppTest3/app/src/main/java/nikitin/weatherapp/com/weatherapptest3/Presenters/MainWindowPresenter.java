@@ -9,9 +9,11 @@ import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.View.MainWindowFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
@@ -40,36 +42,35 @@ public class MainWindowPresenter {
         openWeatherMapAPI.getWeatherByCityId(activeCityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                WeatherResponse weatherResponse = response.body();
 
-                System.out.println("ID_OW = " +activeCityId);
-                CurrentWeather currentWeather = new CurrentWeather();
-                int cityId = databaseHandler.getCityIdByOw_id(activeCityId);
-                currentWeather.setFk_city_id(cityId);
-                currentWeather.setName(response.body().getName());
-                currentWeather.setPressure(response.body().getData().getPressure());
-                currentWeather.setHumidity(response.body().getData().getHumidity());
-                currentWeather.setWind_speed(response.body().getWind().getSpeed());
-                currentWeather.setTemp(convertToCelsius(response.body().getData().getTemp()));
-                currentWeather.setDate(response.body().getDt());
-
-                weatherId = databaseHandler.findWeatherIdByCityId(cityId);
-                if (weatherId != -1) {
-                    System.out.println("WEATHER update");
-                    new updateWeatherTask().execute(currentWeather);
-                } else {
-                    System.out.println("WEATHER add");
-                    new addWeatherTask().execute(currentWeather);
-                }
                 response.body().setData(CitiesFragment.getInstance().getPresenter().convertToCelsius(response.body().getData()));
-                view.applyWeather(currentWeather);
-                view.applyApparentTemperature(calculateApparentTemperature(currentWeather.getTemp(), currentWeather.getHumidity(), currentWeather.getWind_speed()));
+                City city = new City(activeCityId, weatherResponse.getName(), weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
+                        (int) weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
+                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
+                //weatherId = databaseHandler.findWeatherIdByCityId(cityId);
+                new updateCurrentWeatherTask().execute(city);
+//                if (weatherId != -1) {
+//                    System.out.println("WEATHER update");
+//                    new updateWeatherTask().execute(currentWeather);
+//                } else {
+//                    System.out.println("WEATHER add");
+//                    new addWeatherTask().execute(currentWeather);
+//                }
+
+                view.applyCityWeather(city);
+                view.applyApparentTemperature(calculateApparentTemperature(city.getTemperature(), city.getHumidity(), city.getWind_speed()));
+                //view.applyWeather(city);
+                //view.applyApparentTemperature(calculateApparentTemperature(currentWeather.getTemp(), currentWeather.getHumidity(), currentWeather.getWind_speed()));
             }
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                int cityId = databaseHandler.getCityIdByOw_id(activeCityId);
-                CurrentWeather weather = databaseHandler.getWeatherByCityId(cityId);
-                view.applyWeather(weather);
-                view.applyApparentTemperature(calculateApparentTemperature(weather.getTemp(), weather.getHumidity(), weather.getWind_speed()));
+//                int cityId = databaseHandler.getCityIdByOw_id(activeCityId);
+//                CurrentWeather weather = databaseHandler.getWeatherByCityId(cityId);
+//                view.applyWeather(weather);
+//                view.applyApparentTemperature(calculateApparentTemperature(weather.getTemp(), weather.getHumidity(), weather.getWind_speed()));
             }
         });
     }
@@ -112,18 +113,26 @@ public class MainWindowPresenter {
     }
 
 
-    class addWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
-        @Override
-        protected Void doInBackground(CurrentWeather... weathers) {
-            databaseHandler.addWeather(weathers[0]);
-            return null;
-        }
-    }
+//    class addWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
+//        @Override
+//        protected Void doInBackground(CurrentWeather... weathers) {
+//            databaseHandler.addWeather(weathers[0]);
+//            return null;
+//        }
+//    }
+//
+//    class updateWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
+//        @Override
+//        protected Void doInBackground(CurrentWeather... weathers) {
+//            databaseHandler.updateWeather(weathers[0], weatherId);
+//            return null;
+//        }
+//    }
 
-    class updateWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
+    class updateCurrentWeatherTask extends AsyncTask<City, Void, Void> {
         @Override
-        protected Void doInBackground(CurrentWeather... weathers) {
-            databaseHandler.updateWeather(weathers[0], weatherId);
+        protected Void doInBackground(City... city) {
+            databaseHandler.updateCity(city[0]);
             return null;
         }
     }

@@ -36,7 +36,7 @@ public class WeeklyForecastPresenter {
         this.fragment = fragment;
     }
 
-    public void getWeeklyForecast (int activeCityId) {
+    public void getWeeklyForecast (long activeCityId) {
         System.out.println("ACTIVE CITY ID " +activeCityId);
         OpenWeatherMapAPI openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
         openWeatherMapAPI.getWeeklyForecastByCityId(activeCityId, new Callback<ForecastResponse>() {

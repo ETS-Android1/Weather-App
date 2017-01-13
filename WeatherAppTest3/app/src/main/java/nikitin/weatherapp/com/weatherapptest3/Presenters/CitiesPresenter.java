@@ -47,7 +47,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     //----------------------------------------------------------------------------------------------
     //---------------------------- Methods For Working with cities list ----------------------------
 
-    public void getCityData(int cityId) {
+    public void getCityData(long cityId) {
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
@@ -62,8 +62,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 view.addCity(city);
             }
             @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                t.printStackTrace();
+            public void onFailure(Call<WeatherResponse> call, Throwable t) { t.printStackTrace();
             }
         });
     }
@@ -97,21 +96,15 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
 
     public Data convertToCelsius(Data data) {
         double KELVIN_TO_CELCIUM = 273.0;
-        double roundedTemp = new BigDecimal(data.getTemp()-KELVIN_TO_CELCIUM).setScale(2, RoundingMode.UP).doubleValue(); //double)((int)Math.round(data.getTemp()*10)/10);
-        double roundedTempMin = Math.round(data.getTemp_min()*10)/10;
-        double roundedTempMax = Math.round(data.getTemp_max()*10)/10.0;
+        double roundedTemp = data.getTemp()-KELVIN_TO_CELCIUM;
+        double roundedTempMin = data.getTemp_min()-KELVIN_TO_CELCIUM;
+        double roundedTempMax = data.getTemp_max()-KELVIN_TO_CELCIUM;
 
-        data.setTemp(roundedTemp);
+        data.setTemp(roundedTemp - KELVIN_TO_CELCIUM);
         data.setTemp_max(roundedTempMin - KELVIN_TO_CELCIUM);
         data.setTemp_min(roundedTempMax - KELVIN_TO_CELCIUM);
         return data;
     }
-
-
-
-
-
-
     //----------------------------------------------------------------------------------------------
     //---------------------------------- GPS Methods -----------------------------------------------
 

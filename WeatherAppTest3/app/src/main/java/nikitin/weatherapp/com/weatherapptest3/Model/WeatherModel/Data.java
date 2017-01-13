@@ -34,7 +34,7 @@ public class Data implements Serializable{
 
     }
 
-    public Data (double temp, double pressure, int humidity, double temp_min, double temp_max, double sea_level, double grnd_level) {
+    public Data (int temp, double pressure, int humidity, int temp_min, int temp_max, double sea_level, double grnd_level) {
         this.temp = temp;
         this.pressure = pressure;
         this. humidity = humidity;

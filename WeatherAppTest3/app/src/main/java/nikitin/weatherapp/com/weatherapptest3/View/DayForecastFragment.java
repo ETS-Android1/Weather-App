@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -101,7 +102,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         menu.setGroupVisible(R.id.cities_group, false);
     }
 
-    public void createForecastList(ArrayList<DailyForecast> weathers) {
+    public void createForecastList(ArrayList<Forecast> weathers) {
         adapter.setData(weathers);
         if (presenter.isParametrsSet) return;
         view.post(new Runnable() {
@@ -135,12 +136,12 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 presenter.calculateScrollParameters(dailyForecastView.getChildAt(0).getTop());
                 view.setSelectionFromTop(presenter.getSelectedViewPosition(), presenter.getIndent());
                 int item = presenter.getSelectedViewPosition() - 1;
-                DailyForecast forecastItem = adapter.getItem(item);
+                Forecast forecastItem = adapter.getItem(item);
                 setHumidityBoxText(forecastItem.getHumidity());
                 setPressureBoxText(forecastItem.getPressure());
                 setWindSpeedBoxText(forecastItem.getWind_speed());
                 setWindDirectionBoxText(forecastItem.getWind_direction());
-                setWeatherIcon(forecastItem.getWeather_name());
+                setWeatherIcon(forecastItem.getWeatherType());
                 break;
             }
         }

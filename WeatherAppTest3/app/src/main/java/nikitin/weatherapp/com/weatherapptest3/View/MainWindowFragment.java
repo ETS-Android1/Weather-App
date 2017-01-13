@@ -79,6 +79,14 @@ public class MainWindowFragment extends Fragment {
         menu.setGroupVisible(R.id.cities_group, false);
     }
 
+    public void applyCityWeather(City city) {
+        temperatureBox.setText(Integer.toString(city.getTemperature())+ "°");
+        weatherNameBox.setText(city.getWeather_type());
+        humidityBox.setText(Integer.toString(city.getHumidity()) + " %");
+        pressureBox.setText(Integer.toString(city.getPressure()) + " Pa");
+        windSpeedBox.setText(Double.toString(city.getWind_speed()) + " MS");
+    }
+
     public void applyWeather (CurrentWeather weather) {
         temperatureBox.setText(Integer.toString((int)weather.getTemp() )+ "°");
         weatherNameBox.setText(weather.getName());

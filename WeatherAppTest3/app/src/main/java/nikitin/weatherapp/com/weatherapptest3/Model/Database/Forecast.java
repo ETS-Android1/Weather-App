@@ -5,8 +5,8 @@ package nikitin.weatherapp.com.weatherapptest3.Model.Database;
  */
 
 public class Forecast {
-    private int id;
-    private int fkCityId;
+    private long id;
+    private long fkCityId;
     private String weatherType;
     private int temperature;
     private int humidity;
@@ -15,7 +15,7 @@ public class Forecast {
     private int wind_direction;
     private int date;
 
-    public Forecast(int id, int fkCityId, String weatherType, int temperature, int humidity,
+    public Forecast(long id, long fkCityId, String weatherType, int temperature, int humidity,
                     double wind_speed, int pressure, int wind_direction, int date) {
         this.id = id;
         this.fkCityId = fkCityId;
@@ -28,17 +28,17 @@ public class Forecast {
         this.date = date;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public int getFkCityId() {
+    public long getFkCityId() {
         return fkCityId;
     }
-    public void setFkCityId(int fkCityId) {
+    public void setFkCityId(long fkCityId) {
         this.fkCityId = fkCityId;
     }
 
