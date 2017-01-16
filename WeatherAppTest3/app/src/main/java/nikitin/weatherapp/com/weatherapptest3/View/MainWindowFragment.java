@@ -49,10 +49,10 @@ public class MainWindowFragment extends Fragment {
         if (fragment == null) fragment = new MainWindowFragment();
         return fragment;
     }
-
-    public void updateWeather(long activeCityId) {
-        presenter.getWeatherData(activeCityId);
-    }
+//
+//    public void updateWeather(long activeCityId) {
+//        presenter.getWeatherData(activeCityId);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,5 +119,11 @@ public class MainWindowFragment extends Fragment {
             default:
                 return R.drawable.ic_clear_sky;
         }
+    }
+
+    public void updateView(City city) {
+        System.out.println("got it");
+        applyCityWeather(city);
+        applyApparentTemperature(presenter.calculateApparentTemperature(city.getTemperature(), city.getHumidity(), city.getWind_speed()));
     }
 }

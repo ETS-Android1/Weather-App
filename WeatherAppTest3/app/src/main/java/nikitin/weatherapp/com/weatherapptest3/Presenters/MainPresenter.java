@@ -5,7 +5,14 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
 import nikitin.weatherapp.com.weatherapptest3.R;
+import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
+import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Влад on 28.10.2016.
@@ -53,4 +60,5 @@ public class MainPresenter {
         }
         return inSampleSize;
     }
+
 }

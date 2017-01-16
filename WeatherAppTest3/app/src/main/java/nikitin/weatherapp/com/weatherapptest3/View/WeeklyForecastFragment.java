@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.WeeklyWeatherAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.WeeklyForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -31,6 +32,7 @@ public class WeeklyForecastFragment extends Fragment {
     private ListView weeklyListView;
     private View view;
     public static final String TITLE = "Weekly Forecast";
+    private ArrayList<Forecast> forecasts;
     public WeeklyForecastFragment() {
         adapter = WeeklyWeatherAdapter.getInstance();
         presenter = new WeeklyForecastPresenter(this);
@@ -43,6 +45,9 @@ public class WeeklyForecastFragment extends Fragment {
         return fragment;
     }
 
+    //----------------------------------------------------------------------------------------------
+    //---------------------------------------- Life Cycle ------------------------------------------
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,9 +55,7 @@ public class WeeklyForecastFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_weekly_forecast, container, false);
             weeklyListView = (ListView) view.findViewById(R.id.weekly_forecast);
             adapter = WeeklyWeatherAdapter.getInstance();
-            //weeklyListView.setDivider(R.);
         }
-
         setHasOptionsMenu(true);
         return view;
     }
@@ -61,7 +64,6 @@ public class WeeklyForecastFragment extends Fragment {
     public void onStart() {
         super.onStart();
         weeklyListView.setAdapter(adapter);
-        presenter.getWeeklyForecast(TabsPagerAdapter.currentCityId);
     }
 
     @Override
@@ -75,7 +77,8 @@ public class WeeklyForecastFragment extends Fragment {
         adapter.setData(weeklyForecasts);
     }
 
-    public void sadPish() {
-        System.out.println("I AM THE PISH SAIER FUCK YOU");
+    public void setForecasts(ArrayList<Forecast> forecasts) {
+        presenter.setForecasts(forecasts);
+        presenter.getWeeklyForecast();
     }
 }

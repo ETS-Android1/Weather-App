@@ -24,6 +24,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         presenter.createBackground();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager(), this);
+        tabsPagerAdapter = new TabsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(tabsPagerAdapter);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -102,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onPageScrollStateChanged(int state) {
             }
         });
-
-        //System.out.println(getSupportFragmentManager().findFragmentById(R.id.fragment_cities_list).getId());
     }
 
     public static Context getAppContext() {
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Cursor cursor = CitySuggestionProvider.cursor;
             cursor.move(0);
             int cityId = cursor.getInt(cursor.getColumnIndex(CitySuggestionProvider.SUGGEST_COLUMN_CITY_ID));
-            TabsPagerAdapter.citiesFragment.getCityData(cityId);
+            ((CitiesFragment)tabsPagerAdapter.getItem(0)).addCityData(cityId);
         }
     }
 
@@ -156,7 +155,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case R.id.refresh: {
                 Toast toast = Toast.makeText(getAppContext(), "Selected", Toast.LENGTH_LONG);
                 toast.show();
-
                 return true;
             }
             default:
@@ -189,11 +187,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     @Override
-    public void shareForecast() {
-
+    public void shareForecast(ArrayList<Forecast> forecasts) {
+        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setForecasts(forecasts);
+        ((WeeklyForecastFragment)tabsPagerAdapter.getItem(3)).setForecasts(forecasts);
     }
     @Override
-    public void shareCity() {
-
+    public void shareCity(City city) {
+        ((MainWindowFragment)tabsPagerAdapter.getItem(1)).updateView(city);
     }
 }

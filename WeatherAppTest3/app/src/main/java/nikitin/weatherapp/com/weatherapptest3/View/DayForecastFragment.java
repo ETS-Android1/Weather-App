@@ -71,28 +71,11 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     public void onStart() {
         super.onStart();
         dailyForecastView.setAdapter(adapter);
-        System.out.println("onStart. CurrentCutyId " +TabsPagerAdapter.currentCityId);
-        presenter.getForecastData(TabsPagerAdapter.currentCityId);
+        createForecastList(presenter.getForecasts());
     }
 
     public ListView getDailyForecastView() {
         return dailyForecastView;
-    }
-    public void setPressureBoxText(double pressure) {
-        pressureBox.setText(" " + (int)Math.round(pressure));
-    }
-    public void setWindSpeedBoxText(double windSpeed) {
-        windSpeedBox.setText(" " +(int) Math.round(windSpeed));
-    }
-    public void setHumidityBoxText(double humidity) {
-        humidityBox.setText(" " + (int) Math.round(humidity));
-    }
-    public void setWindDirectionBoxText(double windDirection) {
-        windDirectionBox.setText(" " + (int) Math.round(windDirection));
-    }
-    public void setWeatherIcon(String name) {
-        Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(name), getActivity().getTheme());
-        weatherIconBox.setImageDrawable(icon);
     }
 
     @Override
@@ -136,14 +119,19 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 presenter.calculateScrollParameters(dailyForecastView.getChildAt(0).getTop());
                 view.setSelectionFromTop(presenter.getSelectedViewPosition(), presenter.getIndent());
                 int item = presenter.getSelectedViewPosition() - 1;
-                Forecast forecastItem = adapter.getItem(item);
-                setHumidityBoxText(forecastItem.getHumidity());
-                setPressureBoxText(forecastItem.getPressure());
-                setWindSpeedBoxText(forecastItem.getWind_speed());
-                setWindDirectionBoxText(forecastItem.getWind_direction());
-                setWeatherIcon(forecastItem.getWeatherType());
+                Forecast forecast = adapter.getItem(item);
+                pressureBox.setText(Integer.toString(forecast.getPressure()));
+                humidityBox.setText(Integer.toString(forecast.getHumidity()));
+                windSpeedBox.setText(Double.toString(forecast.getWind_speed()));
+                windDirectionBox.setText(Integer.toString(forecast.getWind_direction()));
+                Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeatherType()), getActivity().getTheme());
+                weatherIconBox.setImageDrawable(icon);
                 break;
             }
         }
+    }
+
+    public void setForecasts(ArrayList<Forecast> forecasts) {
+        presenter.setForecasts(forecasts);
     }
 }

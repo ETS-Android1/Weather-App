@@ -4,10 +4,8 @@ package nikitin.weatherapp.com.weatherapptest3.View;
  * Created by Влад on 23.07.2016.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +18,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
-import nikitin.weatherapp.com.weatherapptest3.ForecastSender;
+import nikitin.weatherapp.com.weatherapptest3.DataSharer;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -33,8 +31,8 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     private CitiesPresenter presenter;
     private CitiesAdapter adapter;
     private View view;
-    private int selectedPosition = -1;
-    private ForecastSender sender;
+    private int selectedItemPosition = -1;
+    private DataSharer sharer;
     public static CitiesFragment getInstance() {
         if (fragment == null) fragment = new CitiesFragment();
         return fragment;
@@ -44,21 +42,19 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         return presenter;
     }
 
-
+    //----------------------------------------------------------------------------------------------
+    //--------------------------------------- Life Cycle -------------------------------------------
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        sender = (ForecastSender) context;
+        sharer = (DataSharer) context;
     }
-
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         presenter = new CitiesPresenter(this, getActivity());
         adapter = CitiesAdapter.getInstance(presenter);
-        System.out.println("pop id " +getId() +" tah" +getTag());
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -73,51 +69,11 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         setHasOptionsMenu(true);
         return view;
     }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-        if (selectedPosition != -1) {
-            adapterView.getChildAt(selectedPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
-        }
-        selectedPosition = pos;
-        //Тут подумай
-        //mainActivity.setCurrentCityId(adapter.getItem(selectedPosition).getOw_id());
-        view.setBackgroundResource(R.drawable.shape_rounded_active);
-        TabsPagerAdapter.currentCityId = getActiveCityId();
-        TabsPagerAdapter.mainWindowFragment.updateWeather(getActiveCityId());
-        getCityData(getActiveCityId());
-
-        //sender.send();
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.setGroupVisible(R.id.cities_group, true);
         menu.setGroupVisible(R.id.main_menu_group, false);
-    }
-
-    public void addCity(City city) {
-        adapter.add(city);
-        adapter.notifyDataSetChanged();
-    }
-    public void addAllCities(ArrayList<City> cities) {
-        for (City city : cities) {
-            adapter.add(city);
-        }
-        adapter.notifyDataSetChanged();
-    }
-    public void updateGPSItem(City city, int pos) {
-        adapter.remove(adapter.getItem(pos));
-        adapter.insert(city, pos);
-    }
-    public void getCityData(long cityId) {
-        presenter.getCityData(cityId);
-
-    }
-
-    public long getActiveCityId() {
-        return adapter.getActiveCityId(selectedPosition);
     }
     @Override
     public void onDestroy() {
@@ -125,7 +81,39 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter = null;
         view = null;
     }
+    //----------------------------------------------------------------------------------------------
 
-    public String getActiveCityName() {return adapter.getActiveCityName(selectedPosition);}
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+        if (selectedItemPosition != -1) {
+            adapterView.getChildAt(selectedItemPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
+        }
+        selectedItemPosition = pos;
+        view.setBackgroundResource(R.drawable.shape_rounded_active);
+        presenter.getCityData(adapter.getItem(pos).getId());
+        presenter.getForecast(adapter.getItem(pos).getId());
+    }
+
+    public void updateGPSItem(City city, int pos) {
+        adapter.remove(adapter.getItem(pos));
+        adapter.insert(city, pos);
+    }
+
+    public void getCityData(long cityId) {
+        presenter.getCityData(cityId);
+    }
+    public void addCityData(int cityId) {
+        presenter.addCityData(cityId);
+    }
+    public void addCity(City city) {
+        adapter.add(city);
+        adapter.notifyDataSetChanged();
+    }
+
+
+
+
+
+    public String getActiveCityName() {return adapter.getActiveCityName(selectedItemPosition);}
 }
 

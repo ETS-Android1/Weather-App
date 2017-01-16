@@ -26,6 +26,7 @@ import retrofit2.Response;
  * Created by Влад on 26.10.2016.
  */
 public class DayForecastPresenter  {
+    private ArrayList<Forecast> forecasts;
     private DayForecastPresenter presenter;
     private OpenWeatherMapAPI api;
     private DayForecastFragment fragment;
@@ -41,6 +42,7 @@ public class DayForecastPresenter  {
     private int selectedViewPosition;
     private int indent;
 
+    private final int FORECAST_AMOUNT = 9;
     public boolean isParametrsSet = false;
 
     public DayForecastPresenter(final Activity activity, DayForecastFragment fragment) {
@@ -50,60 +52,6 @@ public class DayForecastPresenter  {
         forecastList = fragment.getDailyForecastView();
         api = OpenWeatherMapAPI.getInstance();
         handler = DatabaseHandler.getInstance(MainActivity.getAppContext());
-    }
-
-    public void loadForecast(final long currentCityId) {
-        System.out.println("Starting");
-        api.getForecast(currentCityId, new Callback<ForecastResponse>() {
-            @Override
-            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                System.out.println("pish ololo");
-                System.out.println(response.body());
-                ArrayList<Forecast> forecasts = new ArrayList<>();
-//                int id, int fkCityId, String weatherType, int temperature, int humidity,
-//                double wind_speed, int pressure, int wind_direction, int date
-                for (ForecastWeather forecast :response.body().getList()) {
-                    forecasts.add(new Forecast(0, currentCityId, forecast.getWeathers().get(0).getDescription(),
-                            (int)forecast.getData().getTemp(), forecast.getData().getHumidity(),
-                            forecast.getWind().getSpeed(), (int)forecast.getData().getPressure(),
-                            (int)forecast.getWind().getDeg(), forecast.getDt()));
-                }
-                fragment.createForecastList(forecasts);
-
-            }
-
-            @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {
-                System.out.println("failed");
-                System.out.println(t.getCause());
-                System.out.println(t.getMessage());
-            }
-        });
-//        api.getDailyForecastByCityId(currentCityId, new Callback<ForecastResponse>() {
-//            @Override
-//            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-//                //Иногда сервер глючит и выдает прогноз на больше чем 9 запрашиваемых позиций. Так что тут я обрезаю лишние
-//                // и заодно конвертирую в подходящий тип.
-//                ArrayList<DailyForecast>  list = new ArrayList<DailyForecast>();
-//                for (int i = 0; i<9; i++) {
-//                    list.add(new DailyForecast(response.body().getList().get(i), currentCityId));
-//                }
-////                if (handler.isDailyForecastExists(currentCityId)) {
-////                    System.out.println("update");
-////                    new updateDBTask().execute(list);
-////                } else {
-////                    System.out.println("new");
-////                    new dbAddTask().execute(list);
-////                }
-//                fragment.createForecastList(list);
-//                //System.out.println(handler.getDailyForecastAll());
-//            }
-//            @Override
-//            public void onFailure(Call<ForecastResponse> call, Throwable t) {
-//                //fragment.createForecastList(handler.getDailyForecast(currentCityId));
-//                //System.out.println(handler.getDailyForecastAll());
-//            }
-//        });
     }
 
     public void onScroll(int firstVisibleItemNumber, int firstVisibleItemBottom) {
@@ -140,39 +88,10 @@ public class DayForecastPresenter  {
         return indent;
     }
 
-    public void getForecastData(long currentCityId) {
-        if (currentCityId != -1) {
-            presenter.loadForecast(currentCityId);
-        }
+    public void setForecasts(ArrayList<Forecast> forecasts) {
+        this.forecasts = new ArrayList<>(forecasts.subList(0, FORECAST_AMOUNT));
     }
-
-    public int convertToCelcium (double temp) {
-        double KELVIN_TO_CELCIUM = 273.0;
-        return (int) Math.round(temp - KELVIN_TO_CELCIUM);
-    }
-//
-//    class dbAddTask extends AsyncTask<ArrayList<DailyForecast>,Void,Void> {
-//        @Override
-//        protected Void doInBackground(ArrayList<DailyForecast>... f) {
-//            DatabaseHandler.getInstance(MainActivity.getAppContext()).addDailyForecastList(f[0]);
-//            return null;
-//        }
-//    }
-//
-//    class updateDBTask extends AsyncTask<ArrayList<DailyForecast>,Void,Void> {
-//        @Override
-//        protected Void doInBackground(ArrayList<DailyForecast>... f) {
-//            int fk_city_id = f[0].get(0).getFk_city_ow_id();
-//            DatabaseHandler.getInstance(MainActivity.getAppContext()).updateDailyForecast(fk_city_id, f[0]);
-//            return null;
-//        }
-//    }
-    class updateForecastTask extends AsyncTask<ArrayList<Forecast>,Void,Void> {
-        @Override
-        protected Void doInBackground(ArrayList<Forecast>... f) {
-            //int fk_city_id = f[0].get(0).getFk_city_ow_id();
-            DatabaseHandler.getInstance(MainActivity.getAppContext()).updateAllForecasts(f[0]);
-            return null;
-        }
+    public ArrayList<Forecast> getForecasts() {
+        return forecasts;
     }
 }

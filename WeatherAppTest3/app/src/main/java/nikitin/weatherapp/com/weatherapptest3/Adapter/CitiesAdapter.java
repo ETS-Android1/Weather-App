@@ -110,30 +110,4 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         addAll(cities);
         notifyDataSetChanged();
     }
-
-
-
-//    private void createRadioButton(final View convertView, final int position, boolean isChecked) {
-//        AppCompatRadioButton r = (AppCompatRadioButton)convertView.findViewById(R.id.activeCity);
-//        r.setChecked(false);
-//        r.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                System.out.println("rd was pressed");
-//                AppCompatRadioButton rd;
-//                View listElementView;
-//                if (selectedPosition != -1) {
-//                    listElementView = listView.getChildAt(selectedPosition);
-//                    listElementView.setBackgroundResource(R.drawable.shape_rounded_inactive);
-//                    rd = (AppCompatRadioButton) listElementView.findViewById(R.id.activeCity);
-//                    rd.setChecked(false);
-//                }
-//                selectedPosition = (int) view.getTag();
-//                listElementView = listView.getChildAt(selectedPosition);
-//                listElementView.setBackgroundResource(R.drawable.shape_rounded_active);
-//                rd = (AppCompatRadioButton) view.findViewById(R.id.activeCity);
-//                rd.setChecked(true);
-//            }
-//        });
-//    }
 }

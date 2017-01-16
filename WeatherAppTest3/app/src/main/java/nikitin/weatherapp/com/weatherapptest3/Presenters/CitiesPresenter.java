@@ -10,10 +10,16 @@ import com.google.android.gms.location.LocationServices;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+
+import nikitin.weatherapp.com.weatherapptest3.DataSharer;
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
+import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -35,34 +41,72 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     private OpenWeatherMapAPI openWeatherMapAPI;
     private Preferences preferences;
     private final int GPS_ELEMENT_POSITION = 0;
+    private DataSharer sharer;
 
     public CitiesPresenter(CitiesFragment view, Activity activity) {
         mainActivity = activity;
         this.view = view;
         openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
         preferences = Preferences.getInstance(mainActivity);
+        sharer = (DataSharer) activity;
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 
     //----------------------------------------------------------------------------------------------
     //---------------------------- Methods For Working with cities list ----------------------------
 
-    public void getCityData(long cityId) {
+    public void addCityData(final long cityId) {
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                response.body().setData(convertToCelsius(response.body().getData()));
                 WeatherResponse weatherResponse = response.body();
-                City city = new City(weatherResponse.getId(), weatherResponse.getName(), weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
-                        (int)weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
-                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
+                City city = new City(weatherResponse.getId(),
+                        weatherResponse.getName(),
+                        weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(),
+                        weatherResponse.getCoordinates().getLongitude(),
+                        City.kelvinToCelsius((int)weatherResponse.getData().getTemp()),
+                        weatherResponse.getWeathers().get(0).getMain(),
+                        weatherResponse.getData().getHumidity(),
+                        weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(),
+                        (int)weatherResponse.getWind().getDeg(),
+                        weatherResponse.getDt(),
+                        weatherResponse.getWeathers().get(0).getId(),
+                        weatherResponse.getWeathers().get(0).getDescription());
                 new AddCityTask().execute(city);
                 view.addCity(city);
             }
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) { t.printStackTrace();
+            }
+        });
+    }
+    public void getCityData(final long cityId) {
+        openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
+            @Override
+            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                WeatherResponse weatherResponse = response.body();
+                City city = new City(cityId,
+                        weatherResponse.getName(),
+                        weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(),
+                        weatherResponse.getCoordinates().getLongitude(),
+                        City.kelvinToCelsius(weatherResponse.getData().getTemp()),
+                        weatherResponse.getWeathers().get(0).getMain(),
+                        weatherResponse.getData().getHumidity(),
+                        weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(),
+                        (int)weatherResponse.getWind().getDeg(),
+                        weatherResponse.getDt(),
+                        weatherResponse.getWeathers().get(0).getId(),
+                        weatherResponse.getWeathers().get(0).getDescription());
+                sharer.shareCity(city);
+                new UpdateCityTask().execute(city);
+            }
+            @Override
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                //достать из базы и отобразить
             }
         });
     }
@@ -81,29 +125,11 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 return cities;
             }
         }
-
-//        public City(long id, String name, String country, double latitude, double longitude,
-//        int temperature, String weather_type, int humidity, double wind_speed,
-//        int pressure, int wind_direction, int date)
-        City GPSCity = new City(0, "GPS", "", 0, 0, 0, "Find location by GPS", 0, 0, 0, 0, 0);
-        //int id, int ow_id, String name, String country, double latitude, double longitude
-        //City GPSCity = new City(0, 0, "Find location by GPS", "", 0, 0);
+        City GPSCity = new City(0, "GPS", "", 0, 0, 0, "Find location by GPS", 0, 0, 0, 0, 0, 0, "");
         cities.add(0, GPSCity);
         long gpsCityId = databaseHandler.addCity(GPSCity);
         preferences.putGPSCityId(gpsCityId);
         return cities;
-    }
-
-    public Data convertToCelsius(Data data) {
-        double KELVIN_TO_CELCIUM = 273.0;
-        double roundedTemp = data.getTemp()-KELVIN_TO_CELCIUM;
-        double roundedTempMin = data.getTemp_min()-KELVIN_TO_CELCIUM;
-        double roundedTempMax = data.getTemp_max()-KELVIN_TO_CELCIUM;
-
-        data.setTemp(roundedTemp - KELVIN_TO_CELCIUM);
-        data.setTemp_max(roundedTempMin - KELVIN_TO_CELCIUM);
-        data.setTemp_min(roundedTempMax - KELVIN_TO_CELCIUM);
-        return data;
     }
     //----------------------------------------------------------------------------------------------
     //---------------------------------- GPS Methods -----------------------------------------------
@@ -128,8 +154,34 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             }
         }
         catch(SecurityException ex) {
-            System.out.println("EXEPTION");
         }
+    }
+
+    public void getForecast (final long cityId) {
+        openWeatherMapAPI.getWeeklyForecastByCityId(cityId, new Callback<ForecastResponse>() {
+            @Override
+            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
+                ArrayList<Forecast> forecasts = new ArrayList<>(40);
+                for (ForecastWeather forecastResponse : response.body().getList()) {
+                    forecasts.add(new Forecast(0, cityId,
+                            forecastResponse.getWeathers().get(0).getMain(),
+                            Forecast.kelvinToCelsius((int)forecastResponse.getData().getTemp()),
+                            forecastResponse.getData().getHumidity(),
+                            forecastResponse.getWind().getSpeed(),
+                            (int)forecastResponse.getData().getPressure(),
+                            (int)forecastResponse.getWind().getDeg(),
+                            forecastResponse.getDt(),
+                            forecastResponse.getWeathers().get(0).getId(),
+                            forecastResponse.getWeathers().get(0).getDescription()));
+                }
+                new UpdateForecastTask().execute(forecasts);
+                sharer.shareForecast(forecasts);
+            }
+            @Override
+            public void onFailure(Call<ForecastResponse> call, Throwable t) {
+                sharer.shareForecast(databaseHandler.getForecast(cityId));
+            }
+        });
     }
 
     private void getCityByCoordinate(double latitude, double longitude) {
@@ -137,11 +189,20 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
                 WeatherResponse weatherResponse = response.body();
-                City city = new City(weatherResponse.getId(), weatherResponse.getName(), weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
-                        (int)weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
-                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
+                City city = new City(weatherResponse.getId(),
+                        weatherResponse.getName(),
+                        weatherResponse.getSys().getCountry(),
+                        weatherResponse.getCoordinates().getLatitude(),
+                        weatherResponse.getCoordinates().getLongitude(),
+                        City.kelvinToCelsius((int)weatherResponse.getData().getTemp()),
+                        weatherResponse.getWeathers().get(0).getMain(),
+                        weatherResponse.getData().getHumidity(),
+                        weatherResponse.getWind().getSpeed(),
+                        (int)weatherResponse.getData().getPressure(),
+                        (int)weatherResponse.getWind().getDeg(),
+                        weatherResponse.getDt(),
+                        weatherResponse.getWeathers().get(0).getId(),
+                        weatherResponse.getWeathers().get(0).getDescription());
                 view.updateGPSItem(city, GPS_ELEMENT_POSITION);
             }
             @Override
@@ -153,6 +214,9 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
 
+
+    //----------------------------------------------------------------------------------------------
+    //------------------------------ AsyncTasks for db ---------------------------------------------
     class AddCityTask extends AsyncTask<City,Void,Void> {
         @Override
         protected Void doInBackground(City... f) {
@@ -160,4 +224,19 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             return null;
         }
     }
+    private class UpdateCityTask extends AsyncTask<City, Void, Void> {
+        @Override
+        protected Void doInBackground(City... f) {
+            databaseHandler.updateCity(f[0]);
+            return null;
+        }
+    }
+    private class UpdateForecastTask extends AsyncTask<ArrayList<Forecast>, Void, Void> {
+        @Override
+        protected Void doInBackground(ArrayList<Forecast>... forecasts) {
+            databaseHandler.updateAllForecasts(forecasts[0]);
+            return null;
+        }
+    }
+
 }

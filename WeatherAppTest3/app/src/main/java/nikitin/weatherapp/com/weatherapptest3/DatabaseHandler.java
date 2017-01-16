@@ -22,7 +22,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler databaseHandler;
-    private static final int DATABASE_VERSION = 27;
+    private static final int DATABASE_VERSION = 28;
     private static final String DATABASE_NAME = "weatherAppDatabase";
 
     private static final String TABLE_CITY = "city";
@@ -38,6 +38,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_CITY_PRESSURE = "pressure";
     private static final String KEY_CITY_WIND_DIRECTION = "wind_direction";
     private static final String KEY_CITY_DATE = "date";
+    private static final String KEY_CITY_GROUP_CODE = "group_code";
+    private static final String KEY_CITY_WEATHER_DETAILED_TYPE = "weather_detailed_type";
 
     private static final String TABLE_FORECAST = "forecast";
     private static final String KEY_FORECAST_ID = "id";
@@ -49,6 +51,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_FORECAST_PRESSURE = "pressure";
     private static final String KEY_FORECAST_WIND_DIRECTION = "wind_direction";
     private static final String KEY_FORECAST_DATE = "date";
+    private static final String KEY_FORECAST_GROUP_CODE = "group_code";
+    private static final String KEY_FORECAST_WEATHER_DETAILED_TYPE = "weather_detailed_type";
 
     private DatabaseHandler (Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -74,7 +78,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_CITY_WIND_SPEED +" REAL, "
                 +KEY_CITY_PRESSURE +" INTEGER, "
                 +KEY_CITY_WIND_DIRECTION +" INTEGER, "
-                +KEY_CITY_DATE +" INTEGER" +")";
+                +KEY_CITY_DATE +" INTEGER, "
+                +KEY_CITY_GROUP_CODE +" INTEGER, "
+                +KEY_CITY_WEATHER_DETAILED_TYPE +" TEXT"+")";
         db.execSQL(CREATE_CITY_TABLE);
 
         String CREATE_FORECAST_TABLE = "CREATE TABLE " +TABLE_FORECAST +" ("
@@ -86,8 +92,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_FORECAST_WIND_SPEED +" REAL, "
                 +KEY_FORECAST_PRESSURE +" INTEGER, "
                 +KEY_FORECAST_WIND_DIRECTION +" INTEGER, "
-                +KEY_FORECAST_DATE +" INTEGER" +")";
-
+                +KEY_FORECAST_DATE +" INTEGER, "
+                +KEY_FORECAST_GROUP_CODE +" INTEGER, "
+                +KEY_FORECAST_WEATHER_DETAILED_TYPE +" TEXT"+")";
         db.execSQL(CREATE_FORECAST_TABLE);
     }
 
@@ -116,7 +123,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITY_PRESSURE, city.getPressure());
         values.put(KEY_CITY_WIND_DIRECTION, city.getWind_direction());
         values.put(KEY_CITY_DATE, city.getDate());
-
+        values.put(KEY_CITY_GROUP_CODE, city.getGroup_code());
+        values.put(KEY_CITY_WEATHER_DETAILED_TYPE, city.getWeather_detailed_type());
         return db.insert(TABLE_CITY, null, values);
     }
 
@@ -130,6 +138,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_CITY_PRESSURE, city.getPressure());
         values.put(KEY_CITY_WIND_DIRECTION, city.getWind_direction());
         values.put(KEY_CITY_DATE, city.getDate());
+        values.put(KEY_CITY_GROUP_CODE, city.getGroup_code());
+        values.put(KEY_CITY_WEATHER_DETAILED_TYPE, city.getWeather_detailed_type());
         db.update(TABLE_CITY, values, "id = " + city.getId(), null);
     }
 
@@ -139,13 +149,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_CITY, new String[]{KEY_CITY_ID, KEY_CITY_NAME, KEY_CITY_COUNTRY,
                         KEY_CITY_LATITUDE, KEY_CITY_LONGITUDE, KEY_CITY_TEMPERATURE, KEY_CITY_WEATHER_TYPE,
                         KEY_CITY_HUMIDITY, KEY_CITY_WIND_SPEED, KEY_CITY_PRESSURE, KEY_CITY_WIND_DIRECTION,
-                        KEY_CITY_DATE}, KEY_CITY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
+                        KEY_CITY_DATE, KEY_CITY_GROUP_CODE, KEY_CITY_WEATHER_DETAILED_TYPE}, KEY_CITY_ID + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (cursor != null) cursor.moveToFirst();
 
         City city = new City(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getDouble(3),
                 cursor.getDouble(4), cursor.getInt(5), cursor.getString(6), cursor.getInt(7), cursor.getDouble(8),
-                cursor.getInt(9), cursor.getInt(10), cursor.getInt(11));
+                cursor.getInt(9), cursor.getInt(10), cursor.getInt(11), cursor.getInt(12), cursor.getString(13));
         cursor.close();
         return city;
     }
@@ -158,7 +168,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         while (cursor.moveToNext()) {
             City city = new City(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getDouble(3),
                     cursor.getDouble(4), cursor.getInt(5), cursor.getString(6), cursor.getInt(7), cursor.getDouble(8),
-                    cursor.getInt(9), cursor.getInt(10), cursor.getInt(11));
+                    cursor.getInt(9), cursor.getInt(10), cursor.getInt(11), cursor.getInt(12), cursor.getString(13));
             cities.add(city);
         }
         cursor.close();
@@ -186,6 +196,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_FORECAST_PRESSURE, forecast.getPressure());
         values.put(KEY_FORECAST_WIND_DIRECTION, forecast.getWind_direction());
         values.put(KEY_FORECAST_DATE, forecast.getDate());
+        values.put(KEY_FORECAST_GROUP_CODE, forecast.getGroup_code());
+        values.put(KEY_FORECAST_WEATHER_DETAILED_TYPE, forecast.getWeatherDetailedType());
         return db.insert(TABLE_FORECAST, null, values);
     }
 
@@ -200,21 +212,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addAllForecasts(forecasts);
     }
 
-    public ArrayList<Forecast> getForecast(int fk_city_id) {
+    public ArrayList<Forecast> getForecast(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.query(TABLE_FORECAST, new String[]{KEY_FORECAST_ID, KEY_FORECAST_FK_CITY_ID,
                 KEY_FORECAST_WEATHER_TYPE, KEY_FORECAST_TEMPERATURE, KEY_FORECAST_HUMIDITY, KEY_FORECAST_WIND_SPEED,
-                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE}, KEY_FORECAST_FK_CITY_ID
+                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE, KEY_FORECAST_GROUP_CODE, KEY_FORECAST_WEATHER_DETAILED_TYPE}, KEY_FORECAST_FK_CITY_ID
                 +" =?", new String[]{String.valueOf(fk_city_id)}, null, null, KEY_FORECAST_DATE + " ASC", null);
         cursor.moveToFirst();
         ArrayList<Forecast> list = new ArrayList<>();
         do {
             list.add(new Forecast(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4),
-                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8)));
+                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getString(10)));
         } while(cursor.moveToNext());
         cursor.close();
         return list;
     }
+
 
     public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();

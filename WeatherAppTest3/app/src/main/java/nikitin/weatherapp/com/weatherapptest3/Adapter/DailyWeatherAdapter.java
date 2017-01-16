@@ -51,7 +51,7 @@ public class DailyWeatherAdapter extends ArrayAdapter<Forecast> {
         format1.setTimeZone(TimeZone.getTimeZone("GMT"));
 
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDate() * 1000L));
-        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(presenter.convertToCelcium(forecast.getTemperature()) + "°");
+        ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getTemperature() + "°");
         ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherType());
         return convertView;
     }

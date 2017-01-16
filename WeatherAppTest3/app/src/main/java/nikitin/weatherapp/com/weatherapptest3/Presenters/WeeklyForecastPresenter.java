@@ -16,6 +16,7 @@ import java.util.TimeZone;
 import java.util.TreeMap;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
@@ -32,70 +33,58 @@ import retrofit2.Response;
 
 public class WeeklyForecastPresenter {
     WeeklyForecastFragment fragment;
+    ArrayList<Forecast> forecasts;
     public WeeklyForecastPresenter(WeeklyForecastFragment fragment) {
         this.fragment = fragment;
     }
 
-    public void getWeeklyForecast (long activeCityId) {
-        System.out.println("ACTIVE CITY ID " +activeCityId);
-        OpenWeatherMapAPI openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
-        openWeatherMapAPI.getWeeklyForecastByCityId(activeCityId, new Callback<ForecastResponse>() {
-            @Override
-            public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                int segmentsPerDay = 8;
-                int a = 0;
-                int b = response.body().getList().size() % segmentsPerDay;
-                ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
-                for (int i = 0; i < 5; i ++) {
-                    System.out.println("pish");
-                    list.add(findDayDataForWeeklyForecast(response.body().getList().subList(a, b)));
-                    a = b;
-                    b += segmentsPerDay;
-                }
-                fragment.updateWeeklyForecastList(list);
-            }
-
-            @Override
-            public void onFailure(Call<ForecastResponse> call, Throwable t) {
-            }
-        });
+    public void getWeeklyForecast() {
+        int segmentsPerDay = 8;
+        int a = 0;
+        int b = forecasts.size() % segmentsPerDay;
+        ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
+        for (int i = 0; i < 5; i ++) {
+            list.add(findDayDataForWeeklyForecast(forecasts.subList(a, b)));
+            a = b;
+            b += segmentsPerDay;
+        }
+        fragment.updateWeeklyForecastList(list);
     }
 
-    private WeeklyForecast findDayDataForWeeklyForecast  (List<ForecastWeather> dayForecast) {
-        String dayName = findDayByDate(dayForecast.get(0).getDt());
+
+    private WeeklyForecast findDayDataForWeeklyForecast  (List<Forecast> dayForecast) {
+        String dayName = findDayByDate(dayForecast.get(0).getDate());
         String weatherName;
-        double maxTemp = dayForecast.get(0).getData().getTemp();
-        double minTemp = dayForecast.get(0).getData().getTemp();
-
+        int maxTemp = dayForecast.get(0).getTemperature();
+        int minTemp = dayForecast.get(0).getTemperature();
         Map<String, Integer> weatherTypes = new TreeMap<>();
-
         int code = 0;
         String name = "";
 
-        for (ForecastWeather forecast : dayForecast) {
+        for (Forecast forecast : dayForecast) {
             //Считаю максимум и минимум температуры
-            if (forecast.getData().getTemp() > maxTemp) maxTemp = forecast.getData().getTemp();
-            if (forecast.getData().getTemp() < minTemp) minTemp = forecast.getData().getTemp();
+            if (forecast.getTemperature() > maxTemp) maxTemp = forecast.getTemperature();
+            if (forecast.getTemperature() < minTemp) minTemp = forecast.getTemperature();
 
             //Заношу типы погод для выбора моды
-            String weatherTypeDescription = forecast.getWeathers().get(0).getDescription();
+            String weatherTypeDescription = forecast.getWeatherType();
             if (weatherTypes.containsKey(weatherTypeDescription)) {
                 weatherTypes.put(weatherTypeDescription, weatherTypes.get(weatherTypeDescription)+1);
             } else weatherTypes.put(weatherTypeDescription, 1);
             //Выбираю приоритный тип погоды
-            if (code < prioritizeCode(forecast.getWeathers().get(0).getId())) {
-                name = forecast.getWeathers().get(0).getDescription();
-                code = prioritizeCode(forecast.getWeathers().get(0).getId());
+            if (code < prioritizeCode(forecast.getGroup_code())) {
+                name = forecast.getWeatherDetailedType();
+                code = prioritizeCode(forecast.getGroup_code());
             }
         }
         //Окончательный тип погоды получаю как мода типа погоды и приоритного типа погоды
         weatherName = firstPartAverageWeatherType(weatherTypes) +" with "+ name;
-        return new WeeklyForecast(dayName, weatherName, convertToCelcium(maxTemp), convertToCelcium(minTemp));
+        return new WeeklyForecast(dayName, weatherName, maxTemp, minTemp);
     }
 
     private String findDayByDate(int dt) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        calendar.setTime(new Date(dt *1000));
+        calendar.setTime(new Date(dt * 1000));
         if (calendar.getFirstDayOfWeek() == Calendar.SUNDAY) {
             calendar.add(Calendar.DAY_OF_WEEK, 1);
         }
@@ -154,5 +143,9 @@ public class WeeklyForecastPresenter {
             case THUNDERSTORM_GROUP: prioritizedCode = THUNDERSTORM_PRIORITIES; break;
         }
         return prioritizedCode + detailedCode;
+    }
+
+    public void setForecasts(ArrayList<Forecast> forecasts) {
+        this.forecasts = forecasts;
     }
 }

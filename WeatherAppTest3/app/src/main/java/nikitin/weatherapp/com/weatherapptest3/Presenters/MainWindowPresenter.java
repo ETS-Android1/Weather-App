@@ -28,51 +28,12 @@ import retrofit2.Response;
 public class MainWindowPresenter {
     static MainWindowFragment view;
     private static Context context;
-    //private static int activeCityId;
     private DatabaseHandler databaseHandler;
-    int weatherId;
 
     public MainWindowPresenter(MainWindowFragment view) {
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
         this.view = view;
         this.context = view.getContext();
-    }
-    public void getWeatherData(final long activeCityId) {
-        OpenWeatherMapAPI openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
-        openWeatherMapAPI.getWeatherByCityId(activeCityId, new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                WeatherResponse weatherResponse = response.body();
-
-                response.body().setData(CitiesFragment.getInstance().getPresenter().convertToCelsius(response.body().getData()));
-                City city = new City(activeCityId, weatherResponse.getName(), weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(), weatherResponse.getCoordinates().getLongitude(),
-                        (int) weatherResponse.getData().getTemp(), weatherResponse.getWeathers().get(0).getDescription(),
-                        weatherResponse.getData().getHumidity(), weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(), (int)weatherResponse.getWind().getDeg(), weatherResponse.getDt());
-                //weatherId = databaseHandler.findWeatherIdByCityId(cityId);
-                new updateCurrentWeatherTask().execute(city);
-//                if (weatherId != -1) {
-//                    System.out.println("WEATHER update");
-//                    new updateWeatherTask().execute(currentWeather);
-//                } else {
-//                    System.out.println("WEATHER add");
-//                    new addWeatherTask().execute(currentWeather);
-//                }
-
-                view.applyCityWeather(city);
-                view.applyApparentTemperature(calculateApparentTemperature(city.getTemperature(), city.getHumidity(), city.getWind_speed()));
-                //view.applyWeather(city);
-                //view.applyApparentTemperature(calculateApparentTemperature(currentWeather.getTemp(), currentWeather.getHumidity(), currentWeather.getWind_speed()));
-            }
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-//                int cityId = databaseHandler.getCityIdByOw_id(activeCityId);
-//                CurrentWeather weather = databaseHandler.getWeatherByCityId(cityId);
-//                view.applyWeather(weather);
-//                view.applyApparentTemperature(calculateApparentTemperature(weather.getTemp(), weather.getHumidity(), weather.getWind_speed()));
-            }
-        });
     }
 
     public double convertToCelsius(double temp) {
@@ -106,34 +67,11 @@ public class MainWindowPresenter {
                 c7*tempFahrenheit*tempFahrenheit*humidity + c8*tempFahrenheit*humidity*humidity +
                 c9*tempFahrenheit*tempFahrenheit*humidity*humidity);
     }
-    private double calculateApparentTemperature(double tempCelsius, double humidity, double windSpeed) {
-        if (tempCelsius < 10) {return calculateWindChillDegree(tempCelsius, windSpeed);}
-            else if (tempCelsius > 27) {return calculateHeatIndexDegree(tempCelsius, humidity);}
-            else return tempCelsius;
-    }
-
-
-//    class addWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
-//        @Override
-//        protected Void doInBackground(CurrentWeather... weathers) {
-//            databaseHandler.addWeather(weathers[0]);
-//            return null;
-//        }
-//    }
-//
-//    class updateWeatherTask extends AsyncTask<CurrentWeather,Void,Void> {
-//        @Override
-//        protected Void doInBackground(CurrentWeather... weathers) {
-//            databaseHandler.updateWeather(weathers[0], weatherId);
-//            return null;
-//        }
-//    }
-
-    class updateCurrentWeatherTask extends AsyncTask<City, Void, Void> {
-        @Override
-        protected Void doInBackground(City... city) {
-            databaseHandler.updateCity(city[0]);
-            return null;
-        }
+    public double calculateApparentTemperature(double tempCelsius, double humidity, double windSpeed) {
+        if (tempCelsius < 10) {
+            return calculateWindChillDegree(tempCelsius, windSpeed);
+        } else if (tempCelsius > 27) {
+            return calculateHeatIndexDegree(tempCelsius, humidity);
+        } else return tempCelsius;
     }
 }
