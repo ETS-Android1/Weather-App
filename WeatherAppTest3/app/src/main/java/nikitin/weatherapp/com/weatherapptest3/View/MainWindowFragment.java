@@ -67,7 +67,11 @@ public class MainWindowFragment extends Fragment {
             windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
             apparentTemperatureBox = (TextView) view.findViewById(R.id.apparentTemperatureBox);
         }
-        createBlankScreen();
+
+        applyCityWeather(presenter.getSelectedCity());
+        applyApparentTemperature(presenter.calculateApparentTemperature());
+
+        //createBlankScreen();
         setHasOptionsMenu(true);
         return view;
     }
@@ -85,6 +89,8 @@ public class MainWindowFragment extends Fragment {
         humidityBox.setText(Integer.toString(city.getHumidity()) + " %");
         pressureBox.setText(Integer.toString(city.getPressure()) + " Pa");
         windSpeedBox.setText(Double.toString(city.getWind_speed()) + " MS");
+        Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(city.getWeather_type()));
+        weatherIconBox.setImageDrawable(icon);
     }
 
     public void applyWeather (CurrentWeather weather) {
@@ -102,8 +108,8 @@ public class MainWindowFragment extends Fragment {
     }
 
     private void createBlankScreen() {
-        CurrentWeather currentWeather = new CurrentWeather(0, 0, "No city selected", 0, 0, 0, 0, 0);
-        applyWeather(currentWeather);
+        City city = new City(0, "None", "", 0, 0, 0, "No city selected", 0, 0, 0, 0, 0, 0, "");
+        applyCityWeather(city);
     }
 
     private static int chooseWeatherIcon(String weatherName) {
@@ -121,9 +127,10 @@ public class MainWindowFragment extends Fragment {
         }
     }
 
-    public void updateView(City city) {
-        System.out.println("got it");
+    public void setView(City city) {
+        presenter.setSelectedCity(city);
         applyCityWeather(city);
-        applyApparentTemperature(presenter.calculateApparentTemperature(city.getTemperature(), city.getHumidity(), city.getWind_speed()));
+        applyApparentTemperature(presenter.calculateApparentTemperature());
     }
+
 }

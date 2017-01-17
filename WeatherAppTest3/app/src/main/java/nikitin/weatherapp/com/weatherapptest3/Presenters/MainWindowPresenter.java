@@ -29,6 +29,7 @@ public class MainWindowPresenter {
     static MainWindowFragment view;
     private static Context context;
     private DatabaseHandler databaseHandler;
+    private City city = new City(0, "None", "", 0, 0, 0, "No city selected", 0, 0, 0, 0, 0, 0, "");
 
     public MainWindowPresenter(MainWindowFragment view) {
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
@@ -36,11 +37,14 @@ public class MainWindowPresenter {
         this.context = view.getContext();
     }
 
-    public double convertToCelsius(double temp) {
-        double KELVIN_TO_CELCIUM = 273.0;
-        double roundedTemp = new BigDecimal(temp-KELVIN_TO_CELCIUM).setScale(2, RoundingMode.UP).doubleValue(); //double)((int)Math.round(data.getTemp()*10)/10);
-        return roundedTemp;
+
+    public void setSelectedCity(City city) {
+        this.city = city;
     }
+    public City getSelectedCity() {
+        return city;
+    }
+
     private double convertTempCtoF(double tempCelsius) {
         return tempCelsius * 1.8 + 32;
     }
@@ -67,11 +71,11 @@ public class MainWindowPresenter {
                 c7*tempFahrenheit*tempFahrenheit*humidity + c8*tempFahrenheit*humidity*humidity +
                 c9*tempFahrenheit*tempFahrenheit*humidity*humidity);
     }
-    public double calculateApparentTemperature(double tempCelsius, double humidity, double windSpeed) {
-        if (tempCelsius < 10) {
-            return calculateWindChillDegree(tempCelsius, windSpeed);
-        } else if (tempCelsius > 27) {
-            return calculateHeatIndexDegree(tempCelsius, humidity);
-        } else return tempCelsius;
+    public double calculateApparentTemperature() {
+        if (city.getTemperature() < 10) {
+            return calculateWindChillDegree(city.getTemperature(), city.getWind_speed());
+        } else if (city.getTemperature() > 27) {
+            return calculateHeatIndexDegree(city.getTemperature(), city.getHumidity());
+        } else return city.getTemperature();
     }
 }

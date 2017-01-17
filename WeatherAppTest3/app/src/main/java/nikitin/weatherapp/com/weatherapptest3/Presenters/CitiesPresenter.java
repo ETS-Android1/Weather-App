@@ -42,7 +42,6 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     private Preferences preferences;
     private final int GPS_ELEMENT_POSITION = 0;
     private DataSharer sharer;
-
     public CitiesPresenter(CitiesFragment view, Activity activity) {
         mainActivity = activity;
         this.view = view;
@@ -114,6 +113,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     public void deleteCity(long position) {
         databaseHandler.deleteCity(position);
     }
+
 
     public ArrayList<City> restoreCities() {
         ArrayList<City> cities = databaseHandler.getAllCities();
@@ -238,5 +238,4 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             return null;
         }
     }
-
 }

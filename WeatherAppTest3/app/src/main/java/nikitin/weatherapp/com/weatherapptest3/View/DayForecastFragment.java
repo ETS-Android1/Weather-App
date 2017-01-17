@@ -64,6 +64,9 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
             weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
         }
+
+        createForecastList(presenter.getForecasts());
+        System.out.println("pishopop");
         setHasOptionsMenu(true);
         return view;
     }
@@ -71,7 +74,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     public void onStart() {
         super.onStart();
         dailyForecastView.setAdapter(adapter);
-        createForecastList(presenter.getForecasts());
+
     }
 
     public ListView getDailyForecastView() {
@@ -133,5 +136,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
 
     public void setForecasts(ArrayList<Forecast> forecasts) {
         presenter.setForecasts(forecasts);
+
     }
 }

@@ -193,6 +193,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
     @Override
     public void shareCity(City city) {
-        ((MainWindowFragment)tabsPagerAdapter.getItem(1)).updateView(city);
+        ((MainWindowFragment)tabsPagerAdapter.getItem(1)).setView(city);
     }
 }
