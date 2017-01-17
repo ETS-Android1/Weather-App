@@ -58,6 +58,8 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                System.out.println("cityId " +cityId);
+                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
                 WeatherResponse weatherResponse = response.body();
                 City city = new City(weatherResponse.getId(),
                         weatherResponse.getName(),
@@ -85,6 +87,8 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
+                System.out.println("cityId " +cityId);
+                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
                 WeatherResponse weatherResponse = response.body();
                 City city = new City(cityId,
                         weatherResponse.getName(),
@@ -117,8 +121,14 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
 
     public ArrayList<City> restoreCities() {
         ArrayList<City> cities = databaseHandler.getAllCities();
+        for (City city: cities) {
+            System.out.println("pop");
+            System.out.println(city);
+        }
         long gpsId = preferences.getGPSCityID();
         for (City city: cities) {
+            System.out.println("printing cities");
+            System.out.println(city);
             if (city.getId() == gpsId) {
                 cities.remove(city);
                 cities.add(0, city);
@@ -161,6 +171,8 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeeklyForecastByCityId(cityId, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
+                System.out.println("cityId " +cityId);
+                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
                 ArrayList<Forecast> forecasts = new ArrayList<>(40);
                 for (ForecastWeather forecastResponse : response.body().getList()) {
                     forecasts.add(new Forecast(0, cityId,

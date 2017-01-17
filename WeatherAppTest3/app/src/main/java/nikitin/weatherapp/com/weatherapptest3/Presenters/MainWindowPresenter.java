@@ -78,4 +78,8 @@ public class MainWindowPresenter {
             return calculateHeatIndexDegree(city.getTemperature(), city.getHumidity());
         } else return city.getTemperature();
     }
+
+    public void onTemperatureBoxClicked() {
+
+    }
 }

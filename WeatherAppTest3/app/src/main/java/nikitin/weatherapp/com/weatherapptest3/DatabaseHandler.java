@@ -178,7 +178,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteCity(long id) {
         SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_CITY, KEY_CITY_ID +" = " +id, null);
-        //удалять связанную погоду
     }
 
     //----------------------------------------------------------------------------------------------
@@ -227,7 +226,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
-
 
     public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();

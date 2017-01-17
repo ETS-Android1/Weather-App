@@ -19,6 +19,7 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
     private ArrayList<City> cities;
     private static CitiesAdapter adapter;
     private static CitiesPresenter presenter;
+    private int selectedPosition = -1;
 
     final int TYPE_ITEM_CITY = 0;
     final int TYPE_ITEM_LOCATION = 1;
@@ -52,7 +53,11 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
             }
         }
 
+
         convertView.setBackgroundResource(R.drawable.shape_rounded_inactive);
+        if (position == selectedPosition) {
+            convertView.setBackgroundResource(R.drawable.shape_rounded_active);
+        }
         convertView.setTag(position);
 
         TextView cityName = (TextView) convertView.findViewById(R.id.cityName);
@@ -109,5 +114,9 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         clear();
         addAll(cities);
         notifyDataSetChanged();
+    }
+
+    public void setSelectedPosition(int selectedPosition) {
+        this.selectedPosition = selectedPosition;
     }
 }

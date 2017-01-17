@@ -11,17 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainWindowPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Wind;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 
 /**
  * Created by Влад on 23.07.2016.
@@ -36,8 +28,6 @@ public class MainWindowFragment extends Fragment {
     private TextView windSpeedBox;
     private TextView pressureBox;
     private ImageView weatherIconBox;
-    private TextView apparentTemperatureBox;
-
     private static MainWindowFragment fragment;
     private View view;
 
@@ -61,13 +51,22 @@ public class MainWindowFragment extends Fragment {
             humidityBox = (TextView) view.findViewById(R.id.humidityBox);
             pressureBox = (TextView) view.findViewById(R.id.pressureBox);
             windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
-            apparentTemperatureBox = (TextView) view.findViewById(R.id.apparentTemperatureBox);
+            temperatureBox.setOnClickListener(new View.OnClickListener() {
+                boolean apparentTemperatureShows = false;
+                @Override
+                public void onClick(View v) {
+                    if (apparentTemperatureShows) {
+                        temperatureBox.setText(Integer.toString(presenter.getSelectedCity().getTemperature())+"°");
+                        apparentTemperatureShows = false;
+                    } else {
+                        temperatureBox.setText(Integer.toString((int)presenter.calculateApparentTemperature())+"°");
+                        apparentTemperatureShows = true;
+                    }
+                }
+            });
         }
 
         applyCityWeather(presenter.getSelectedCity());
-        applyApparentTemperature(presenter.calculateApparentTemperature());
-
-        //createBlankScreen();
         setHasOptionsMenu(true);
         return view;
     }
@@ -89,10 +88,6 @@ public class MainWindowFragment extends Fragment {
         weatherIconBox.setImageDrawable(icon);
     }
 
-    public void applyApparentTemperature(double temp) {
-        apparentTemperatureBox.setText(Integer.toString((int)temp) + "°");
-    }
-
     private static int chooseWeatherIcon(String weatherName) {
         switch (weatherName) {
             case "Thunderstorm":
@@ -111,7 +106,5 @@ public class MainWindowFragment extends Fragment {
     public void setView(City city) {
         presenter.setSelectedCity(city);
         applyCityWeather(city);
-        applyApparentTemperature(presenter.calculateApparentTemperature());
     }
-
 }

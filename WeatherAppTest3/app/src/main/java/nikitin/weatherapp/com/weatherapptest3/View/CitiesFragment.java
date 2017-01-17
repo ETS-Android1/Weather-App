@@ -14,9 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
 import nikitin.weatherapp.com.weatherapptest3.DataSharer;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
@@ -24,7 +21,6 @@ import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 
 public class CitiesFragment extends Fragment implements ListView.OnItemClickListener{
-    private final String TAG = "CitiesFragment";
     public static final String TITLE = "Cities List";
     private static CitiesFragment fragment;
     private ListView citiesList;
@@ -37,7 +33,6 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         if (fragment == null) fragment = new CitiesFragment();
         return fragment;
     }
-
     public CitiesPresenter getPresenter() {
         return presenter;
     }
@@ -58,6 +53,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        System.out.println("Item position " +selectedItemPosition);
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_locations, container, false);
             citiesList = (ListView) view.findViewById(R.id.citiesList);
@@ -66,6 +62,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
             citiesList.setAdapter(adapter);
             adapter.notifyDataSetChanged();
         }
+
         setHasOptionsMenu(true);
         return view;
     }
@@ -82,6 +79,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         view = null;
     }
     //----------------------------------------------------------------------------------------------
+    //
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
@@ -89,6 +87,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
             adapterView.getChildAt(selectedItemPosition).setBackgroundResource(R.drawable.shape_rounded_inactive);
         }
         selectedItemPosition = pos;
+        adapter.setSelectedPosition(selectedItemPosition);
         view.setBackgroundResource(R.drawable.shape_rounded_active);
         presenter.getCityData(adapter.getItem(pos).getId());
         presenter.getForecast(adapter.getItem(pos).getId());
@@ -99,9 +98,6 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter.insert(city, pos);
     }
 
-    public void getCityData(long cityId) {
-        presenter.getCityData(cityId);
-    }
     public void addCityData(int cityId) {
         presenter.addCityData(cityId);
     }
@@ -109,6 +105,5 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter.add(city);
         adapter.notifyDataSetChanged();
     }
-
     public String getActiveCityName() {return adapter.getActiveCityName(selectedItemPosition);}
 }
