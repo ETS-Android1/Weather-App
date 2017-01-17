@@ -110,10 +110,5 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter.notifyDataSetChanged();
     }
 
-
-
-
-
     public String getActiveCityName() {return adapter.getActiveCityName(selectedItemPosition);}
 }
-

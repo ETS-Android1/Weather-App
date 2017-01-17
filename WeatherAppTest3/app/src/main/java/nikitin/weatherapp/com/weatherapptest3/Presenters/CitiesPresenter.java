@@ -105,7 +105,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             }
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                //достать из базы и отобразить
+                new GetCityTask().execute(cityId);
             }
         });
     }
@@ -236,6 +236,16 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         protected Void doInBackground(ArrayList<Forecast>... forecasts) {
             databaseHandler.updateAllForecasts(forecasts[0]);
             return null;
+        }
+    }
+    private class GetCityTask extends AsyncTask<Long, Void, City> {
+        @Override
+        protected City doInBackground(Long... cityIds) {
+            return databaseHandler.getCity(cityIds[0]);
+        }
+        @Override
+        protected void onPostExecute(City city) {
+            sharer.shareCity(city);
         }
     }
 }

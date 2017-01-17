@@ -57,28 +57,37 @@ public class WeeklyForecastPresenter {
         String weatherName;
         int maxTemp = dayForecast.get(0).getTemperature();
         int minTemp = dayForecast.get(0).getTemperature();
-        Map<String, Integer> weatherTypes = new TreeMap<>();
-        int code = 0;
+        Map<Key, Integer> weatherTypes = new TreeMap<>();
+        int foregroundCode = 0;
+
+        int modeCode = 0;
         String name = "";
+
+        String prioritizedWeatherDetailedType = "";
+        String prioritizedWeatherType = "";
 
         for (Forecast forecast : dayForecast) {
             //Считаю максимум и минимум температуры
             if (forecast.getTemperature() > maxTemp) maxTemp = forecast.getTemperature();
             if (forecast.getTemperature() < minTemp) minTemp = forecast.getTemperature();
+            Key key = new Key(forecast.getGroup_code(), forecast.getWeatherType(), forecast.getWeatherDetailedType());
+            if (weatherTypes.containsKey(key)) {
+                weatherTypes.put(key, weatherTypes.get(key)+1);
+            } else weatherTypes.put(key, 1);
 
-            //Заношу типы погод для выбора моды
-            String weatherTypeDescription = forecast.getWeatherType();
-            if (weatherTypes.containsKey(weatherTypeDescription)) {
-                weatherTypes.put(weatherTypeDescription, weatherTypes.get(weatherTypeDescription)+1);
-            } else weatherTypes.put(weatherTypeDescription, 1);
             //Выбираю приоритный тип погоды
-            if (code < prioritizeCode(forecast.getGroup_code())) {
-                name = forecast.getWeatherDetailedType();
-                code = prioritizeCode(forecast.getGroup_code());
+            if (foregroundCode < prioritizeCode(forecast.getGroup_code())) {
+                prioritizedWeatherDetailedType = forecast.getWeatherDetailedType();
+                prioritizedWeatherType = forecast.getWeatherType();
+                foregroundCode = prioritizeCode(forecast.getGroup_code());
             }
         }
-        //Окончательный тип погоды получаю как мода типа погоды и приоритного типа погоды
-        weatherName = firstPartAverageWeatherType(weatherTypes) +" with "+ name;
+        Key modeWeather = firstPartAverageWeatherType(weatherTypes);
+        if (modeWeather.getGroupName() == prioritizedWeatherType) {
+            weatherName = modeWeather.getWeatherDetailedType().substring(0,1).toUpperCase() + modeWeather.getWeatherDetailedType().substring(1);
+        } else {
+            weatherName = modeWeather.getGroupName() + " with " +prioritizedWeatherDetailedType;
+        }
         return new WeeklyForecast(dayName, weatherName, maxTemp, minTemp);
     }
 
@@ -106,15 +115,15 @@ public class WeeklyForecastPresenter {
     }
 
 
-    private String firstPartAverageWeatherType(Map<String, Integer> map) {
-        ArrayList <Map.Entry<String, Integer>> list = new ArrayList(map.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+    private Key firstPartAverageWeatherType(Map<Key, Integer> map) {
+        ArrayList <Map.Entry<Key, Integer>> list = new ArrayList(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<Key, Integer>>() {
             @Override
-            public int compare(Map.Entry<String, Integer> a, Map.Entry<String, Integer> b) {
+            public int compare(Map.Entry<Key, Integer> a, Map.Entry<Key, Integer> b) {
                 return - (a.getValue() - b.getValue());
             }
         });
-        return list.get(0).getKey();
+        return new Key(list.get(0).getKey().getGroupCode(), list.get(0).getKey().getGroupName(), list.get(0).getKey().getWeatherDetailedType());
     }
 
 
@@ -147,5 +156,43 @@ public class WeeklyForecastPresenter {
 
     public void setForecasts(ArrayList<Forecast> forecasts) {
         this.forecasts = forecasts;
+    }
+
+    public class Key implements Comparable{
+        int groupCode;
+        String groupName;
+        String weatherDetailedType;
+
+        Key(int groupCode, String groupName, String weatherDetailedType) {
+            this.groupCode = groupCode;
+            this.groupName = groupName;
+            this.weatherDetailedType = weatherDetailedType;
+        }
+
+        public int getGroupCode() {
+            return groupCode;
+        }
+        public void setGroupCode(int groupCode) {
+            this.groupCode = groupCode;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+        public void setGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
+        public String getWeatherDetailedType() {
+            return weatherDetailedType;
+        }
+        public void setWeatherDetailedType(String weatherDetailedType) {
+            this.weatherDetailedType = weatherDetailedType;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return (this.groupName.equals(((Key)o).getGroupName()) ? 0: -1);
+        }
     }
 }

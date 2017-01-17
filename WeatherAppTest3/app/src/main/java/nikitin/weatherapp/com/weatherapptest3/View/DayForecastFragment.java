@@ -89,6 +89,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     }
 
     public void createForecastList(ArrayList<Forecast> weathers) {
+        if (presenter.getForecasts() == null) return;
         adapter.setData(weathers);
         if (presenter.isParametrsSet) return;
         view.post(new Runnable() {
