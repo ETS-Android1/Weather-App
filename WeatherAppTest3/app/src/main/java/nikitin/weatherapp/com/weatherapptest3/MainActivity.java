@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
@@ -56,10 +58,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         appContext = getApplicationContext();
 
         Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
-        //TextView tv = (TextView) mActionBarToolbar.findViewById(R.id.pop);
-        //tv.setText("olololol");
         setSupportActionBar(mActionBarToolbar);
-
 
         imageView = (ImageView)findViewById(R.id.mainActivityImage);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

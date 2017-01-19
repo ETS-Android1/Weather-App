@@ -52,7 +52,7 @@ public class DailyWeatherAdapter extends ArrayAdapter<Forecast> {
 
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getDate() * 1000L));
         ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getTemperature() + "°");
-        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherType());
+        ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getWeatherDetailedType().substring(0,1).toUpperCase() + forecast.getWeatherDetailedType().substring(1));
         return convertView;
     }
 

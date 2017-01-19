@@ -32,7 +32,6 @@ public class WeeklyForecastFragment extends Fragment {
     private ListView weeklyListView;
     private View view;
     public static final String TITLE = "Weekly Forecast";
-    private ArrayList<Forecast> forecasts;
     public WeeklyForecastFragment() {
         adapter = WeeklyWeatherAdapter.getInstance();
         presenter = new WeeklyForecastPresenter(this);

@@ -66,7 +66,6 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         City city = getItem(position);
         cityName.setText(city.getName() + ", " +city.getCountry());
         cityShortWeather.setText("zaglyshka");
-        //createRadioButton(convertView, position, false);
         return convertView;
     }
 

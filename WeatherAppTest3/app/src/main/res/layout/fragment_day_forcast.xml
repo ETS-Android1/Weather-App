@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="80dp">
+    android:paddingBottom="50dp">
     <ImageView
         android:id="@+id/weatherIconBox"
         android:layout_margin="20dp"
@@ -12,66 +12,79 @@
         android:layout_gravity="center"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:weightSum="8"
-        android:orientation="horizontal"
-        android:layout_marginBottom="30dp">
+        android:layout_height="30dp"
+        android:weightSum="4"
+        android:orientation="horizontal">
         <ImageView
-            android:layout_weight="1"
+            android:id="@+id/humidityBoxIcon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:src="@drawable/humidity_new"/>
+            android:src="@drawable/humidity_new"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/windSpeedBoxIcon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/wind_speed"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/pressureBoxIcon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/pressure_icon2"
+            android:layout_weight="1"/>
+        <ImageView
+            android:id="@+id/windDirectionBoxIcon"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/wind_speed"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="4"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="5dp">
         <TextView
             android:id="@+id/humidityBox"
-            android:text="--"
-            android:textSize="15sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:textColor="#ffffff"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="20sp"
             android:layout_height="match_parent" />
-
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/wind_speed"/>
         <TextView
             android:id="@+id/windSpeedBox"
-            android:text="--"
-            android:textSize="15sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:textColor="#ffffff"
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
             android:layout_height="match_parent" />
-
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/pressure_icon2"/>
         <TextView
             android:id="@+id/pressureBox"
-            android:text="----"
-            android:textSize="15sp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:textColor="#ffffff"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"/>
-
-        <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:src="@drawable/wind_speed"/>
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"/>
         <TextView
             android:id="@+id/pishBox"
-            android:text="--"
-            android:textSize="15sp"
-            android:textColor="#ffffff"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="match_parent" />
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:layout_height="match_parent"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"/>
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="250dp"
@@ -105,7 +118,7 @@
             android:id="@+id/daily_weather"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="bottom"
+            android:layout_gravity="bottom"
             android:padding="10dp"
             android:background="#3d000000"/>
     </FrameLayout>

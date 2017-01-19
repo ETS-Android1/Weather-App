@@ -66,7 +66,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         }
 
         createForecastList(presenter.getForecasts());
-        System.out.println("pishopop");
         setHasOptionsMenu(true);
         return view;
     }

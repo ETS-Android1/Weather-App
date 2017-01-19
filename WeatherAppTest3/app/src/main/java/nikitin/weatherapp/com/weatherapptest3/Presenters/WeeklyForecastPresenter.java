@@ -1,5 +1,7 @@
 package nikitin.weatherapp.com.weatherapptest3.Presenters;
 
+import android.widget.Toast;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
+import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
@@ -43,7 +46,8 @@ public class WeeklyForecastPresenter {
         int a = 0;
         int b = forecasts.size() % segmentsPerDay;
         ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
-        for (int i = 0; i < 5; i ++) {
+        for (int i = 0; i < Math.ceil(forecasts.size()/segmentsPerDay); i ++) {
+            if (b == 0) b = segmentsPerDay;
             list.add(findDayDataForWeeklyForecast(forecasts.subList(a, b)));
             a = b;
             b += segmentsPerDay;
@@ -59,9 +63,6 @@ public class WeeklyForecastPresenter {
         int minTemp = dayForecast.get(0).getTemperature();
         Map<Key, Integer> weatherTypes = new TreeMap<>();
         int foregroundCode = 0;
-
-        int modeCode = 0;
-        String name = "";
 
         String prioritizedWeatherDetailedType = "";
         String prioritizedWeatherType = "";
@@ -88,15 +89,18 @@ public class WeeklyForecastPresenter {
         } else {
             weatherName = modeWeather.getGroupName() + " with " +prioritizedWeatherDetailedType;
         }
-        return new WeeklyForecast(dayName, weatherName, maxTemp, minTemp);
+        return new WeeklyForecast(dayName, modeWeather.getGroupName(), weatherName, maxTemp, minTemp);
     }
 
     private String findDayByDate(int dt) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        TimeZone timeZone = TimeZone.getTimeZone("UTC");
+        Calendar calendar = Calendar.getInstance(timeZone);
         calendar.setTime(new Date(dt * 1000));
         if (calendar.getFirstDayOfWeek() == Calendar.SUNDAY) {
             calendar.add(Calendar.DAY_OF_WEEK, 1);
         }
+
+        System.out.println("olololololololooloool" +calendar.getFirstDayOfWeek());
         switch (calendar.get(Calendar.DAY_OF_WEEK)) {
             case Calendar.MONDAY: return "Monday";
             case Calendar.TUESDAY: return "Tuesday";
@@ -108,12 +112,6 @@ public class WeeklyForecastPresenter {
         }
         return "error";
     }
-
-    public int convertToCelcium (double temp) {
-        double KELVIN_TO_CELCIUM = 273.0;
-        return (int) Math.round(temp - KELVIN_TO_CELCIUM);
-    }
-
 
     private Key firstPartAverageWeatherType(Map<Key, Integer> map) {
         ArrayList <Map.Entry<Key, Integer>> list = new ArrayList(map.entrySet());
@@ -141,7 +139,7 @@ public class WeeklyForecastPresenter {
         final int SNOW_PRIORITIES = 200;
         final int CLEAR_CLOUDS_PRIORITIES = 100;
 
-        int groupCode = ((int)(code/100))*100;
+        int groupCode = (code/100)*100;
         int detailedCode = code % 100;
         int prioritizedCode = 0;
         switch (groupCode) {

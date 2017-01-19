@@ -6,6 +6,7 @@ package nikitin.weatherapp.com.weatherapptest3.Model.Database;
 
 public class WeeklyForecast {
     private String dayName;
+    private String mainWeatherType;
     private String weatherName;
     private int dayTemp;
     private int nightTemp;
@@ -17,9 +18,10 @@ public class WeeklyForecast {
         this.nightTemp = 0;
     }
 
-    public WeeklyForecast(String dayName, String weatherName, int dayTemp, int nightTemp){
+    public WeeklyForecast(String dayName, String mainWeatherType, String weatherName, int dayTemp, int nightTemp){
         this.dayName = dayName;
         this.weatherName = weatherName;
+        this.mainWeatherType = mainWeatherType;
         this.dayTemp = dayTemp;
         this.nightTemp = nightTemp;
     }
@@ -50,5 +52,12 @@ public class WeeklyForecast {
     }
     public void setNightTemp(int nightTemp) {
         this.nightTemp = nightTemp;
+    }
+
+    public String getMainWeatherType() {
+        return mainWeatherType;
+    }
+    public void setMainWeatherType(String mainWeatherType) {
+        this.mainWeatherType = mainWeatherType;
     }
 }

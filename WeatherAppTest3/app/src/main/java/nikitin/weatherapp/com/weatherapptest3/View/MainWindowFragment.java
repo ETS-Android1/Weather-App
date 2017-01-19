@@ -83,12 +83,12 @@ public class MainWindowFragment extends Fragment {
         weatherNameBox.setText(city.getWeather_type());
         humidityBox.setText(Integer.toString(city.getHumidity()) + " %");
         pressureBox.setText(Integer.toString(city.getPressure()) + " Pa");
-        windSpeedBox.setText(Double.toString(city.getWind_speed()) + " MS");
+        windSpeedBox.setText(Integer.toString((int)city.getWind_speed()) + " MS");
         Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(city.getWeather_type()));
         weatherIconBox.setImageDrawable(icon);
     }
 
-    private static int chooseWeatherIcon(String weatherName) {
+    public static int chooseWeatherIcon(String weatherName) {
         switch (weatherName) {
             case "Thunderstorm":
             case "Drizzle":

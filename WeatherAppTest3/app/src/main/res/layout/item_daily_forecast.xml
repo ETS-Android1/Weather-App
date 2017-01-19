@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/timeBoxDailyForecast"
         android:gravity="center"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textColor="#ffffff"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -18,14 +18,14 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textColor="#ffffff"
         android:gravity="center"/>
 
     <TextView
         android:id="@+id/temperatureBoxDailyForecast"
         android:gravity="center"
-        android:textSize="15sp"
+        android:textSize="16sp"
         android:textColor="#ffffff"
         android:layout_width="0dp"
         android:layout_weight="1"

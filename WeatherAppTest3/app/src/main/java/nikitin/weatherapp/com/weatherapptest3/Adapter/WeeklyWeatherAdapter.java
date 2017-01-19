@@ -1,9 +1,11 @@
 package nikitin.weatherapp.com.weatherapptest3.Adapter;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.R;
+import nikitin.weatherapp.com.weatherapptest3.View.MainWindowFragment;
 
 /**
  * Created by Uladzislau_Nikitsin on 1/6/2017.
@@ -42,6 +45,9 @@ public class WeeklyWeatherAdapter extends ArrayAdapter<WeeklyForecast> {
         ((TextView) convertView.findViewById(R.id.day_name_weekly_forecast)).setText(getItem(position).getDayName());
         ((TextView) convertView.findViewById(R.id.max_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getDayTemp()) +"°");
         ((TextView) convertView.findViewById(R.id.min_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getNightTemp()) +"°");
+        System.out.println("jiji" +getItem(position).getWeatherName());
+        Drawable icon = getContext().getResources().getDrawable(MainWindowFragment.chooseWeatherIcon(getItem(position).getMainWeatherType()));
+        ((ImageView) convertView.findViewById(R.id.weatherIconBox)).setImageDrawable(icon);
         return convertView;
     }
 
