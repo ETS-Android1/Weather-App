@@ -16,19 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
-
-import nikitin.weatherapp.com.weatherapptest3.MainActivity;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
-import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
-import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.View.WeeklyForecastFragment;
-import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Uladzislau_Nikitsin on 1/6/2017.

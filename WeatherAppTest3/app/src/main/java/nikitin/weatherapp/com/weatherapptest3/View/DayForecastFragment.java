@@ -64,7 +64,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
             weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
         }
-
         createForecastList(presenter.getForecasts());
         setHasOptionsMenu(true);
         return view;

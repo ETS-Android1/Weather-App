@@ -14,6 +14,7 @@ import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.*;
+import nikitin.weatherapp.com.weatherapptest3.rest.ApiClient;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
 import retrofit2.Response;
 
@@ -38,7 +39,7 @@ public class CitySuggestionProvider extends ContentProvider{
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
         //Получаю список городов которые подходят под пользовательский поиск
-        Response<FindCityResponse> callback = OpenWeatherMapAPI.getInstance().findCity(uri.getLastPathSegment());
+        Response<FindCityResponse> callback = OpenWeatherMapAPI.getNewInstance(ApiClient.URL_OPEN_WEATHER).findCity(uri.getLastPathSegment());
         findCityList = callback.body().getWeatherList();
 
         cursor = new MatrixCursor(new String[]{

@@ -1,5 +1,9 @@
 package nikitin.weatherapp.com.weatherapptest3.rest;
 
+import java.util.List;
+
+import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticResponse;
+import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.FindCityResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
@@ -27,5 +31,7 @@ public interface APIWeatherInterface {
     Call<ForecastResponse> getWeeklyForecastByCityId(@Query("id") long cityId, @Query("appId") String appId);
     @GET("forecast")
     Call<ForecastResponse> getForecast(@Query("id") long cityId, @Query("appId") String appId);
+    @GET("products/alerts.json")
+    Call<List<GeomagneticStorm>> getGeomagneticStorm();
 
 }

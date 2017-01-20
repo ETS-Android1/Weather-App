@@ -24,6 +24,7 @@ import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
+import nikitin.weatherapp.com.weatherapptest3.rest.ApiClient;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +46,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     public CitiesPresenter(CitiesFragment view, Activity activity) {
         mainActivity = activity;
         this.view = view;
-        openWeatherMapAPI = OpenWeatherMapAPI.getInstance();
+        openWeatherMapAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.URL_OPEN_WEATHER);
         preferences = Preferences.getInstance(mainActivity);
         sharer = (DataSharer) activity;
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());

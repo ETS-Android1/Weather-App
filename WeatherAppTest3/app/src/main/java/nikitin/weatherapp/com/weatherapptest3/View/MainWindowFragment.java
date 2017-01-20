@@ -21,7 +21,6 @@ import nikitin.weatherapp.com.weatherapptest3.R;
 public class MainWindowFragment extends Fragment {
     public static final String TITLE = "Weather";
     private MainWindowPresenter presenter;
-
     private TextView temperatureBox;
     private TextView weatherNameBox;
     private TextView humidityBox;

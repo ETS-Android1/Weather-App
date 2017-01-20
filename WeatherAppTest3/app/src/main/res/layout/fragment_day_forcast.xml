@@ -122,5 +122,4 @@
             android:padding="10dp"
             android:background="#3d000000"/>
     </FrameLayout>
-
 </LinearLayout>

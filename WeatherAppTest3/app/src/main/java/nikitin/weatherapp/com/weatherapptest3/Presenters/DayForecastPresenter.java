@@ -17,6 +17,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeathe
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
+import nikitin.weatherapp.com.weatherapptest3.rest.ApiClient;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +51,7 @@ public class DayForecastPresenter  {
         this.activity = activity;
         this.fragment = fragment;
         forecastList = fragment.getDailyForecastView();
-        api = OpenWeatherMapAPI.getInstance();
+        api = OpenWeatherMapAPI.getNewInstance(ApiClient.URL_OPEN_WEATHER);
         handler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 
