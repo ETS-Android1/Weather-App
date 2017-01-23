@@ -10,6 +10,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticStor
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.FindCityResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -24,12 +25,12 @@ public class OpenWeatherMapAPI {
     private final String API_KEY = "485400ed5d502b7b04378efed428665b";
     private final String TAG = "OpenWeatherMapAPI";
 
-    OpenWeatherMapAPI(String base_url) {
-        api = ApiClient.getClient(base_url).create(APIWeatherInterface.class);
+    OpenWeatherMapAPI(ApiClient.Urls url) {
+        api = ApiClient.getClient(url).create(APIWeatherInterface.class);
     }
 
-    public static OpenWeatherMapAPI getNewInstance(String base_url) {
-        return new OpenWeatherMapAPI(base_url);
+    public static OpenWeatherMapAPI getNewInstance(ApiClient.Urls url) {
+        return new OpenWeatherMapAPI(url);
     }
 
     public void getWeatherByCityId(long cityId, Callback<WeatherResponse> callback) {
@@ -69,16 +70,8 @@ public class OpenWeatherMapAPI {
         call.enqueue(callback);
     }
 
-    public void getGeomagneticStormData(Callback<List<GeomagneticStorm>> callback) {
-        Call<List<GeomagneticStorm>> call = api.getGeomagneticStorm();
+    public void getGeomagneticStormData(Callback<ResponseBody> callback) {
+        Call<ResponseBody> call = api.getGeomagneticStorm();
         call.enqueue(callback);
     }
-
-
-//
-//    public void getWeaklyForecastByCityId(int cityId, Callback<ForecastResponse> callback) {
-//        int hoursSection = 9;
-//        Call<ForecastResponse> call = api.getForecastByCityId(cityId, hoursSection, API_KEY);
-//        call.enqueue(callback);
-//    }
 }

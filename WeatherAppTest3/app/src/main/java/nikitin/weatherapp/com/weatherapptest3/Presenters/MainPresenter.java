@@ -60,5 +60,4 @@ public class MainPresenter {
         }
         return inSampleSize;
     }
-
 }

@@ -51,7 +51,7 @@ public class DayForecastPresenter  {
         this.activity = activity;
         this.fragment = fragment;
         forecastList = fragment.getDailyForecastView();
-        api = OpenWeatherMapAPI.getNewInstance(ApiClient.URL_OPEN_WEATHER);
+        api = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.OPENWEATHER);
         handler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 

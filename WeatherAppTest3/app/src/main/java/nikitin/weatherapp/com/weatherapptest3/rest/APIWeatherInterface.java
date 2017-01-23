@@ -7,6 +7,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticStor
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.FindCityResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -31,7 +32,7 @@ public interface APIWeatherInterface {
     Call<ForecastResponse> getWeeklyForecastByCityId(@Query("id") long cityId, @Query("appId") String appId);
     @GET("forecast")
     Call<ForecastResponse> getForecast(@Query("id") long cityId, @Query("appId") String appId);
-    @GET("products/alerts.json")
-    Call<List<GeomagneticStorm>> getGeomagneticStorm();
+    @GET("text/3-day-geomag-forecast.txt")
+    Call<ResponseBody> getGeomagneticStorm();
 
 }

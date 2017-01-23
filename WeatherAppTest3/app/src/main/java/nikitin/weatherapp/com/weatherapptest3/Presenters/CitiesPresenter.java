@@ -46,7 +46,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     public CitiesPresenter(CitiesFragment view, Activity activity) {
         mainActivity = activity;
         this.view = view;
-        openWeatherMapAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.URL_OPEN_WEATHER);
+        openWeatherMapAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.OPENWEATHER);
         preferences = Preferences.getInstance(mainActivity);
         sharer = (DataSharer) activity;
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
