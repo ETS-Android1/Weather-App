@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.SQLOutput;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,6 +28,10 @@ import retrofit2.Response;
 
 public class ExtremeWeatherPresenter {
     ExtremeWeatherFragment view;
+
+    final private String yearPatternString = "Issued:\\s(\\d\\d\\d\\d)";
+    final private String datePatternString = "forecast\\s(\\d\\d?)\\s(\\w\\w\\w)";
+    final private String timeAndIndexPattern = "(\\d\\d)-\\d\\dUT\\s+(\\d)\\s+(\\d)";
     public ExtremeWeatherPresenter(ExtremeWeatherFragment view) {
         this.view = view;
     }
@@ -35,38 +42,53 @@ public class ExtremeWeatherPresenter {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
-                String result = "";
+                String file = "";
                 String line;
                 try {
                     while ((line = reader.readLine())!= null) {
-                        result += line;
+                        file += line;
                     }
                 } catch (IOException ex) {
                     ex.getMessage();
                 }
-                Pattern yearPattern = Pattern.compile("Issued:\\s(\\d\\d\\d\\d)");
-                Pattern datePattern = Pattern.compile("forecast\\s(\\d\\d?)\\s(\\w\\w\\w)");
-                Pattern timeAndValuePattern = Pattern.compile("(\\d\\d)-\\d\\dUT\\s+(\\d)\\s+(\\d)");
-                Matcher m = datePattern.matcher(result);
+
+
+
+
+                Pattern yearPattern = Pattern.compile(yearPatternString);
+                Pattern datePattern = Pattern.compile(datePatternString);
+
+                Matcher m = yearPattern.matcher(file);
+
                 m.find();
-                System.out.println(m.group(1));
-                System.out.println(m.group(2));
+                String year = m.group(1);
+
+                m = datePattern.matcher(file);
+                m.find();
+                String month = m.group(2);
+                int day = Integer.parseInt(m.group(1));
 
 
-                m = timeAndValuePattern.matcher(result);
-                System.out.println(result);
-                for (int i = 0; i < 8; i ++) {
-                    m.find();
-                    System.out.println(m.group(1));
-                    System.out.println(m.group(2));
-                    System.out.println(m.group(3));
+                System.out.println("pish");
+                System.out.println(year +" " +month +" " +day);
+
+                String pattern = "yyyy MMM dd HH mm ss";
+
+                SimpleDateFormat format = new SimpleDateFormat(pattern);
+                try {
+                    Date date = format.parse(year + " " +month +" " +day +" " +"12" +" " +"00" +" " +"00");
+                    long time = date.getTime();
+                    System.out.println("look at this ");
+                    System.out.println(time);
+                } catch (ParseException ex) {
+                    System.out.println("failed");
+                    System.out.println(ex.getMessage());
                 }
 
 
 
 
-
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 System.out.println(timestamp.getTime());
 
 
@@ -78,6 +100,23 @@ public class ExtremeWeatherPresenter {
         });
     }
 
+    private String findMatches(String file, String stringPattern) {
+        Pattern pattern = Pattern.compile(stringPattern);
+        Matcher matcher = pattern.matcher(file);
+        matcher.find();
+        String result = "";
+        for (int i = 1; i <= matcher.groupCount(); i ++) {
+            result +=matcher.group(i);
+            if (i != matcher.groupCount()) result+=" ";
+        }
+        return result;
+    }
 
+    private void parseForecast(String file, String date) {
+        Pattern pattern = Pattern.compile(date);
+        Matcher matcher = pattern.matcher(file);
+        while (matcher.find()) {
 
+        }
+    }
 }

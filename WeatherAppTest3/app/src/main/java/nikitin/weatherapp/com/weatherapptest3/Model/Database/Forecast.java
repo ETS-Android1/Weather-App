@@ -16,10 +16,12 @@ public class Forecast {
     private int date;
     private int group_code;
     private String weatherDetailedType;
+    private int kIndex;
+
     private static final int KELVIN_TO_CELSIUS = 273;
 
     public Forecast(long id, long fkCityId, String weatherType, int temperature, int humidity,
-                    double wind_speed, int pressure, int wind_direction, int date, int group_code, String weatherDetailedType) {
+                    double wind_speed, int pressure, int wind_direction, int date, int group_code, String weatherDetailedType, int kIndex) {
         this.id = id;
         this.fkCityId = fkCityId;
         this.weatherType = weatherType;
@@ -31,6 +33,7 @@ public class Forecast {
         this.date = date;
         this.group_code = group_code;
         this.weatherDetailedType = weatherDetailedType;
+        this.kIndex = kIndex;
     }
 
     public long getId() {
@@ -110,8 +113,14 @@ public class Forecast {
         this.weatherDetailedType = weatherDetailedType;
     }
 
+    public int getkIndex() {
+        return kIndex;
+    }
+    public void setkIndex(int kIndex) {
+        this.kIndex = kIndex;
+    }
+
     public static int kelvinToCelsius(double kelvinDegrees) {
         return (int)kelvinDegrees - KELVIN_TO_CELSIUS;
     }
-
 }

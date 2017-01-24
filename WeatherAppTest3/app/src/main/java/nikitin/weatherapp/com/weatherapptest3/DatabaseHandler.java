@@ -211,21 +211,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addAllForecasts(forecasts);
     }
 
-    public ArrayList<Forecast> getForecast(long fk_city_id) {
-        SQLiteDatabase db = getReadableDatabase();
-        Cursor cursor = db.query(TABLE_FORECAST, new String[]{KEY_FORECAST_ID, KEY_FORECAST_FK_CITY_ID,
-                KEY_FORECAST_WEATHER_TYPE, KEY_FORECAST_TEMPERATURE, KEY_FORECAST_HUMIDITY, KEY_FORECAST_WIND_SPEED,
-                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE, KEY_FORECAST_GROUP_CODE, KEY_FORECAST_WEATHER_DETAILED_TYPE}, KEY_FORECAST_FK_CITY_ID
-                +" =?", new String[]{String.valueOf(fk_city_id)}, null, null, KEY_FORECAST_DATE + " ASC", null);
-        cursor.moveToFirst();
-        ArrayList<Forecast> list = new ArrayList<>();
-        do {
-            list.add(new Forecast(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4),
-                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getString(10)));
-        } while(cursor.moveToNext());
-        cursor.close();
-        return list;
-    }
+//    public ArrayList<Forecast> getForecast(long fk_city_id) {
+//        SQLiteDatabase db = getReadableDatabase();
+//        Cursor cursor = db.query(TABLE_FORECAST, new String[]{KEY_FORECAST_ID, KEY_FORECAST_FK_CITY_ID,
+//                KEY_FORECAST_WEATHER_TYPE, KEY_FORECAST_TEMPERATURE, KEY_FORECAST_HUMIDITY, KEY_FORECAST_WIND_SPEED,
+//                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE, KEY_FORECAST_GROUP_CODE, KEY_FORECAST_WEATHER_DETAILED_TYPE}, KEY_FORECAST_FK_CITY_ID
+//                +" =?", new String[]{String.valueOf(fk_city_id)}, null, null, KEY_FORECAST_DATE + " ASC", null);
+//        cursor.moveToFirst();
+//        ArrayList<Forecast> list = new ArrayList<>();
+//        do {
+//            list.add(new Forecast(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4),
+//                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getString(10)));
+//        } while(cursor.moveToNext());
+//        cursor.close();
+//        return list;
+//    }
 
     public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();
