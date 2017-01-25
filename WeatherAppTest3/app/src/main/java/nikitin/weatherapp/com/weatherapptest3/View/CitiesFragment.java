@@ -57,6 +57,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_locations, container, false);
             citiesList = (ListView) view.findViewById(R.id.citiesList);
+
             adapter.setDatas(presenter.restoreCities());
             citiesList.setOnItemClickListener(this);
             citiesList.setAdapter(adapter);

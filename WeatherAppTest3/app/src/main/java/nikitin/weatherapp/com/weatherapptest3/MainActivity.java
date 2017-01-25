@@ -28,6 +28,7 @@ import java.util.TimeZone;
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
@@ -193,5 +194,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void shareCity(City city) {
         ((MainWindowFragment)tabsPagerAdapter.getItem(1)).setView(city);
+    }
+    @Override
+    public void shareGeoStormForecast(ArrayList<GeoStorm> forecast) {
+        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setGeoStormForecast(forecast);
     }
 }

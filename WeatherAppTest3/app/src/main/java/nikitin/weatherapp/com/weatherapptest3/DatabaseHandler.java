@@ -12,9 +12,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 
 /**
@@ -22,7 +21,7 @@ import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
  */
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler databaseHandler;
-    private static final int DATABASE_VERSION = 28;
+    private static final int DATABASE_VERSION = 29;
     private static final String DATABASE_NAME = "weatherAppDatabase";
 
     private static final String TABLE_CITY = "city";
@@ -53,6 +52,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_FORECAST_DATE = "date";
     private static final String KEY_FORECAST_GROUP_CODE = "group_code";
     private static final String KEY_FORECAST_WEATHER_DETAILED_TYPE = "weather_detailed_type";
+
+    private static final String TABLE_GEOSTORM = "geostorm";
+    private static final String KEY_GEOSTORM_DATE = "date";
+    private static final String KEY_GEOSTORM_KINDEX = "k_index";
 
     private DatabaseHandler (Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -96,11 +99,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_FORECAST_GROUP_CODE +" INTEGER, "
                 +KEY_FORECAST_WEATHER_DETAILED_TYPE +" TEXT"+")";
         db.execSQL(CREATE_FORECAST_TABLE);
+
+        String CREATE_GEOSTORM_TABLE = "CREATE TABLE " +TABLE_GEOSTORM +" ("
+                +KEY_GEOSTORM_DATE +" INTEGER PRIMARY KEY, "
+                +KEY_GEOSTORM_KINDEX +" INTEGER"+")";
+        db.execSQL(CREATE_GEOSTORM_TABLE);
+
+
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_CITY);
         db.execSQL("DROP TABLE IF EXISTS " +TABLE_FORECAST);
+        db.execSQL("DROP TABLE IF EXISTS " +TABLE_GEOSTORM);
         Preferences.getInstance(MainActivity.getAppContext()).clear();
         onCreate(db);
     }
@@ -230,5 +241,46 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_FORECAST, KEY_FORECAST_FK_CITY_ID +" = " +fk_city_id, null);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //----------------------------- Methods for work with geomagnetic Activity ---------------------
+
+    public void addGeoStorm(GeoStorm geoStorm) {
+        SQLiteDatabase db = getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_GEOSTORM_DATE, geoStorm.getDate());
+        values.put(KEY_GEOSTORM_KINDEX, geoStorm.getkIndex());
+        db.insert(TABLE_GEOSTORM, null, values);
+    }
+
+    public GeoStorm getGeoStorm(int geoStormDate) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_GEOSTORM, new String[]{KEY_GEOSTORM_DATE, KEY_GEOSTORM_KINDEX}, KEY_GEOSTORM_DATE +"=?", new String[]{String.valueOf(geoStormDate)}, null, null, null, null);
+        return new GeoStorm(cursor.getInt(0), cursor.getInt(1));
+    }
+
+    public void deleteGeoStorm(int date) {
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TABLE_GEOSTORM, KEY_GEOSTORM_DATE +" = "+date, null);
+    }
+
+    public void deleteAllOldGeoStorms(int date) {
+        SQLiteDatabase db = getReadableDatabase();
+        db.delete(TABLE_GEOSTORM, KEY_GEOSTORM_DATE +" < " +date, null);
+    }
+
+    public void addOrIgnoreGeoStorm(ArrayList<GeoStorm> geoStorms) {
+        SQLiteDatabase db = getReadableDatabase();
+        ContentValues values = new ContentValues();
+
+        for (GeoStorm geoStorm : geoStorms) {
+            System.out.println(geoStorm.getDate() +"        " +geoStorm.getkIndex());
+            values.put(KEY_GEOSTORM_DATE, geoStorm.getDate());
+            values.put(KEY_GEOSTORM_KINDEX, geoStorm.getkIndex());
+            db.insertWithOnConflict(TABLE_GEOSTORM, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            values.clear();
+        }
     }
 }

@@ -45,7 +45,6 @@ public class WeeklyWeatherAdapter extends ArrayAdapter<WeeklyForecast> {
         ((TextView) convertView.findViewById(R.id.day_name_weekly_forecast)).setText(getItem(position).getDayName());
         ((TextView) convertView.findViewById(R.id.max_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getDayTemp()) +"°");
         ((TextView) convertView.findViewById(R.id.min_temp_weekly_forecast)).setText(Integer.toString(getItem(position).getNightTemp()) +"°");
-        System.out.println("jiji" +getItem(position).getWeatherName());
         Drawable icon = getContext().getResources().getDrawable(MainWindowFragment.chooseWeatherIcon(getItem(position).getMainWeatherType()));
         ((ImageView) convertView.findViewById(R.id.weatherIconBox)).setImageDrawable(icon);
         return convertView;
@@ -57,5 +56,4 @@ public class WeeklyWeatherAdapter extends ArrayAdapter<WeeklyForecast> {
         addAll(forecasts);
         notifyDataSetChanged();
     }
-
 }

@@ -17,9 +17,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
+import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.WeatherDrawable;
@@ -64,7 +67,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
             weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
         }
-        createForecastList(presenter.getForecasts());
+        createForecastList(presenter.getForecasts(), presenter.getGeoStormForecast());
         setHasOptionsMenu(true);
         return view;
     }
@@ -86,9 +89,15 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         menu.setGroupVisible(R.id.cities_group, false);
     }
 
-    public void createForecastList(ArrayList<Forecast> weathers) {
+    public void createForecastList(ArrayList<Forecast> weathers, ArrayList<GeoStorm> geoStormForecast) {
         if (presenter.getForecasts() == null) return;
-        adapter.setData(weathers);
+
+        ArrayList<DailyForecastItem> list = new ArrayList<>();
+
+        for (int i = 0; i < weathers.size(); i++) {
+            list.add(new DailyForecastItem(weathers.get(i), geoStormForecast.get(i).getkIndex()));
+        }
+        adapter.setData(list);
         if (presenter.isParametrsSet) return;
         view.post(new Runnable() {
             @Override
@@ -121,12 +130,12 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 presenter.calculateScrollParameters(dailyForecastView.getChildAt(0).getTop());
                 view.setSelectionFromTop(presenter.getSelectedViewPosition(), presenter.getIndent());
                 int item = presenter.getSelectedViewPosition() - 1;
-                Forecast forecast = adapter.getItem(item);
-                pressureBox.setText(Integer.toString(forecast.getPressure()));
-                humidityBox.setText(Integer.toString(forecast.getHumidity()));
-                windSpeedBox.setText(Double.toString(forecast.getWind_speed()));
-                windDirectionBox.setText(Integer.toString(forecast.getWind_direction()));
-                Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getWeatherType()), getActivity().getTheme());
+                DailyForecastItem forecast = adapter.getItem(item);
+                pressureBox.setText(Integer.toString(forecast.getForecast().getPressure()));
+                humidityBox.setText(Integer.toString(forecast.getForecast().getHumidity()));
+                windSpeedBox.setText(Double.toString(forecast.getForecast().getWind_speed()));
+                windDirectionBox.setText(Integer.toString(forecast.getForecast().getWind_direction()));
+                Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getForecast().getWeatherType()), getActivity().getTheme());
                 weatherIconBox.setImageDrawable(icon);
                 break;
             }
@@ -135,6 +144,10 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
 
     public void setForecasts(ArrayList<Forecast> forecasts) {
         presenter.setForecasts(forecasts);
+    }
 
+    public void setGeoStormForecast(ArrayList<GeoStorm> forecast) {
+        System.out.println("it's setting");
+        presenter.setGeoStormForecast(forecast);
     }
 }

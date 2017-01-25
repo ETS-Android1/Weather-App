@@ -13,6 +13,7 @@ import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.View.DayForecastFragment;
@@ -42,6 +43,8 @@ public class DayForecastPresenter  {
     private int divider;
     private int selectedViewPosition;
     private int indent;
+
+    private ArrayList<GeoStorm> geoStormForecast;
 
     private final int FORECAST_AMOUNT = 9;
     public boolean isParametrsSet = false;
@@ -94,5 +97,12 @@ public class DayForecastPresenter  {
     }
     public ArrayList<Forecast> getForecasts() {
         return forecasts;
+    }
+
+    public void setGeoStormForecast(ArrayList<GeoStorm> forecast) {
+        this.geoStormForecast = forecast;
+    }
+    public ArrayList<GeoStorm> getGeoStormForecast() {
+        return geoStormForecast;
     }
 }

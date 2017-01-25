@@ -28,9 +28,11 @@ import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
+import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticStorm;
 import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
@@ -161,6 +163,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         preferences.putGPSCityId(gpsCityId);
         return cities;
     }
+
     //----------------------------------------------------------------------------------------------
     //---------------------------------- GPS Methods -----------------------------------------------
 
@@ -191,11 +194,6 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeeklyForecastByCityId(cityId, new Callback<ForecastResponse>() {
             @Override
             public void onResponse(Call<ForecastResponse> call, Response<ForecastResponse> response) {
-                System.out.println("cityId " +cityId);
-                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
-
-
-
                 ArrayList<Forecast> forecasts = new ArrayList<>(40);
                 for (ForecastWeather forecastResponse : response.body().getList()) {
                     forecasts.add(new Forecast(0, cityId,
@@ -211,8 +209,13 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                             0)
                     );
                 }
-                getGeomagneticForecast(forecasts);
 
+                new UpdateForecastTask().execute(forecasts);
+                sharer.shareForecast(forecasts);
+
+                //Текущий отрезок прогноза который отдает сервер
+                long current_dt = forecasts.get(0).getDate();
+                getGeomagneticForecast(current_dt);
             }
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
@@ -221,10 +224,11 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         });
     }
 
-    private void getGeomagneticForecast(final ArrayList<Forecast> forecasts) {
+    private void getGeomagneticForecast(final long current_dt) {
         geomagneticSormsAPI.getGeomagneticStormData(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                //Считываем файл
                 BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
                 String file = "";
                 String line;
@@ -235,42 +239,20 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 } catch (IOException ex) {
                     ex.getMessage();
                 }
-
-                parseDate(file, forecasts);
-
-
-
-
-
-//                SimpleDateFormat format = new SimpleDateFormat(pattern);
-//                try {
-//                    Date date = format.parse(year + " " +month +" " +day +" " +"12" +" " +"00" +" " +"00");
-//                    long time = date.getTime();
-//                    System.out.println("look at this ");
-//                    System.out.println(time);
-//                } catch (ParseException ex) {
-//                    System.out.println("failed");
-//                    System.out.println(ex.getMessage());
-//                }
-
-
-
-
-                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-                System.out.println(timestamp.getTime());
-
-//                new UpdateForecastTask().execute(list2);
-//                sharer.shareForecast(forecasts);
+                System.out.println("DJDF UEQ");
+                ArrayList<GeoStorm> geoStormForecast = parseGeoStormForecast(current_dt, file);
+                sharer.shareGeoStormForecast(geoStormForecast);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                System.out.println(t.getMessage());
+                System.out.println(t.getStackTrace());
             }
         });
     }
 
-    private void parseDate(String file, ArrayList<Forecast> forecasts) {
+    private ParsedDate parseDate(String file) {
         Pattern p;
         Matcher m;
         //Парсим год
@@ -288,12 +270,13 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         m = p.matcher(file);
         m.find();
         int day = Integer.parseInt(m.group(1));
-
-        int firstForecastTime = forecasts.get(0).getDate();
-        parseForecast(forecasts, file, year, month, day);
+        return new ParsedDate(year, month, day);
     }
 
-    private void parseForecast(ArrayList<Forecast> forecasts,String file, int year, String month, int day) {
+    private ArrayList<GeoStorm> parseGeoStormForecast(long current_dt, String file) {
+
+        System.out.println("KOT GEI");
+        ParsedDate date = parseDate(file);
         int [] kIndex = new int [24];
         long [] time = new long[24];
         SimpleDateFormat format = new SimpleDateFormat("yyyy MMM dd HH mm ss");
@@ -307,24 +290,22 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             kIndex[i + 8] = Integer.parseInt(m.group(3));
             kIndex[i + 16] = Integer.parseInt(m.group(4));
 
-            String firstDay = year +" " +month +" " +day +" " +m.group(1) +" " +"00" +" " +"00";
-            String secondDay = year +" " +month +" " +(day+1) +" " +m.group(1) +" " +"00" +" " +"00";
-            String thirdDay = year +" " +month +" " +(day+2) +" " +m.group(1) +" " +"00" +" " +"00";
+            String firstDay = date.getYear() +" " +date.getMonth() +" " +date.getDay() +" " +m.group(1) +" " +"00" +" " +"00";
+            String secondDay = date.getYear() +" " +date.getMonth() +" " +date.getDay()+1 +" " +m.group(1) +" " +"00" +" " +"00";
+            String thirdDay = date.getYear() +" " +date.getMonth() +" " +date.getDay()+2 +" " +m.group(1) +" " +"00" +" " +"00";
 
             try {
-                Date date = format.parse(firstDay);
-                time[i] = date.getTime()/1000;
-                date = format.parse(secondDay);
-                time[i + 8] = date.getTime()/1000;
-                date = format.parse(thirdDay);
-                time[i + 16] = date.getTime()/1000;
+                Date exactDate = format.parse(firstDay);
+                time[i] = exactDate.getTime()/1000;
+                exactDate = format.parse(secondDay);
+                time[i + 8] = exactDate.getTime()/1000;
+                exactDate = format.parse(thirdDay);
+                time[i + 16] = exactDate.getTime()/1000;
             } catch(ParseException ex) {
                 ex.printStackTrace();
             }
         }
 
-        //Текущий отрезок прогноза который отдает сервер
-        long current_dt = forecasts.get(0).getDate();
         int index = 0;
         for (int i = 0; i < 24; i++) {
             if (time[i] == current_dt) {
@@ -332,12 +313,48 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 break;
             }
         }
-
+        ArrayList<GeoStorm> geoStorms = new ArrayList<>(24);
+        System.out.println("YOU WANT A GEOSTORM AND NOW YOU WILL GET IT!!!!!111111");
         for (int i = index; i < 24; i++) {
-            forecasts.get(i - index).setkIndex(kIndex[i]);
+            geoStorms.add(new GeoStorm(time[i], kIndex[i]));
+            System.out.println(geoStorms.get(i - index));
         }
-        int j = 0;
+        return geoStorms;
     }
+
+    private class ParsedDate {
+        int year;
+        String month;
+        int day;
+
+        ParsedDate(int year, String month, int day) {
+            this.year = year;
+            this.month = month;
+            this.day = day;
+        }
+
+        public int getYear() {
+            return year;
+        }
+        public void setYear(int year) {
+            this.year = year;
+        }
+
+        public String getMonth() {
+            return month;
+        }
+        public void setMonth(String month) {
+            this.month = month;
+        }
+
+        public int getDay() {
+            return day;
+        }
+        public void setDay(int day) {
+            this.day = day;
+        }
+    }
+
     private void getCityByCoordinate(double latitude, double longitude) {
         openWeatherMapAPI.getWeatherByCityCoordinate(latitude, longitude, new Callback<WeatherResponse>() {
             @Override
