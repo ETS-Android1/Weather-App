@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
+import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.CurrentWeather;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
@@ -44,6 +45,7 @@ public class DayForecastPresenter  {
     private int selectedViewPosition;
     private int indent;
 
+    public ArrayList <DailyForecastItem>  listItems = new ArrayList<>();
     private ArrayList<GeoStorm> geoStormForecast;
 
     private final int FORECAST_AMOUNT = 9;
@@ -70,6 +72,32 @@ public class DayForecastPresenter  {
         this.topSpace = topSpace;
 
         isParametrsSet = true;
+    }
+
+    public void setWeatherForecast(ArrayList<Forecast> forecasts) {
+        if (listItems.isEmpty()) {
+            for (int i = 0; i < FORECAST_AMOUNT; i++) {
+                listItems.add(new DailyForecastItem(forecasts.get(i), 0));
+            }
+            return;
+        }
+        for (int i = 0; i < FORECAST_AMOUNT; i++) {
+            listItems.get(i).setForecast(forecasts.get(i));
+        }
+        fragment.updateView(listItems);
+    }
+
+    public void setGeoStormForecast(ArrayList<GeoStorm> forecasts) {
+        if (listItems.isEmpty()) {
+            for (int i = 0; i < FORECAST_AMOUNT; i++) {
+                listItems.add(new DailyForecastItem(null, forecasts.get(i).getkIndex()));
+            }
+            return;
+        }
+        for (int i = 0; i < FORECAST_AMOUNT; i++) {
+            listItems.get(i).setkIndex(forecasts.get(i).getkIndex());
+        }
+        fragment.updateView(listItems);
     }
 
     public void calculateScrollParameters(int firstElementTop) {
@@ -99,10 +127,12 @@ public class DayForecastPresenter  {
         return forecasts;
     }
 
-    public void setGeoStormForecast(ArrayList<GeoStorm> forecast) {
-        this.geoStormForecast = forecast;
-    }
+
     public ArrayList<GeoStorm> getGeoStormForecast() {
         return geoStormForecast;
+    }
+
+    public ArrayList<DailyForecastItem> getListItems() {
+        return listItems;
     }
 }

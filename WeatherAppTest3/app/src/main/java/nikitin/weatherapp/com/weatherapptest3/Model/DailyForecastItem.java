@@ -1,5 +1,6 @@
 package nikitin.weatherapp.com.weatherapptest3.Model;
 
+
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 
 /**

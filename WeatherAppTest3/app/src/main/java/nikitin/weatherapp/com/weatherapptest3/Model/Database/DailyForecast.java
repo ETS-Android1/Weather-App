@@ -16,6 +16,18 @@ public class DailyForecast {
     private int pressure;
     private int wind_direction;
 
+    public DailyForecast() {
+        this.id = 0;
+        this.fk_city_ow_id = 0;
+        this.date = 0;
+        this.weather_name = "";
+        this.temperature = 0;
+        this.humidity = 0;
+        this.wind_speed = 0;
+        this.wind_direction = 0;
+        this.pressure = 0;
+    }
+
     public DailyForecast(int id, int fk_city_ow_id, int date, String weather_name, int temperature, int humidity, int wind_speed, int pressure, int wind_direction) {
         this.id = id;
         this.fk_city_ow_id = fk_city_ow_id;

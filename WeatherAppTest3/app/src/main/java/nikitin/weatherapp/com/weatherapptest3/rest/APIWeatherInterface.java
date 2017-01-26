@@ -34,5 +34,4 @@ public interface APIWeatherInterface {
     Call<ForecastResponse> getForecast(@Query("id") long cityId, @Query("appId") String appId);
     @GET("text/3-day-geomag-forecast.txt")
     Call<ResponseBody> getGeomagneticStorm();
-
 }

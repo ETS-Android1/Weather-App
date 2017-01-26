@@ -1,5 +1,4 @@
 package nikitin.weatherapp.com.weatherapptest3.View;
-
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,16 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
-
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
-import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Weather;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.DayForecastPresenter;
 import nikitin.weatherapp.com.weatherapptest3.R;
 import nikitin.weatherapp.com.weatherapptest3.WeatherDrawable;
@@ -40,8 +34,11 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     private TextView windSpeedBox;
     private TextView humidityBox;
     private TextView windDirectionBox;
+    private TextView kIndexBox;
     private ImageView weatherIconBox;
     private View view;
+    private boolean parametersSet = false;
+    public ArrayList <DailyForecastItem>  listItems = new ArrayList<DailyForecastItem>();
 
     public DayForecastFragment() {
         presenter = new DayForecastPresenter(getActivity(), this);
@@ -59,6 +56,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         if (view == null) {
+
             view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
             dailyForecastView = (ListView) view.findViewById(R.id.daily_weather);
             pressureBox = (TextView) view.findViewById(R.id.pressureBox);
@@ -66,16 +64,39 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             humidityBox = (TextView) view.findViewById(R.id.humidityBox);
             windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
             weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
+            kIndexBox = (TextView) view.findViewById(R.id.kIndexBox);
         }
-        createForecastList(presenter.getForecasts(), presenter.getGeoStormForecast());
         setHasOptionsMenu(true);
+
+        System.out.println("VIEW CREATED");
         return view;
+    }
+
+    public void calculateViewSize() {
+        if (parametersSet) return;
+        adapter.add(new DailyForecastItem(null, 0));
+        adapter.notifyDataSetChanged();
+        int listViewHeight = dailyForecastView.getHeight();
+        int listElementHeight = dailyForecastView.getChildAt(0).getHeight();
+        int divider = Math.abs(dailyForecastView.getChildAt(0).getBottom() - dailyForecastView.getChildAt(1).getTop());
+        int topSpace = dailyForecastView.getChildAt(0).getTop();
+        presenter.setListViewParameters(listElementHeight, listViewHeight, divider, topSpace);
+        adapter.clear();
+        adapter.notifyDataSetChanged();
+        //Пустые вьюшки нужны что бы центрировать верхние и нижние значимые элементы списка.
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight / 2 - listElementHeight / 2);
+        LinearLayout indent = new LinearLayout(getActivity());
+        indent.setLayoutParams(layoutParams);
+        dailyForecastView.addHeaderView(indent, null, true);
+        dailyForecastView.addFooterView(indent, null, true);
+        dailyForecastView.setOnScrollListener(fragment);
+        dailyForecastView.scrollListBy(30);
+        parametersSet = true;
     }
     @Override
     public void onStart() {
         super.onStart();
         dailyForecastView.setAdapter(adapter);
-
     }
 
     public ListView getDailyForecastView() {
@@ -89,36 +110,11 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         menu.setGroupVisible(R.id.cities_group, false);
     }
 
-    public void createForecastList(ArrayList<Forecast> weathers, ArrayList<GeoStorm> geoStormForecast) {
-        if (presenter.getForecasts() == null) return;
 
-        ArrayList<DailyForecastItem> list = new ArrayList<>();
-
-        for (int i = 0; i < weathers.size(); i++) {
-            list.add(new DailyForecastItem(weathers.get(i), geoStormForecast.get(i).getkIndex()));
-        }
+    public void updateView(ArrayList<DailyForecastItem> list) {
         adapter.setData(list);
-        if (presenter.isParametrsSet) return;
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                int listElementHeight = dailyForecastView.getChildAt(0).getHeight();
-                int listViewHeight = dailyForecastView.getHeight();
-                int divider = Math.abs(dailyForecastView.getChildAt(0).getBottom() - dailyForecastView.getChildAt(1).getTop());
-                int topSpace = dailyForecastView.getChildAt(0).getTop();
-                presenter.setListViewParameters(listElementHeight, listViewHeight, divider, topSpace);
-
-                //Пустые вьюшки нужны что бы центрировать верхние и нижние значимые элементы списка.
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight / 2 - listElementHeight / 2);
-                LinearLayout indent = new LinearLayout(getActivity());
-                indent.setLayoutParams(layoutParams);
-                dailyForecastView.addHeaderView(indent, null, true);
-                dailyForecastView.addFooterView(indent, null, true);
-                dailyForecastView.setOnScrollListener(fragment);
-                dailyForecastView.scrollListBy(30);
-            }
-        });
     }
+
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         presenter.onScroll(firstVisibleItem, dailyForecastView.getChildAt(0).getBottom());
@@ -135,6 +131,7 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 humidityBox.setText(Integer.toString(forecast.getForecast().getHumidity()));
                 windSpeedBox.setText(Double.toString(forecast.getForecast().getWind_speed()));
                 windDirectionBox.setText(Integer.toString(forecast.getForecast().getWind_direction()));
+                kIndexBox.setText(Integer.toString(forecast.getkIndex()));
                 Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getForecast().getWeatherType()), getActivity().getTheme());
                 weatherIconBox.setImageDrawable(icon);
                 break;
@@ -144,10 +141,17 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
 
     public void setForecasts(ArrayList<Forecast> forecasts) {
         presenter.setForecasts(forecasts);
+        presenter.setWeatherForecast(presenter.getForecasts());
+        if (dailyForecastView!= null) {
+            calculateViewSize();
+        }
     }
 
     public void setGeoStormForecast(ArrayList<GeoStorm> forecast) {
-        System.out.println("it's setting");
         presenter.setGeoStormForecast(forecast);
+    }
+
+    public ArrayList<DailyForecastItem> getData() {
+        return adapter.getAllItems();
     }
 }

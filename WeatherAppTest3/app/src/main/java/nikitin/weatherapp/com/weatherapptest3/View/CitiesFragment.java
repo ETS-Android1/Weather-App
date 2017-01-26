@@ -53,7 +53,6 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        System.out.println("Item position " +selectedItemPosition);
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_locations, container, false);
             citiesList = (ListView) view.findViewById(R.id.citiesList);

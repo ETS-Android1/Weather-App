@@ -24,9 +24,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
+import java.util.jar.Attributes;
 
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
+import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
@@ -46,13 +49,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int currentCityId = 629634;
     private String currentCityName;
     private static Context appContext;
-
-
     private ArrayList<Forecast> forecasts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //System.out.println("LOL cities adapter " +CitiesAdapter.citiesAdapter);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -93,7 +93,30 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     case 1: setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     case 2: setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     case 3: setTitle(WeeklyForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+                }
+                if (position == 2) {
+                    if (((DayForecastFragment)tabsPagerAdapter.getItem(2)).getData() == null) {
 
+                        ArrayList<Forecast> pop = new ArrayList<>();
+                        ArrayList<GeoStorm> pop2 = new ArrayList<GeoStorm>();
+                        int [] kIndex = new int [9];
+                        for (int i = 0; i < 9; i++) {
+
+                            pop.add(new Forecast());
+                            pop2.add(new GeoStorm(12, 0));
+                        }
+                        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setForecasts(pop);
+                        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setGeoStormForecast(pop2);
+                        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).calculateViewSize();
+
+                    } else {
+                        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).calculateViewSize();
+                    }
+
+
+
+                    System.out.println("CHANGE TO THIS PAGE");
+                    ((DayForecastFragment)tabsPagerAdapter.getItem(2)).calculateViewSize();
                 }
             }
             @Override

@@ -56,8 +56,6 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastItem> {
         ((TextView) convertView.findViewById(R.id.timeBoxDailyForecast)).setText(format1.format(forecast.getForecast().getDate() * 1000L));
         ((TextView) convertView.findViewById(R.id.temperatureBoxDailyForecast)).setText(forecast.getForecast().getTemperature() + "°");
         ((TextView) convertView.findViewById(R.id.weatherNameBoxDailyForecast)).setText(forecast.getForecast().getWeatherDetailedType().substring(0,1).toUpperCase() + forecast.getForecast().getWeatherDetailedType().substring(1));
-        ((TextView) convertView.findViewById(R.id.pish1)).setText(Integer.toString(forecast.getkIndex()));
-
         return convertView;
     }
 
@@ -69,5 +67,13 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastItem> {
         this.weathers = weathers;
         addAll(weathers);
         System.out.println("count " + getCount());
+    }
+
+    public ArrayList<DailyForecastItem> getAllItems() {
+        weathers.clear();
+        for (int i = 0; i < weathers.size(); i++) {
+            weathers.add(getItem(i));
+        }
+        return weathers;
     }
 }

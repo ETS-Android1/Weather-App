@@ -20,6 +20,21 @@ public class Forecast {
 
     private static final int KELVIN_TO_CELSIUS = 273;
 
+    public Forecast() {
+        this.id = 0;
+        this.fkCityId = 0;
+        this.weatherType = "";
+        this.temperature = 0;
+        this.humidity = 0;
+        this.wind_speed = 0;
+        this.pressure = 0;
+        this.wind_direction = 0;
+        this.date = 0;
+        this.group_code = 0;
+        this.weatherDetailedType = "";
+        this.kIndex = 0;
+    }
+
     public Forecast(long id, long fkCityId, String weatherType, int temperature, int humidity,
                     double wind_speed, int pressure, int wind_direction, int date, int group_code, String weatherDetailedType, int kIndex) {
         this.id = id;
