@@ -209,7 +209,10 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                             0)
                     );
                 }
-
+                System.out.println("out");
+                for (int i = 0; i <forecasts.size(); i++) {
+                    System.out.println(forecasts.get(i).toString());
+                }
                 new UpdateForecastTask().execute(forecasts);
                 sharer.shareForecast(forecasts);
 

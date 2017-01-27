@@ -29,4 +29,12 @@ public class DailyForecastItem {
     public void setkIndex(int kIndex) {
         this.kIndex = kIndex;
     }
+
+    @Override
+    public String toString() {
+        return "DailyForecastItem{" +
+                "forecast=" + forecast +
+                ", kIndex=" + kIndex +
+                '}';
+    }
 }

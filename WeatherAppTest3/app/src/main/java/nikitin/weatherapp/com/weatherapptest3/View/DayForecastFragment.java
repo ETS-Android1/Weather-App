@@ -8,6 +8,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,14 +37,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     private TextView windDirectionBox;
     private TextView kIndexBox;
     private ImageView weatherIconBox;
-    private View view;
-    private boolean parametersSet = false;
-    public ArrayList <DailyForecastItem>  listItems = new ArrayList<DailyForecastItem>();
-
-    public DayForecastFragment() {
-        presenter = new DayForecastPresenter(getActivity(), this);
-        adapter = DailyWeatherAdapter.getInstance(presenter);
-    }
 
     public static DayForecastFragment newInstance() {
         if (fragment == null) {
@@ -55,49 +48,46 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (view == null) {
+        View view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
+        dailyForecastView = (ListView) view.findViewById(R.id.daily_weather);
+        pressureBox = (TextView) view.findViewById(R.id.pressureBox);
+        windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
+        humidityBox = (TextView) view.findViewById(R.id.humidityBox);
+        windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
+        weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
+        kIndexBox = (TextView) view.findViewById(R.id.kIndexBox);
 
-            view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
-            dailyForecastView = (ListView) view.findViewById(R.id.daily_weather);
-            pressureBox = (TextView) view.findViewById(R.id.pressureBox);
-            windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
-            humidityBox = (TextView) view.findViewById(R.id.humidityBox);
-            windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
-            weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
-            kIndexBox = (TextView) view.findViewById(R.id.kIndexBox);
-        }
+        presenter = new DayForecastPresenter(getActivity(), this);
+        adapter = new DailyWeatherAdapter(presenter);
+        dailyForecastView.setAdapter(adapter);
+        tuneUpDailyForecastView();
+
         setHasOptionsMenu(true);
-
-        System.out.println("VIEW CREATED");
         return view;
     }
 
-    public void calculateViewSize() {
-        if (parametersSet) return;
-        adapter.add(new DailyForecastItem(null, 0));
-        adapter.notifyDataSetChanged();
-        int listViewHeight = dailyForecastView.getHeight();
-        int listElementHeight = dailyForecastView.getChildAt(0).getHeight();
-        int divider = Math.abs(dailyForecastView.getChildAt(0).getBottom() - dailyForecastView.getChildAt(1).getTop());
-        int topSpace = dailyForecastView.getChildAt(0).getTop();
-        presenter.setListViewParameters(listElementHeight, listViewHeight, divider, topSpace);
-        adapter.clear();
-        adapter.notifyDataSetChanged();
-        //Пустые вьюшки нужны что бы центрировать верхние и нижние значимые элементы списка.
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight / 2 - listElementHeight / 2);
-        LinearLayout indent = new LinearLayout(getActivity());
-        indent.setLayoutParams(layoutParams);
-        dailyForecastView.addHeaderView(indent, null, true);
-        dailyForecastView.addFooterView(indent, null, true);
-        dailyForecastView.setOnScrollListener(fragment);
-        dailyForecastView.scrollListBy(30);
-        parametersSet = true;
-    }
-    @Override
-    public void onStart() {
+    private void tuneUpDailyForecastView() {
         super.onStart();
-        dailyForecastView.setAdapter(adapter);
+        dailyForecastView.post(new Runnable() {
+            @Override
+            public void run() {
+                int listViewHeight = dailyForecastView.getHeight();
+                int listElementHeight = dailyForecastView.getChildAt(0).getHeight();
+                int divider = Math.abs(dailyForecastView.getChildAt(0).getBottom() - dailyForecastView.getChildAt(1).getTop());
+                int topSpace = dailyForecastView.getChildAt(0).getTop();
+                presenter.setListViewParameters(listElementHeight, listViewHeight, divider, topSpace);
+
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, listViewHeight / 2 - listElementHeight / 2);
+                LinearLayout indent = new LinearLayout(getActivity());
+                indent.setLayoutParams(layoutParams);
+                dailyForecastView.addHeaderView(indent, null, true);
+                dailyForecastView.addFooterView(indent, null, true);
+                dailyForecastView.setOnScrollListener(fragment);
+                dailyForecastView.scrollListBy(30);
+            }
+        });
     }
+
 
     public ListView getDailyForecastView() {
         return dailyForecastView;
@@ -110,15 +100,11 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         menu.setGroupVisible(R.id.cities_group, false);
     }
 
-
-    public void updateView(ArrayList<DailyForecastItem> list) {
-        adapter.setData(list);
-    }
-
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         presenter.onScroll(firstVisibleItem, dailyForecastView.getChildAt(0).getBottom());
     }
+
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
         switch (scrollState) {
@@ -139,19 +125,34 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         }
     }
 
-    public void setForecasts(ArrayList<Forecast> forecasts) {
-        presenter.setForecasts(forecasts);
-        presenter.setWeatherForecast(presenter.getForecasts());
-        if (dailyForecastView!= null) {
-            calculateViewSize();
+    public void setWeatherForecast(ArrayList<Forecast> forecasts) {
+        System.out.println("out2" +forecasts.size());
+        for (int i = 0; i < forecasts.size(); i++) {
+            System.out.println("pish " +forecasts.get(i));
         }
+        presenter.setWeatherForecasts(forecasts);
     }
 
-    public void setGeoStormForecast(ArrayList<GeoStorm> forecast) {
-        presenter.setGeoStormForecast(forecast);
+    public void setGeostormForecast(ArrayList<GeoStorm> geoStorms) {
+        presenter.setGeoStorms(geoStorms);
+    }
+
+    public void setForecasts(ArrayList<GeoStorm> geoStorms, ArrayList<Forecast> weatherForecast) {
+        presenter.setForecasts(geoStorms, weatherForecast);
+    }
+    public void setAdapter(ArrayList<DailyForecastItem> items) {
+        adapter.setData(items);
     }
 
     public ArrayList<DailyForecastItem> getData() {
         return adapter.getAllItems();
+    }
+
+    public void setListViewData() {
+
+    }
+
+    public ListView getListView() {
+        return dailyForecastView;
     }
 }

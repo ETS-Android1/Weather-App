@@ -23,7 +23,7 @@ public class Forecast {
     public Forecast() {
         this.id = 0;
         this.fkCityId = 0;
-        this.weatherType = "";
+        this.weatherType = "none";
         this.temperature = 0;
         this.humidity = 0;
         this.wind_speed = 0;
@@ -31,7 +31,7 @@ public class Forecast {
         this.wind_direction = 0;
         this.date = 0;
         this.group_code = 0;
-        this.weatherDetailedType = "";
+        this.weatherDetailedType = "none";
         this.kIndex = 0;
     }
 
@@ -137,5 +137,23 @@ public class Forecast {
 
     public static int kelvinToCelsius(double kelvinDegrees) {
         return (int)kelvinDegrees - KELVIN_TO_CELSIUS;
+    }
+
+    @Override
+    public String toString() {
+        return "Forecast{" +
+                "id=" + id +
+                ", fkCityId=" + fkCityId +
+                ", weatherType='" + weatherType + '\'' +
+                ", temperature=" + temperature +
+                ", humidity=" + humidity +
+                ", wind_speed=" + wind_speed +
+                ", pressure=" + pressure +
+                ", wind_direction=" + wind_direction +
+                ", date=" + date +
+                ", group_code=" + group_code +
+                ", weatherDetailedType='" + weatherDetailedType + '\'' +
+                ", kIndex=" + kIndex +
+                '}';
     }
 }

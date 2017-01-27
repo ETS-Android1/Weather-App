@@ -26,4 +26,12 @@ public class GeoStorm {
     public void setkIndex(int kIndex) {
         this.kIndex = kIndex;
     }
+
+    @Override
+    public String toString() {
+        return "GeoStorm{" +
+                "date=" + date +
+                ", kIndex=" + kIndex +
+                '}';
+    }
 }

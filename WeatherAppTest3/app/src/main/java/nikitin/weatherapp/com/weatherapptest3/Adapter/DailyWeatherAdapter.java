@@ -26,20 +26,19 @@ import nikitin.weatherapp.com.weatherapptest3.R;
  * Created by Влад on 22.10.2016.
  */
 public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastItem> {
-    private static DailyWeatherAdapter adapter;
     private static DayForecastPresenter presenter;
     private ArrayList<DailyForecastItem> weathers;
+    private int FORECAST_AMOUNT = 9;
 
-    private DailyWeatherAdapter() {
+    public DailyWeatherAdapter(DayForecastPresenter presenter) {
         super(MainActivity.getAppContext(), 0, new ArrayList<DailyForecastItem>());
-    }
+        this.presenter = presenter;
 
-    public static DailyWeatherAdapter getInstance(DayForecastPresenter p) {
-        if (adapter == null) {
-            presenter = p;
-            adapter = new DailyWeatherAdapter();
+        //Добавляю пустых элементов
+        for (int i = 0; i < FORECAST_AMOUNT; i++) {
+            add(new DailyForecastItem(new Forecast(), 0));
         }
-        return adapter;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -59,14 +58,23 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastItem> {
         return convertView;
     }
 
-    public void setData(ArrayList<DailyForecastItem> weathers) {
-        System.out.println("weathers " + weathers.size());
-        clear();
+    public void setData(ArrayList<DailyForecastItem> items) {
+        for (int i = 0; i < 9; i ++) {
+            insert(items.get(i), i);
+            remove(getItem(i+1));
+        }
+
+        for (int i = 0; i < getCount(); i++) {
+            System.out.println(getItem(i));
+        }
+//        insert();
+//        clear();
+//        addAll(items);
+//        System.out.println("printing");
+//        for (int i = 0; i < items.size(); i++) {
+//            System.out.println("ololo " +items.get(i));
+//        }
         notifyDataSetChanged();
-        System.out.println("weathers " + getCount());
-        this.weathers = weathers;
-        addAll(weathers);
-        System.out.println("count " + getCount());
     }
 
     public ArrayList<DailyForecastItem> getAllItems() {
