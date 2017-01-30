@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Cursor cursor = CitySuggestionProvider.cursor;
             cursor.move(0);
             int cityId = cursor.getInt(cursor.getColumnIndex(CitySuggestionProvider.SUGGEST_COLUMN_CITY_ID));
+
             ((CitiesFragment)tabsPagerAdapter.getItem(0)).addCityData(cityId);
         }
     }

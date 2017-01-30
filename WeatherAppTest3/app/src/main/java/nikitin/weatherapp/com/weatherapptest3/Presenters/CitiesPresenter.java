@@ -80,23 +80,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                System.out.println("cityId " +cityId);
-                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
-                WeatherResponse weatherResponse = response.body();
-                City city = new City(weatherResponse.getId(),
-                        weatherResponse.getName(),
-                        weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(),
-                        weatherResponse.getCoordinates().getLongitude(),
-                        City.kelvinToCelsius((int)weatherResponse.getData().getTemp()),
-                        weatherResponse.getWeathers().get(0).getMain(),
-                        weatherResponse.getData().getHumidity(),
-                        weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(),
-                        (int)weatherResponse.getWind().getDeg(),
-                        weatherResponse.getDt(),
-                        weatherResponse.getWeathers().get(0).getId(),
-                        weatherResponse.getWeathers().get(0).getDescription());
+                City city = parseCity(response.body());
                 new AddCityTask().execute(city);
                 view.addCity(city);
             }
@@ -109,24 +93,9 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityId(cityId, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                System.out.println("cityId " +cityId);
-                System.out.println("message " +response.code() +" " +response.message() +" " +response.errorBody() +" " +response.isSuccessful() +" " +response.headers() +" " +response.raw());
-                WeatherResponse weatherResponse = response.body();
-                City city = new City(cityId,
-                        weatherResponse.getName(),
-                        weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(),
-                        weatherResponse.getCoordinates().getLongitude(),
-                        City.kelvinToCelsius(weatherResponse.getData().getTemp()),
-                        weatherResponse.getWeathers().get(0).getMain(),
-                        weatherResponse.getData().getHumidity(),
-                        weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(),
-                        (int)weatherResponse.getWind().getDeg(),
-                        weatherResponse.getDt(),
-                        weatherResponse.getWeathers().get(0).getId(),
-                        weatherResponse.getWeathers().get(0).getDescription());
+                City city = parseCity(response.body());
                 sharer.shareCity(city);
+                view.updateSmallWeather(city.getTemperature(), city.getWeather_type());
                 new UpdateCityTask().execute(city);
             }
             @Override
@@ -134,6 +103,24 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 new GetCityTask().execute(cityId);
             }
         });
+    }
+
+    private City parseCity(WeatherResponse weatherResponse) {
+        City city = new City(weatherResponse.getId(),
+                weatherResponse.getName(),
+                weatherResponse.getSys().getCountry(),
+                weatherResponse.getCoordinates().getLatitude(),
+                weatherResponse.getCoordinates().getLongitude(),
+                City.kelvinToCelsius(weatherResponse.getData().getTemp()),
+                weatherResponse.getWeathers().get(0).getMain(),
+                weatherResponse.getData().getHumidity(),
+                weatherResponse.getWind().getSpeed(),
+                (int)weatherResponse.getData().getPressure(),
+                (int)weatherResponse.getWind().getDeg(),
+                weatherResponse.getDt(),
+                weatherResponse.getWeathers().get(0).getId(),
+                weatherResponse.getWeathers().get(0).getDescription());
+        return city;
     }
 
     public void deleteCity(long position) {

@@ -16,25 +16,16 @@ import nikitin.weatherapp.com.weatherapptest3.Presenters.CitiesPresenter;
  * Created by Влад on 28.07.2016.
  */
 public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickListener{
-    private ArrayList<City> cities;
-    private static CitiesAdapter adapter;
-    private static CitiesPresenter presenter;
+    final private int TYPE_ITEM_CITY = 0;
+    final private int TYPE_ITEM_LOCATION = 1;
+    final private int TYPES_AMOUNT = 2;
+
+    private CitiesPresenter presenter;
     private int selectedPosition = -1;
 
-    final int TYPE_ITEM_CITY = 0;
-    final int TYPE_ITEM_LOCATION = 1;
-    final int TYPES_AMOUNT = 2;
-
-    public CitiesAdapter(ArrayList<City> cities) {
+    public CitiesAdapter(ArrayList<City> cities, CitiesPresenter presenter) {
         super(MainActivity.getAppContext(), 0, cities);
-    }
-
-    public static CitiesAdapter getInstance(CitiesPresenter p) {
-        if (adapter == null) {
-            adapter = new CitiesAdapter(new ArrayList<City>());
-            presenter = p;
-        }
-        return adapter;
+        this.presenter = presenter;
     }
 
     @Override
@@ -65,7 +56,7 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
 
         City city = getItem(position);
         cityName.setText(city.getName() + ", " +city.getCountry());
-        cityShortWeather.setText("zaglyshka");
+        cityShortWeather.setText(city.getTemperature() + "°, " +city.getWeather_type());
         return convertView;
     }
 
@@ -109,9 +100,8 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
     }
 
     public void setDatas(ArrayList<City> list) {
-        cities = list;
         clear();
-        addAll(cities);
+        addAll(list);
         notifyDataSetChanged();
     }
 

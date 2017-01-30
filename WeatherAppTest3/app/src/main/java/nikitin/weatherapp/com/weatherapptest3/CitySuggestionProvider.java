@@ -38,6 +38,7 @@ public class CitySuggestionProvider extends ContentProvider{
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] strings, String s, String[] strings1, String s1) {
+        if (uri.getLastPathSegment().length() < 3) return null;
         //Получаю список городов которые подходят под пользовательский поиск
         Response<FindCityResponse> callback = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.OPENWEATHER).findCity(uri.getLastPathSegment());
         findCityList = callback.body().getWeatherList();

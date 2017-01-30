@@ -28,7 +28,6 @@ import retrofit2.Response;
 public class ExtremeWeatherFragment extends Fragment {
     ExtremeWeatherPresenter presenter;
     View view;
-    TextView geomagneticStormTextView;
     public ExtremeWeatherFragment(){
         this.presenter = new ExtremeWeatherPresenter(this);
     }
@@ -37,7 +36,6 @@ public class ExtremeWeatherFragment extends Fragment {
                              Bundle savedInstanceState) {
         if (view == null) {
             view = inflater.inflate(R.layout.fragment_extreme_weather, container, false);
-            geomagneticStormTextView = (TextView) view.findViewById(R.id.geomagneticStormBox);
         }
         presenter.getSpaceWeatherData();
         return view;
@@ -46,7 +44,6 @@ public class ExtremeWeatherFragment extends Fragment {
     public void setGeomagneticBox(GeomagneticStorm geomagneticStorm) {
         System.out.println("message");
         System.out.println(geomagneticStorm.getMessage());
-        geomagneticStormTextView.setText(geomagneticStorm.getMessage());
     }
 
 

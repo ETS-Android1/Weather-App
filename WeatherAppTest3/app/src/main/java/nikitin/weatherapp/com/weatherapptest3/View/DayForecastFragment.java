@@ -26,10 +26,11 @@ import nikitin.weatherapp.com.weatherapptest3.WeatherDrawable;
  * Created by Влад on 22.10.2016.
  */
 public class DayForecastFragment extends Fragment implements AbsListView.OnScrollListener{
-    DayForecastPresenter presenter;
-    private DailyWeatherAdapter adapter;
+    private static DayForecastPresenter presenter;
+    private static DailyWeatherAdapter adapter;
     private static DayForecastFragment fragment;
     public static final String TITLE = "Daily Forecast";
+    private View view;
     private ListView dailyForecastView;
     private TextView pressureBox;
     private TextView windSpeedBox;
@@ -41,14 +42,24 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     public static DayForecastFragment newInstance() {
         if (fragment == null) {
             fragment = new DayForecastFragment();
+            presenter = new DayForecastPresenter(fragment);
+            adapter = new DailyWeatherAdapter(presenter);
         }
         return fragment;
     }
 
     @Override
+    public void onCreate(Bundle saveInstanceState) {
+        super.onCreate(saveInstanceState);
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
+        if (view != null) return view;
+
+        view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
         dailyForecastView = (ListView) view.findViewById(R.id.daily_weather);
         pressureBox = (TextView) view.findViewById(R.id.pressureBox);
         windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
@@ -56,18 +67,14 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
         weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
         kIndexBox = (TextView) view.findViewById(R.id.kIndexBox);
-
-        presenter = new DayForecastPresenter(getActivity(), this);
-        adapter = new DailyWeatherAdapter(presenter);
         dailyForecastView.setAdapter(adapter);
-        tuneUpDailyForecastView();
 
+        tuneUpDailyForecastView();
         setHasOptionsMenu(true);
         return view;
     }
 
     private void tuneUpDailyForecastView() {
-        super.onStart();
         dailyForecastView.post(new Runnable() {
             @Override
             public void run() {
@@ -86,11 +93,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 dailyForecastView.scrollListBy(30);
             }
         });
-    }
-
-
-    public ListView getDailyForecastView() {
-        return dailyForecastView;
     }
 
     @Override
@@ -126,33 +128,18 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     }
 
     public void setWeatherForecast(ArrayList<Forecast> forecasts) {
-        System.out.println("out2" +forecasts.size());
-        for (int i = 0; i < forecasts.size(); i++) {
-            System.out.println("pish " +forecasts.get(i));
-        }
-        presenter.setWeatherForecasts(forecasts);
+        presenter.setWeatherForecasts(new ArrayList<>(forecasts.subList(0, 8)));
     }
 
     public void setGeostormForecast(ArrayList<GeoStorm> geoStorms) {
         presenter.setGeoStorms(geoStorms);
     }
 
-    public void setForecasts(ArrayList<GeoStorm> geoStorms, ArrayList<Forecast> weatherForecast) {
-        presenter.setForecasts(geoStorms, weatherForecast);
-    }
     public void setAdapter(ArrayList<DailyForecastItem> items) {
         adapter.setData(items);
     }
 
     public ArrayList<DailyForecastItem> getData() {
         return adapter.getAllItems();
-    }
-
-    public void setListViewData() {
-
-    }
-
-    public ListView getListView() {
-        return dailyForecastView;
     }
 }

@@ -31,13 +31,7 @@ import retrofit2.Response;
  * Created by Влад on 26.10.2016.
  */
 public class DayForecastPresenter  {
-
-    private DayForecastPresenter presenter;
-    private OpenWeatherMapAPI api;
     private DayForecastFragment fragment;
-    private Activity activity;
-    private ListView forecastList;
-    private DatabaseHandler handler;
     private int listElementHeight;
     private int listViewHeight;
     private int firstVisibleItemNumber;
@@ -46,23 +40,13 @@ public class DayForecastPresenter  {
     private int divider;
     private int selectedViewPosition;
     private int indent;
-
-    public ArrayList <DailyForecastItem>  items = new ArrayList<DailyForecastItem>();
     private ArrayList <GeoStorm> geoStorms;
     private ArrayList <Forecast> weatherForecasts;
-    private boolean weatherSet = false;
-    private boolean geoStormSet = false;
 
     private final int FORECAST_AMOUNT = 9;
-    public boolean isParametrsSet = false;
 
-    public DayForecastPresenter(final Activity activity, DayForecastFragment fragment) {
-        this.presenter = this;
-        this.activity = activity;
+    public DayForecastPresenter(DayForecastFragment fragment) {
         this.fragment = fragment;
-        forecastList = fragment.getDailyForecastView();
-        api = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.OPENWEATHER);
-        handler = DatabaseHandler.getInstance(MainActivity.getAppContext());
     }
 
     public void onScroll(int firstVisibleItemNumber, int firstVisibleItemBottom) {
@@ -75,8 +59,6 @@ public class DayForecastPresenter  {
         this.listViewHeight = listViewHeight;
         this.divider = divider;
         this.topSpace = topSpace;
-
-        isParametrsSet = true;
     }
 
 
@@ -100,128 +82,23 @@ public class DayForecastPresenter  {
         return indent;
     }
 
-    public void setForecasts(ArrayList<GeoStorm> geoStorms, ArrayList<Forecast> weatherForecasts) {
-        if (geoStorms == null) this.weatherForecasts = weatherForecasts;
-        if (weatherForecasts == null) this.geoStorms = geoStorms;
-        System.out.println();
-        if (this.weatherForecasts != null && this.geoStorms !=null) {
-            System.out.println("shit");
-            ArrayList<DailyForecastItem> items = new ArrayList<>();
-            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-                items.add(i, new DailyForecastItem(this.weatherForecasts.get(i), this.geoStorms.get(i).getkIndex()));
-                System.out.println("items " +i +"   " +items.get(i).toString());
-            }
-
-            fragment.setAdapter(items);
-        }
-    }
-
     public void setWeatherForecasts(ArrayList<Forecast> forecast) {
-        this.weatherForecasts = forecast;
-        weatherSet = true;
-
-        if (geoStormSet) {
-            System.out.println("worked");
-            items.clear();
-            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-                items.add(new DailyForecastItem(new Forecast(), 0));
-            }
-            fragment.setAdapter(items);
-            weatherSet = false;
-            geoStormSet = false;
+        weatherForecasts = forecast;
+        if (geoStorms == null || geoStorms.isEmpty()) return;
+        ArrayList<DailyForecastItem> forecastItems = new ArrayList<>();
+        for (int i = 0; i < weatherForecasts.size(); i++) {
+            forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), geoStorms.get(i).getkIndex()));
         }
+        fragment.setAdapter(forecastItems);
     }
 
     public void setGeoStorms(ArrayList<GeoStorm> geoStorms) {
         this.geoStorms = geoStorms;
-        geoStormSet = true;
-        System.out.println("worked");
-        if (weatherSet) {
-            items.clear();
-            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-                items.add(new DailyForecastItem(new Forecast(), 0));
-            }
-            fragment.setAdapter(items);
-            weatherSet = false;
-            geoStormSet = false;
+        if (weatherForecasts == null || weatherForecasts.isEmpty()) return;
+        ArrayList<DailyForecastItem> forecastItems = new ArrayList<>();
+        for (int i = 0; i < weatherForecasts.size(); i++) {
+            forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), geoStorms.get(i).getkIndex()));
         }
+        fragment.setAdapter(forecastItems);
     }
-
-
-
-//    set
-//    private void setWeatherForecast1(ArrayList<Forecast> forecasts) {
-//
-//        if (items.isEmpty()) {
-//            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//                items.add(new DailyForecastItem(forecasts.get(i), 0));
-//            }
-//            return;
-//        }
-//        for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//            items.get(i).setForecast(forecasts.get(i));
-//        }
-//        fragment.setAdapter(items);
-//    }
-//    private void setGeoStormForecast1(ArrayList<GeoStorm> geoStorms) {
-//        if (items.isEmpty()) {
-//            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//                items.add(new DailyForecastItem(null, items.get(i).getkIndex()));
-//            }
-//            return;
-//        }
-//        for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//            items.get(i).setkIndex(geoStorms.get(i).getkIndex());
-//        }
-//        fragment.setAdapter(items);
-//    }
-//
-//    public void setItems(ArrayList<DailyForecastItem> items) {
-//        this.items = items;
-//    }
-//
-//    public ArrayList<DailyForecastItem> getItems() {
-//        return items;
-//    }
-//
-//    public void setWeathForecast(ArrayList<Forecast> forecasts) {
-//        this.forecasts = new ArrayList<>(forecasts.subList(0, FORECAST_AMOUNT));
-//    }
-//    public ArrayList<Forecast> getWeathForecast() {
-//        return forecasts;
-//    }
-//
-//
-//    public ArrayList<GeoStorm> getGeoStormForecast() {
-//        return geoStormForecast;
-//    }
-//
-//    public ArrayList<DailyForecastItem> getListItems() {
-//        return listItems;
-//    }
-//public void setWeatherForecast(ArrayList<Forecast> forecasts) {
-//    if (listItems.isEmpty()) {
-//        for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//            listItems.add(new DailyForecastItem(forecasts.get(i), 0));
-//        }
-//        return;
-//    }
-//    for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//        listItems.get(i).setForecast(forecasts.get(i));
-//    }
-//    fragment.updateView(listItems);
-//}
-//
-//    public void setGeoStormForecast(ArrayList<GeoStorm> forecasts) {
-//        if (listItems.isEmpty()) {
-//            for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//                listItems.add(new DailyForecastItem(null, forecasts.get(i).getkIndex()));
-//            }
-//            return;
-//        }
-//        for (int i = 0; i < FORECAST_AMOUNT; i++) {
-//            listItems.get(i).setkIndex(forecasts.get(i).getkIndex());
-//        }
-//        fragment.updateView(listItems);
-//    }
 }

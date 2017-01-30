@@ -59,21 +59,8 @@ public class DailyWeatherAdapter extends ArrayAdapter<DailyForecastItem> {
     }
 
     public void setData(ArrayList<DailyForecastItem> items) {
-        for (int i = 0; i < 9; i ++) {
-            insert(items.get(i), i);
-            remove(getItem(i+1));
-        }
-
-        for (int i = 0; i < getCount(); i++) {
-            System.out.println(getItem(i));
-        }
-//        insert();
-//        clear();
-//        addAll(items);
-//        System.out.println("printing");
-//        for (int i = 0; i < items.size(); i++) {
-//            System.out.println("ololo " +items.get(i));
-//        }
+        clear();
+        addAll(items);
         notifyDataSetChanged();
     }
 

@@ -14,6 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+
 import nikitin.weatherapp.com.weatherapptest3.Adapter.CitiesAdapter;
 import nikitin.weatherapp.com.weatherapptest3.DataSharer;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
@@ -48,7 +51,7 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         presenter = new CitiesPresenter(this, getActivity());
-        adapter = CitiesAdapter.getInstance(presenter);
+        adapter = new CitiesAdapter(new ArrayList<City>(), presenter);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -106,4 +109,11 @@ public class CitiesFragment extends Fragment implements ListView.OnItemClickList
         adapter.notifyDataSetChanged();
     }
     public String getActiveCityName() {return adapter.getActiveCityName(selectedItemPosition);}
+
+    public void updateSmallWeather(int temp, String weatherType) {
+        System.out.println();
+        adapter.getItem(selectedItemPosition).setTemperature(temp);
+        adapter.getItem(selectedItemPosition).setWeather_type(weatherType);
+        adapter.notifyDataSetChanged();
+    }
 }

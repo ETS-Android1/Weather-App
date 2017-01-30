@@ -45,6 +45,7 @@ public class OpenWeatherMapAPI {
 
     public Response<FindCityResponse> findCity(String query) {
         final String SEARCH_TYPE = "like";
+        System.out.println("findCity q=" +query);
         try {
             Call<FindCityResponse> call = api.findCity(query, SEARCH_TYPE, API_KEY);
             return call.execute();
