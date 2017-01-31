@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -11,14 +13,13 @@ import com.google.android.gms.location.LocationServices;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,16 +27,12 @@ import nikitin.weatherapp.com.weatherapptest3.DataSharer;
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
-import nikitin.weatherapp.com.weatherapptest3.Model.Database.WeeklyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastResponse;
 import nikitin.weatherapp.com.weatherapptest3.Model.ForecastModel.ForecastWeather;
-import nikitin.weatherapp.com.weatherapptest3.Model.SpaceWeather.GeomagneticStorm;
 import nikitin.weatherapp.com.weatherapptest3.Preferences;
 import nikitin.weatherapp.com.weatherapptest3.View.CitiesFragment;
-import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.Data;
 import nikitin.weatherapp.com.weatherapptest3.Model.WeatherModel.WeatherResponse;
 import nikitin.weatherapp.com.weatherapptest3.rest.ApiClient;
 import nikitin.weatherapp.com.weatherapptest3.rest.OpenWeatherMapAPI;
@@ -50,24 +47,19 @@ import retrofit2.Response;
 public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
     private CitiesFragment view;
     private DatabaseHandler databaseHandler;
-
     private Activity mainActivity;
     private GoogleApiClient googleApiClient;
     private OpenWeatherMapAPI openWeatherMapAPI;
-    private OpenWeatherMapAPI geomagneticSormsAPI;
+    private OpenWeatherMapAPI geoMagneticStormsAPI;
     private Preferences preferences;
     private final int GPS_ELEMENT_POSITION = 0;
     private DataSharer sharer;
-
-    final private String yearPatternString = "Issued:\\s(\\d\\d\\d\\d)";
-    final private String datePatternString = "forecast\\s(\\d\\d?)\\s(\\w\\w\\w)";
-    final private String timeAndIndexPattern = "(\\d\\d)-\\d\\dUT\\s+(\\d)\\s+(\\d)\\s+(\\d)";
 
     public CitiesPresenter(CitiesFragment view, Activity activity) {
         mainActivity = activity;
         this.view = view;
         openWeatherMapAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.OPENWEATHER);
-        geomagneticSormsAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.SPACEWEATHER);
+        geoMagneticStormsAPI = OpenWeatherMapAPI.getNewInstance(ApiClient.Urls.SPACEWEATHER);
         preferences = Preferences.getInstance(mainActivity);
         sharer = (DataSharer) activity;
         databaseHandler = DatabaseHandler.getInstance(MainActivity.getAppContext());
@@ -85,7 +77,8 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 view.addCity(city);
             }
             @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) { t.printStackTrace();
+            public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                t.printStackTrace();
             }
         });
     }
@@ -128,16 +121,10 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     }
 
 
-    public ArrayList<City> restoreCities() {
-        ArrayList<City> cities = databaseHandler.getAllCities();
-        for (City city: cities) {
-            System.out.println("pop");
-            System.out.println(city);
-        }
+    public List<City> restoreCities() {
+        List<City> cities = databaseHandler.getAllCities();
         long gpsId = preferences.getGPSCityID();
         for (City city: cities) {
-            System.out.println("printing cities");
-            System.out.println(city);
             if (city.getId() == gpsId) {
                 cities.remove(city);
                 cities.add(0, city);
@@ -168,14 +155,18 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         Location mLastLocation;
         try {
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            System.out.println(mLastLocation.getLatitude() + " " +mLastLocation.getLongitude());
-            if (mLastLocation != null) {
-                getCityByCoordinate(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            if (mLastLocation == null){
+                throw new SecurityException();
             }
+            getCityByCoordinate(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         }
         catch(SecurityException ex) {
+            Toast toast = Toast.makeText(MainActivity.getAppContext(), "Can't find your current position. Please make sure you turn on GPS", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
+
+
 
     public void getForecast (final long cityId) {
         openWeatherMapAPI.getWeeklyForecastByCityId(cityId, new Callback<ForecastResponse>() {
@@ -192,15 +183,15 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                             (int)forecastResponse.getWind().getDeg(),
                             forecastResponse.getDt(),
                             forecastResponse.getWeathers().get(0).getId(),
-                            forecastResponse.getWeathers().get(0).getDescription(),
-                            0)
+                            forecastResponse.getWeathers().get(0).getDescription())
                     );
                 }
-                System.out.println("out");
-                for (int i = 0; i <forecasts.size(); i++) {
-                    System.out.println(forecasts.get(i).toString());
-                }
+
                 new UpdateForecastTask().execute(forecasts);
+                System.out.println("THIS IS FORECAST");
+                for (int i = 0; i < forecasts.size(); i++) {
+                    System.out.println(forecasts.get(i));
+                }
                 sharer.shareForecast(forecasts);
 
                 //Текущий отрезок прогноза который отдает сервер
@@ -209,15 +200,23 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             }
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
-                //sharer.shareForecast(databaseHandler.getForecast(cityId));
+                sharer.shareForecast(databaseHandler.getForecast(cityId));
+                System.out.println("currernt mills " +(System.currentTimeMillis() / 1000));
+                getGeomagneticForecast(System.currentTimeMillis() / 1000);
+                List<GeoStorm> geoStorms = databaseHandler.getAllGeoStorms();
+                for (GeoStorm geoStorm: geoStorms ) {
+                    System.out.println("pish " +geoStorm);
+                }
             }
         });
     }
 
     private void getGeomagneticForecast(final long current_dt) {
-        geomagneticSormsAPI.getGeomagneticStormData(new Callback<ResponseBody>() {
+        geoMagneticStormsAPI.getGeomagneticStormData(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+                System.out.println("there we are trying..." +response.message());
                 //Считываем файл
                 BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
                 String file = "";
@@ -229,20 +228,24 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 } catch (IOException ex) {
                     ex.getMessage();
                 }
-                System.out.println("DJDF UEQ");
+
+
                 ArrayList<GeoStorm> geoStormForecast = parseGeoStormForecast(current_dt, file);
                 sharer.shareGeoStormForecast(geoStormForecast);
+                new UpdateGeoStormsTask().execute(geoStormForecast);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                System.out.println(t.getMessage());
-                System.out.println(t.getStackTrace());
+                System.out.println("geomagnetic forecast offline");
+                sharer.shareGeoStormForecast(databaseHandler.getAllGeoStorms());
             }
         });
     }
 
     private ParsedDate parseDate(String file) {
+        final String yearPatternString = "Issued:\\s(\\d\\d\\d\\d)";
+        final String datePatternString = "forecast\\s(\\d\\d?)\\s(\\w\\w\\w)";
         Pattern p;
         Matcher m;
         //Парсим год
@@ -264,8 +267,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
     }
 
     private ArrayList<GeoStorm> parseGeoStormForecast(long current_dt, String file) {
-
-        System.out.println("KOT GEI");
+        final String timeAndIndexPattern = "(\\d\\d)-\\d\\dUT\\s+(\\d)\\s+(\\d)\\s+(\\d)";
         ParsedDate date = parseDate(file);
         int [] kIndex = new int [24];
         long [] time = new long[24];
@@ -295,7 +297,6 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 ex.printStackTrace();
             }
         }
-
         int index = 0;
         for (int i = 0; i < 24; i++) {
             if (time[i] == current_dt) {
@@ -303,11 +304,10 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
                 break;
             }
         }
+
         ArrayList<GeoStorm> geoStorms = new ArrayList<>(24);
-        System.out.println("YOU WANT A GEOSTORM AND NOW YOU WILL GET IT!!!!!111111");
         for (int i = index; i < 24; i++) {
             geoStorms.add(new GeoStorm(time[i], kIndex[i]));
-            System.out.println(geoStorms.get(i - index));
         }
         return geoStorms;
     }
@@ -349,21 +349,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         openWeatherMapAPI.getWeatherByCityCoordinate(latitude, longitude, new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                WeatherResponse weatherResponse = response.body();
-                City city = new City(weatherResponse.getId(),
-                        weatherResponse.getName(),
-                        weatherResponse.getSys().getCountry(),
-                        weatherResponse.getCoordinates().getLatitude(),
-                        weatherResponse.getCoordinates().getLongitude(),
-                        City.kelvinToCelsius((int)weatherResponse.getData().getTemp()),
-                        weatherResponse.getWeathers().get(0).getMain(),
-                        weatherResponse.getData().getHumidity(),
-                        weatherResponse.getWind().getSpeed(),
-                        (int)weatherResponse.getData().getPressure(),
-                        (int)weatherResponse.getWind().getDeg(),
-                        weatherResponse.getDt(),
-                        weatherResponse.getWeathers().get(0).getId(),
-                        weatherResponse.getWeathers().get(0).getDescription());
+                City city = parseCity(response.body());
                 view.updateGPSItem(city, GPS_ELEMENT_POSITION);
             }
             @Override
@@ -407,6 +393,14 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
         @Override
         protected void onPostExecute(City city) {
             sharer.shareCity(city);
+        }
+    }
+
+    private class UpdateGeoStormsTask extends AsyncTask<ArrayList<GeoStorm>, Void, Void> {
+        @Override
+        protected Void doInBackground(ArrayList<GeoStorm>... geoStorms) {
+            databaseHandler.updateGeoStorms(geoStorms[0]);
+            return null;
         }
     }
 }

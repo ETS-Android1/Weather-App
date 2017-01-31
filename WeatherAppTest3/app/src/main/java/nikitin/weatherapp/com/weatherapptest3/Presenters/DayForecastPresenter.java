@@ -9,6 +9,8 @@ import android.widget.ListView;
 import java.nio.channels.AsynchronousCloseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.DatabaseHandler;
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
@@ -82,23 +84,19 @@ public class DayForecastPresenter  {
         return indent;
     }
 
-    public void setWeatherForecasts(ArrayList<Forecast> forecast) {
-        weatherForecasts = forecast;
-        if (geoStorms == null || geoStorms.isEmpty()) return;
-        ArrayList<DailyForecastItem> forecastItems = new ArrayList<>();
-        for (int i = 0; i < weatherForecasts.size(); i++) {
-            forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), geoStorms.get(i).getkIndex()));
-        }
-        fragment.setAdapter(forecastItems);
-    }
+     public void setDailyForecastItems(List<Forecast> weathers, List<GeoStorm> geoStorms) {
+        if (weathers!=null) weatherForecasts = new ArrayList<>(weathers);
+        if (geoStorms!=null) this.geoStorms = new ArrayList<>(geoStorms);
 
-    public void setGeoStorms(ArrayList<GeoStorm> geoStorms) {
-        this.geoStorms = geoStorms;
-        if (weatherForecasts == null || weatherForecasts.isEmpty()) return;
         ArrayList<DailyForecastItem> forecastItems = new ArrayList<>();
-        for (int i = 0; i < weatherForecasts.size(); i++) {
-            forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), geoStorms.get(i).getkIndex()));
+
+        if (weatherForecasts != null && this.geoStorms!=null && !weatherForecasts.isEmpty() && !this.geoStorms.isEmpty()) {
+            for (int i = 0; i < 8; i++) {
+                forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), this.geoStorms.get(i).getkIndex()));
+            }
+            fragment.setAdapter(forecastItems);
+            weatherForecasts.clear();
+            this.geoStorms.clear();
         }
-        fragment.setAdapter(forecastItems);
     }
 }

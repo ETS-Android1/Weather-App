@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -14,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import nikitin.weatherapp.com.weatherapptest3.Adapter.DailyWeatherAdapter;
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
@@ -35,7 +39,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     private TextView pressureBox;
     private TextView windSpeedBox;
     private TextView humidityBox;
-    private TextView windDirectionBox;
     private TextView kIndexBox;
     private ImageView weatherIconBox;
 
@@ -64,10 +67,10 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
         pressureBox = (TextView) view.findViewById(R.id.pressureBox);
         windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
         humidityBox = (TextView) view.findViewById(R.id.humidityBox);
-        windDirectionBox = (TextView) view.findViewById(R.id.pishBox);
         weatherIconBox = (ImageView) view.findViewById(R.id.weatherIconBox);
         kIndexBox = (TextView) view.findViewById(R.id.kIndexBox);
         dailyForecastView.setAdapter(adapter);
+
 
         tuneUpDailyForecastView();
         setHasOptionsMenu(true);
@@ -118,7 +121,6 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
                 pressureBox.setText(Integer.toString(forecast.getForecast().getPressure()));
                 humidityBox.setText(Integer.toString(forecast.getForecast().getHumidity()));
                 windSpeedBox.setText(Double.toString(forecast.getForecast().getWind_speed()));
-                windDirectionBox.setText(Integer.toString(forecast.getForecast().getWind_direction()));
                 kIndexBox.setText(Integer.toString(forecast.getkIndex()));
                 Drawable icon = getContext().getResources().getDrawable(WeatherDrawable.getDrawable(forecast.getForecast().getWeatherType()), getActivity().getTheme());
                 weatherIconBox.setImageDrawable(icon);
@@ -126,20 +128,26 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
             }
         }
     }
-
-    public void setWeatherForecast(ArrayList<Forecast> forecasts) {
-        presenter.setWeatherForecasts(new ArrayList<>(forecasts.subList(0, 8)));
+    public void setDailyForecastItems(List<Forecast> forecasts, List<GeoStorm> geoStorms) {
+        presenter.setDailyForecastItems(forecasts, geoStorms);
     }
 
-    public void setGeostormForecast(ArrayList<GeoStorm> geoStorms) {
-        presenter.setGeoStorms(geoStorms);
-    }
-
-    public void setAdapter(ArrayList<DailyForecastItem> items) {
+    public void setAdapter (ArrayList<DailyForecastItem> items) {
         adapter.setData(items);
     }
 
     public ArrayList<DailyForecastItem> getData() {
         return adapter.getAllItems();
+    }
+
+    public void animate() {
+        Animation logoMoveAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.test_animation);
+        view.findViewById(R.id.humidityBoxIcon).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.test1));
+        view.findViewById(R.id.pressureBoxIcon).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.test2));
+        view.findViewById(R.id.windSpeedBoxIcon).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.test3));
+        view.findViewById(R.id.kIndexBoxIcon).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.test4));
+
+        Animation logoMoveAnimation2 = AnimationUtils.loadAnimation(getContext(), R.anim.test5);
+        view.findViewById(R.id.weatherIconBox).startAnimation(logoMoveAnimation2);
     }
 }

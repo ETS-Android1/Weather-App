@@ -1,6 +1,7 @@
 package nikitin.weatherapp.com.weatherapptest3;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
@@ -13,5 +14,5 @@ import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 public interface DataSharer {
     void shareForecast(ArrayList<Forecast> forecast);
     void shareCity(City city);
-    void shareGeoStormForecast(ArrayList<GeoStorm> forecast);
+    void shareGeoStormForecast(List<GeoStorm> forecast);
 }

@@ -15,13 +15,10 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     public static CitiesFragment citiesFragment;
     public static MainWindowFragment mainWindowFragment;
 
-    public ExtremeWeatherFragment extremeWeatherFragment;
-
     public TabsPagerAdapter(FragmentManager fm) {
         super(fm);
         citiesFragment = CitiesFragment.getInstance();
         mainWindowFragment = MainWindowFragment.getInstance();
-        extremeWeatherFragment = new ExtremeWeatherFragment();
     }
 
     @Override
@@ -31,12 +28,11 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             case 1: return mainWindowFragment;
             case 2: return DayForecastFragment.newInstance();
             case 3: return WeeklyForecastFragment.getInstance();
-            case 4: return extremeWeatherFragment;
         }
         return null;
     }
     @Override
     public int getCount() {
-        return 5;
+        return 4;
     }
 }

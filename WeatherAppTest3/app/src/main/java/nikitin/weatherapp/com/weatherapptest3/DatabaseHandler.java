@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
@@ -52,6 +53,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_FORECAST_DATE = "date";
     private static final String KEY_FORECAST_GROUP_CODE = "group_code";
     private static final String KEY_FORECAST_WEATHER_DETAILED_TYPE = "weather_detailed_type";
+    private static final String KEY_FORECAST_K_INDEX = "k_index";
 
     private static final String TABLE_GEOSTORM = "geostorm";
     private static final String KEY_GEOSTORM_DATE = "date";
@@ -97,7 +99,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 +KEY_FORECAST_WIND_DIRECTION +" INTEGER, "
                 +KEY_FORECAST_DATE +" INTEGER, "
                 +KEY_FORECAST_GROUP_CODE +" INTEGER, "
-                +KEY_FORECAST_WEATHER_DETAILED_TYPE +" TEXT"+")";
+                +KEY_FORECAST_WEATHER_DETAILED_TYPE +" TEXT, "
+                +KEY_FORECAST_K_INDEX +" INTEGER"+")";
         db.execSQL(CREATE_FORECAST_TABLE);
 
         String CREATE_GEOSTORM_TABLE = "CREATE TABLE " +TABLE_GEOSTORM +" ("
@@ -212,7 +215,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void addAllForecasts(ArrayList<Forecast> forecasts) {
+        System.out.println("Forecast size = " +forecasts.size());
         for (Forecast forecast : forecasts) {
+            System.out.println("pish  " +forecast);
             addForecast(forecast);
         }
     }
@@ -222,21 +227,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         addAllForecasts(forecasts);
     }
 
-//    public ArrayList<Forecast> getForecast(long fk_city_id) {
-//        SQLiteDatabase db = getReadableDatabase();
-//        Cursor cursor = db.query(TABLE_FORECAST, new String[]{KEY_FORECAST_ID, KEY_FORECAST_FK_CITY_ID,
-//                KEY_FORECAST_WEATHER_TYPE, KEY_FORECAST_TEMPERATURE, KEY_FORECAST_HUMIDITY, KEY_FORECAST_WIND_SPEED,
-//                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE, KEY_FORECAST_GROUP_CODE, KEY_FORECAST_WEATHER_DETAILED_TYPE}, KEY_FORECAST_FK_CITY_ID
-//                +" =?", new String[]{String.valueOf(fk_city_id)}, null, null, KEY_FORECAST_DATE + " ASC", null);
-//        cursor.moveToFirst();
-//        ArrayList<Forecast> list = new ArrayList<>();
-//        do {
-//            list.add(new Forecast(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4),
-//                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getString(10)));
-//        } while(cursor.moveToNext());
-//        cursor.close();
-//        return list;
-//    }
+    public ArrayList<Forecast> getForecast(long fk_city_id) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.query(TABLE_FORECAST, new String[]{KEY_FORECAST_ID, KEY_FORECAST_FK_CITY_ID,
+                KEY_FORECAST_WEATHER_TYPE, KEY_FORECAST_TEMPERATURE, KEY_FORECAST_HUMIDITY, KEY_FORECAST_WIND_SPEED,
+                KEY_FORECAST_PRESSURE, KEY_FORECAST_WIND_DIRECTION, KEY_FORECAST_DATE, KEY_FORECAST_GROUP_CODE, KEY_FORECAST_WEATHER_DETAILED_TYPE}, KEY_FORECAST_FK_CITY_ID
+                +" =?", new String[]{String.valueOf(fk_city_id)}, null, null, KEY_FORECAST_DATE + " ASC", null);
+        cursor.moveToFirst();
+        ArrayList<Forecast> list = new ArrayList<>();
+        do {
+            list.add(new Forecast(cursor.getInt(0), cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getInt(4),
+                    cursor.getDouble(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getString(10)));
+        } while(cursor.moveToNext());
+        cursor.close();
+        return list;
+    }
 
     public void deleteAllForecasts(long fk_city_id) {
         SQLiteDatabase db = getReadableDatabase();
@@ -266,7 +271,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.delete(TABLE_GEOSTORM, KEY_GEOSTORM_DATE +" = "+date, null);
     }
 
-    public void deleteAllOldGeoStorms(int date) {
+    public void deleteAllOldGeoStorms(long date) {
         SQLiteDatabase db = getReadableDatabase();
         db.delete(TABLE_GEOSTORM, KEY_GEOSTORM_DATE +" < " +date, null);
     }
@@ -282,5 +287,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.insertWithOnConflict(TABLE_GEOSTORM, null, values, SQLiteDatabase.CONFLICT_IGNORE);
             values.clear();
         }
+    }
+
+    public List<GeoStorm> getAllGeoStorms() {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " +TABLE_GEOSTORM, null);
+        cursor.moveToFirst();
+        ArrayList <GeoStorm> geoStorms = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            GeoStorm geoStorm = new GeoStorm(cursor.getInt(0), cursor.getInt(1));
+            geoStorms.add(geoStorm);
+        }
+        cursor.close();
+        return geoStorms;
+    }
+    public void updateGeoStorms(ArrayList<GeoStorm> geoStorms) {
+        addOrIgnoreGeoStorm(geoStorms);
+        deleteAllOldGeoStorms(geoStorms.get(0).getDate());
     }
 }

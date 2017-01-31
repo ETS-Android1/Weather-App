@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.ArrayList;
+import java.util.List;
+
 import nikitin.weatherapp.com.weatherapptest3.MainActivity;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
 import nikitin.weatherapp.com.weatherapptest3.R;
@@ -99,7 +101,7 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
         }
     }
 
-    public void setDatas(ArrayList<City> list) {
+    public void setDatas(List<City> list) {
         clear();
         addAll(list);
         notifyDataSetChanged();

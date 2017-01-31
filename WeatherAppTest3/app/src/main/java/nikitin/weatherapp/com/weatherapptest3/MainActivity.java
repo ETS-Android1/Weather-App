@@ -16,14 +16,18 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import nikitin.weatherapp.com.weatherapptest3.Model.DailyForecastItem;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.City;
+import nikitin.weatherapp.com.weatherapptest3.Model.Database.DailyForecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.Forecast;
 import nikitin.weatherapp.com.weatherapptest3.Model.Database.GeoStorm;
 import nikitin.weatherapp.com.weatherapptest3.Presenters.MainPresenter;
@@ -86,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     case 1: setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     case 2: setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
                     case 3: setTitle(WeeklyForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+                }
+                if (position == 2) {
+                    ((DayForecastFragment)tabsPagerAdapter.getItem(2)).animate();
                 }
         }
             @Override
@@ -180,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void shareForecast(ArrayList<Forecast> forecasts) {
-        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setWeatherForecast(forecasts);
+        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setDailyForecastItems(forecasts, null);
         ((WeeklyForecastFragment)tabsPagerAdapter.getItem(3)).setForecasts(forecasts);
     }
     @Override
@@ -188,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ((MainWindowFragment)tabsPagerAdapter.getItem(1)).setView(city);
     }
     @Override
-    public void shareGeoStormForecast(ArrayList<GeoStorm> forecast) {
-        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setGeostormForecast(forecast);
+    public void shareGeoStormForecast(List<GeoStorm> forecast) {
+        ((DayForecastFragment)tabsPagerAdapter.getItem(2)).setDailyForecastItems(null, forecast);
     }
 }

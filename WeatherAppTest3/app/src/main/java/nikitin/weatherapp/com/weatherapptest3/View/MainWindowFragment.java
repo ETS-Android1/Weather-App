@@ -3,6 +3,7 @@ package nikitin.weatherapp.com.weatherapptest3.View;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -83,7 +84,7 @@ public class MainWindowFragment extends Fragment {
         humidityBox.setText(Integer.toString(city.getHumidity()) + " %");
         pressureBox.setText(Integer.toString(city.getPressure()) + " Pa");
         windSpeedBox.setText(Integer.toString((int)city.getWind_speed()) + " MS");
-        Drawable icon = getContext().getResources().getDrawable(chooseWeatherIcon(city.getWeather_type()));
+        Drawable icon = ResourcesCompat.getDrawable(getResources(), chooseWeatherIcon(city.getWeather_type()), null);
         weatherIconBox.setImageDrawable(icon);
     }
 
