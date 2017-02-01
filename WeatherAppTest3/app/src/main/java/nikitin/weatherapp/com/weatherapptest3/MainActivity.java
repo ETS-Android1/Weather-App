@@ -85,11 +85,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 ImageView fourthTab = (ImageView)findViewById(R.id.fourth_tab);
                 fourthTab.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), getNavigationCircleDrawable(fourthActive)));
 
+                String activeCityName = CitiesFragment.getInstance().getActiveCityName();
                 switch(position) {
-                    case 0: setTitle(CitiesFragment.TITLE);
-                    case 1: setTitle(MainWindowFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
-                    case 2: setTitle(DayForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
-                    case 3: setTitle(WeeklyForecastFragment.TITLE +": " +CitiesFragment.getInstance().getActiveCityName());
+                    case 0: setTitle(CitiesFragment.TITLE); break;
+                    case 1: setTitle(MainWindowFragment.TITLE +": " +activeCityName); break;
+                    case 2: setTitle(DayForecastFragment.TITLE +": " +activeCityName); break;
+                    case 3: setTitle(WeeklyForecastFragment.TITLE +": " +activeCityName); break;
                 }
                 if (position == 2) {
                     ((DayForecastFragment)tabsPagerAdapter.getItem(2)).animate();

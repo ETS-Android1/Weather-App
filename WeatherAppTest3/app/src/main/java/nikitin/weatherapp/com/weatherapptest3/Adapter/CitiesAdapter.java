@@ -40,7 +40,7 @@ public class CitiesAdapter extends ArrayAdapter<City> implements Button.OnClickL
                     convertView.findViewById(R.id.deleteButton).setOnClickListener(this);
                     break;
                 case TYPE_ITEM_LOCATION:
-                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_city_2, parent, false);
+                    convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_gps, parent, false);
                     convertView.findViewById(R.id.findLocationButton).setOnClickListener(this);
                     break;
             }

@@ -6,11 +6,11 @@
     <ListView
         android:id="@+id/weekly_forecast"
         android:layout_width="match_parent"
-        android:dividerHeight="1dp"
-        android:divider="#b7b7b7"
         android:layout_height="match_parent"
+        android:dividerHeight="0.5dp"
+        android:divider="@color/colorPrimaryDark"
         android:clipToPadding="false"
         android:scrollbarStyle="outsideInset"
-        android:overScrollFooter="@android:color/transparent"
+        android:layout_margin="8dp"
         android:footerDividersEnabled="false"/>
 </LinearLayout>

@@ -1,0 +1,30 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp">
+        <TextView
+            android:id="@+id/cityName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_medium"
+            android:textStyle="normal"/>
+
+        <TextView
+            android:id="@+id/cityShotWeather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/text_small"
+            android:fontFamily="sans-serif-condensed"
+            android:textStyle="normal"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="@dimen/width_3"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"/>
+</merge>

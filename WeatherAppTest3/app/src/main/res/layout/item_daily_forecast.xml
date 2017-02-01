@@ -3,32 +3,35 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:weightSum="3">
+    android:gravity="center"
+    android:weightSum="5">
     <TextView
         android:id="@+id/timeBoxDailyForecast"
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/colorPrimary"
         android:gravity="center"
-        android:textSize="16sp"
-        android:textColor="#ffffff"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-condensed"/>
 
     <TextView
         android:id="@+id/weatherNameBoxDailyForecast"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:textSize="16sp"
-        android:textColor="#ffffff"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:gravity="center"
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/colorPrimary"
+        android:fontFamily="sans-serif-condensed"/>
 
     <TextView
         android:id="@+id/temperatureBoxDailyForecast"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:textColor="#ffffff"
+        android:textSize="@dimen/text_xlarge"
+        android:textColor="@color/colorPrimary"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:gravity="center"/>
 </LinearLayout>
 

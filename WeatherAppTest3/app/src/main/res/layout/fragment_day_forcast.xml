@@ -19,7 +19,7 @@
                 android:id="@+id/humidityBoxIcon"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/humidity_new"
+                android:src="@drawable/ic_clear_sky"
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/humidityBox"
@@ -35,7 +35,7 @@
                 android:id="@+id/windSpeedBoxIcon"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/wind_speed"
+                android:src="@drawable/ic_clear_sky"
                 android:layout_weight="1" />
 
             <TextView
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:src="@drawable/pressure_icon2"/>
+                android:src="@drawable/ic_clear_sky"/>
             <TextView
                 android:id="@+id/pressureBox"
                 android:layout_width="match_parent"
@@ -81,7 +81,7 @@
                 android:id="@+id/kIndexBoxIcon"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:src="@drawable/humidity_new"
+                android:src="@drawable/ic_clear_sky"
                 android:layout_weight="1"/>
             <TextView
                 android:id="@+id/kIndexBox"

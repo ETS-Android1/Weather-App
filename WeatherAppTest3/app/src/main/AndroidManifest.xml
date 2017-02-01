@@ -15,7 +15,8 @@
             android:authorities="nikitin.weatherapp.com.weatherapptest3"
             android:enabled="true"
             android:exported="true"/>
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

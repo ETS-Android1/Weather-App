@@ -200,10 +200,10 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             }
             @Override
             public void onFailure(Call<ForecastResponse> call, Throwable t) {
-                sharer.shareForecast(databaseHandler.getForecast(cityId));
+                sharer.shareForecast(databaseHandler.getForecast(cityId, System.currentTimeMillis() / 1000));
                 System.out.println("currernt mills " +(System.currentTimeMillis() / 1000));
                 getGeomagneticForecast(System.currentTimeMillis() / 1000);
-                List<GeoStorm> geoStorms = databaseHandler.getAllGeoStorms();
+                List<GeoStorm> geoStorms = databaseHandler.getAllGeoStorms(System.currentTimeMillis() / 1000);
                 for (GeoStorm geoStorm: geoStorms ) {
                     System.out.println("pish " +geoStorm);
                 }
@@ -238,7 +238,7 @@ public class CitiesPresenter implements GoogleApiClient.ConnectionCallbacks, Goo
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 System.out.println("geomagnetic forecast offline");
-                sharer.shareGeoStormForecast(databaseHandler.getAllGeoStorms());
+                sharer.shareGeoStormForecast(databaseHandler.getAllGeoStorms(System.currentTimeMillis()/1000));
             }
         });
     }
