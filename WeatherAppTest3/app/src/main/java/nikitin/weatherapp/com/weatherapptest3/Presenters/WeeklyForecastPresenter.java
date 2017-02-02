@@ -34,9 +34,11 @@ public class WeeklyForecastPresenter {
     public void getWeeklyForecast() {
         int segmentsPerDay = 8;
         int a = 0;
-        int b = forecasts.size() % segmentsPerDay;
+        int modulo = forecasts.size() % segmentsPerDay;
+        int b = (modulo == 0) ? segmentsPerDay : modulo;
+        int numberOfDays = (int)Math.ceil(forecasts.size() / segmentsPerDay);
         ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
-        for (int i = 0; i < 5; i ++) {
+        for (int i = 0; i < numberOfDays; i ++) {
             if (b == 0) b = segmentsPerDay;
             list.add(findDayDataForWeeklyForecast(forecasts.subList(a, b)));
             a = b;

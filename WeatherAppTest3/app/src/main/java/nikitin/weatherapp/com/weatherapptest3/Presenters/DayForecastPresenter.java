@@ -42,8 +42,8 @@ public class DayForecastPresenter  {
     private int divider;
     private int selectedViewPosition;
     private int indent;
-    private ArrayList <GeoStorm> geoStorms;
-    private ArrayList <Forecast> weatherForecasts;
+    private List <GeoStorm> geoStorms;
+    private List <Forecast> weatherForecasts;
 
     private final int FORECAST_AMOUNT = 9;
 
@@ -85,8 +85,12 @@ public class DayForecastPresenter  {
     }
 
      public void setDailyForecastItems(List<Forecast> weathers, List<GeoStorm> geoStorms) {
-        if (weathers!=null) weatherForecasts = new ArrayList<>(weathers);
-        if (geoStorms!=null) this.geoStorms = new ArrayList<>(geoStorms);
+        if (weathers!=null) {
+            weatherForecasts = new ArrayList<>(weathers);
+        }
+        if (geoStorms!=null) {
+            this.geoStorms = new ArrayList<>(geoStorms);
+        }
 
         ArrayList<DailyForecastItem> forecastItems = new ArrayList<>();
 
@@ -95,8 +99,6 @@ public class DayForecastPresenter  {
                 forecastItems.add(new DailyForecastItem(weatherForecasts.get(i), this.geoStorms.get(i).getkIndex()));
             }
             fragment.setAdapter(forecastItems);
-            weatherForecasts.clear();
-            this.geoStorms.clear();
         }
     }
 }

@@ -60,9 +60,9 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (view != null) return view;
 
-        view = inflater.inflate(R.layout.fragment_day_forcast, container, false);
+        if (view != null) return view;
+        view = inflater.inflate(R.layout.fragment_day_forecast2, container, false);
         dailyForecastView = (ListView) view.findViewById(R.id.daily_weather);
         pressureBox = (TextView) view.findViewById(R.id.pressureBox);
         windSpeedBox = (TextView) view.findViewById(R.id.windSpeedBox);
@@ -149,5 +149,10 @@ public class DayForecastFragment extends Fragment implements AbsListView.OnScrol
 
         Animation logoMoveAnimation2 = AnimationUtils.loadAnimation(getContext(), R.anim.test5);
         view.findViewById(R.id.weatherIconBox).startAnimation(logoMoveAnimation2);
+
+        view.findViewById(R.id.humidityBox).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.instant_appear));
+        view.findViewById(R.id.pressureBox).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.instant_appear));
+        view.findViewById(R.id.windSpeedBox).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.instant_appear));
+        view.findViewById(R.id.kIndexBox).startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.instant_appear));
     }
 }
