@@ -1,5 +1,6 @@
 package nikitin.weatherapp.com.weatherapptest3.Presenters;
 
+import android.util.Log;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -34,21 +35,33 @@ public class WeeklyForecastPresenter {
     public void getWeeklyForecast() {
         int segmentsPerDay = 8;
         int a = 0;
-        int modulo = forecasts.size() % segmentsPerDay;
-        int b = (modulo == 0) ? segmentsPerDay : modulo;
-        int numberOfDays = (int)Math.ceil(forecasts.size() / segmentsPerDay);
-        ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
-        for (int i = 0; i < numberOfDays; i ++) {
-            if (b == 0) b = segmentsPerDay;
-            list.add(findDayDataForWeeklyForecast(forecasts.subList(a, b)));
-            a = b;
-            b += segmentsPerDay;
+
+/*        final Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(forecasts.get(0).getDate() * 1000);*/
+
+        Date date = new Date(forecasts.get(0).getDate() * 1000L);
+
+
+        int lastDayOfWeek = date.getDay();
+        final ArrayList<WeeklyForecast> list = new ArrayList<WeeklyForecast>(5);
+        final ArrayList<Forecast> day = new ArrayList<>(segmentsPerDay);
+        for (int i = 0; i < forecasts.size(); i++) {
+            Date date2 = new Date(forecasts.get(i).getDate() * 1000L);
+            final int currentDayNumber = date2.getDay();
+            if (lastDayOfWeek != currentDayNumber || i + 1 == forecasts.size()) {
+                list.add(findDayDataForWeeklyForecast(day));
+                day.clear();
+                lastDayOfWeek = currentDayNumber;
+            }
+            day.add(forecasts.get(i));
         }
+
         fragment.updateWeeklyForecastList(list);
     }
 
 
     private WeeklyForecast findDayDataForWeeklyForecast  (List<Forecast> dayForecast) {
+        Log.d("size", ""+dayForecast.size());
         String dayName = findDayByDate(dayForecast.get(0).getDate());
         String weatherName;
         int maxTemp = dayForecast.get(0).getTemperature();
@@ -84,23 +97,28 @@ public class WeeklyForecastPresenter {
         return new WeeklyForecast(dayName, modeWeather.getGroupName(), weatherName, maxTemp, minTemp);
     }
 
-    private String findDayByDate(int dt) {
+    private String findDayByDate(long dt) {
+        Date date = new Date(dt * 1000L);
+
+        Log.d("date", ""+date.getDay());
+
         TimeZone timeZone = TimeZone.getTimeZone("UTC");
         Calendar calendar = Calendar.getInstance(timeZone);
-        calendar.setTime(new Date(dt * 1000));
+        calendar.setTime(new Date(dt * 1000L));
         if (calendar.getFirstDayOfWeek() == Calendar.SUNDAY) {
             calendar.add(Calendar.DAY_OF_WEEK, 1);
         }
 
         System.out.println("olololololololooloool" +calendar.getFirstDayOfWeek());
-        switch (calendar.get(Calendar.DAY_OF_WEEK)) {
-            case Calendar.MONDAY: return "Monday";
-            case Calendar.TUESDAY: return "Tuesday";
-            case Calendar.WEDNESDAY: return "Wednesday";
-            case Calendar.THURSDAY: return "Thursday";
-            case Calendar.FRIDAY: return "Friday";
-            case Calendar.SATURDAY: return "Saturday";
-            case Calendar.SUNDAY: return "Sunday";
+        switch (date.getDay()) {
+            case 1: return "Monday";
+            case 2: return "Tuesday";
+            case 3: return "Wednesday";
+            case 4: return "Thursday";
+            case 5: return "Friday";
+            case 6: return "Saturday";
+            case 7:
+            case 0: return "Sunday";
         }
         return "error";
     }
