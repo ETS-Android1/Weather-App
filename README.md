@@ -15,11 +15,17 @@ It is planned to add the following features:
 ---
 
 ## How it's look now
-<img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/CitiesScreen.png" width="180" height="320">
-<img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/MainWindowScreen.png" width="180" height="320">
-<img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/Suggestions.png" width="180" height="320">
-<img src="https://github.com/IstrajI/Weather-App/blob/master/Pictures/Screenshot_20161126-233026.png" width="180" height="320">
 
+<div id="screenshot1">
+    <img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/CitiesScreen.png" width="360" height="640">
+    <img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/MainWindowScreen.png" width="360" height="640">
+</div>
+
+
+<div id="screenshot1">
+    <img src="https://github.com/IstrajI/WeatherApp/blob/master/Pictures/Suggestions.png" width="360" height="640">
+    <img src="https://github.com/IstrajI/Weather-App/blob/master/Pictures/Screenshot_20161126-233026.png" width="360" height="640">
+</div>
 ---
 
 ## What was used
